@@ -44,8 +44,3 @@ class DeliveryCreateView(generics.GenericAPIView):
             return Response({"details": "no user with this phone number found"})
 
         return Response(serializer.data, status.HTTP_200_OK)
-
-        # if not phone:
-        #     return Response({"detail": "provide reciever number"})
-
-        # return Response("dsa", status.HTTP_200_OK)
