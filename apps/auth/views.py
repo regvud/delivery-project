@@ -8,5 +8,5 @@ class MeView(generics.GenericAPIView):
     serializer_class = UserSerializer
 
     def get(self, *args, **kwargs):
-        user = self.request.user
-        return Response(f"{user}", status.HTTP_200_OK)
+        serializer = self.get_serializer(self.request.user)
+        return Response(serializer.data, status.HTTP_200_OK)

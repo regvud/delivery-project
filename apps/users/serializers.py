@@ -1,3 +1,4 @@
+from django.db.models import manager
 from rest_framework import serializers
 from rest_framework.authentication import get_user_model
 
@@ -8,6 +9,7 @@ UserModel = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
     sending = DeliverySerializer(many=True, read_only=True)
+    recieving = DeliverySerializer(many=True, read_only=True)
 
     class Meta:
         model = UserModel
@@ -16,6 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
             "email",
             "password",
             "sending",
+            "recieving",
             "last_login",
             "created_at",
             "updated_at",
@@ -24,6 +27,7 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = (
             "id",
             "sending",
+            "recieving",
             "last_login",
             "created_at",
             "updated_at",
