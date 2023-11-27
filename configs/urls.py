@@ -1,3 +1,7 @@
-from django.urls import path
+from django.urls import include, path
 
-urlpatterns = []
+urlpatterns = [
+    path("api/auth", include("apps.auth.urls")),
+    path("api/deliveries", include("apps.deliveries.urls")),
+    path("api/users", include("apps.users.urls")),
+]
