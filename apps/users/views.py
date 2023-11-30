@@ -9,3 +9,8 @@ UserModel = get_user_model()
 class UserListCreateView(generics.ListCreateAPIView):
     queryset = UserModel.objects.all()
     serializer_class = UserSerializer
+
+
+class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = UserModel
+    serializer_class = UserSerializer

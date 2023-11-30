@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.views import Response
 
@@ -24,18 +23,17 @@ class DeliveryCreateView(generics.GenericAPIView):
     def post(self, *args, **kwargs):
         data = self.request.data
         sender = self.request.user
-
         serializer = self.serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
 
+        print(data)
+
         try:
             phone = serializer.validated_data["reciever"]
-
             reciever = UserModel.objects.get(phone=phone)
             serializer.validated_data["reciever"] = reciever.pk
 
             data = dict(serializer.validated_data)
-
             serializer = DeliverySerializer(data=data)
             serializer.is_valid(raise_exception=True)
             serializer.save(sender=sender)
@@ -44,3 +42,8 @@ class DeliveryCreateView(generics.GenericAPIView):
             return Response({"details": "no user with this phone number found"})
 
         return Response(serializer.data, status.HTTP_200_OK)
+
+
+class DeliveryDetailRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = DeliveryModel
+    serializer_class = DeliveryWithSenderSerializer
