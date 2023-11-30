@@ -4,7 +4,6 @@ from .views import (
     DeliveryCreateView,
     DeliveryDetailRetrieveUpdateDestroyView,
     DeliveryListView,
-    dsadsdwq,
 )
 
 urlpatterns = [
