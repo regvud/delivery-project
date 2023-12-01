@@ -33,9 +33,9 @@ class DeliveryCreateView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
 
         try:
-            phone = serializer.validated_data["reciever"]
-            reciever = UserModel.objects.get(phone=phone)
-            serializer.validated_data["reciever"] = reciever.pk
+            phone = serializer.validated_data["receiver"]
+            receiver = UserModel.objects.get(phone=phone)
+            serializer.validated_data["receiver"] = receiver.pk
 
             data = dict(serializer.validated_data)
             serializer = DeliverySerializer(data=data)
@@ -45,7 +45,7 @@ class DeliveryCreateView(generics.GenericAPIView):
         except UserModel.DoesNotExist:
             return Response({"details": "no user with this phone number found"})
 
-        return Response(serializer.data, status.HTTP_200_OK)
+        return Response(serializer.data, status.HTTP_201_CREATED)
 
 
 class DeliveryInfoView(generics.GenericAPIView):
@@ -59,24 +59,57 @@ class DeliveryInfoView(generics.GenericAPIView):
 
     """
     GET method:
-        Represents reciever and sender fields with phone numbers instead of table ids 
+        Represents receiver and sender fields with phone numbers instead of table ids 
     """
 
     def get(self, *args, **kwargs):
         delivery = self.get_delivery()
         serializer = DeliveryWithSenderSerializer(delivery)
 
-        reciever_id = serializer.data["reciever"]
+        receiver_id = serializer.data["receiver"]
         sender_id = serializer.data["sender"]
 
-        reciever = self.get_user(pk=reciever_id).phone
+        receiver = self.get_user(pk=receiver_id).phone
         sender = self.get_user(pk=sender_id).phone
 
         info_serializer = DeliveryConvertedIdToPhoneNumberSerializer(
             data=serializer.data
         )
         info_serializer.is_valid(raise_exception=True)
-        info_serializer.validated_data["reciever"] = reciever
+        info_serializer.validated_data["receiver"] = receiver
         info_serializer.validated_data["sender"] = sender
 
         return Response(info_serializer.data, status.HTTP_200_OK)
+
+
+class DeliveryReceiveView(generics.RetrieveUpdateAPIView):
+    queryset = DeliveryModel
+    serializer_class = DeliveryWithSenderSerializer
+
+    def patch(self, *args, **kwargs):
+        delivery = self.get_object()
+
+        if delivery.status == "received":
+            return Response("This delivery is received")
+
+        delivery.status = "received"
+        delivery.save()
+        serializer = self.get_serializer(delivery)
+        return Response(serializer.data, status.HTTP_202_ACCEPTED)
+
+
+class DeliveryDeclineView(generics.RetrieveUpdateAPIView):
+    queryset = DeliveryModel
+    serializer_class = DeliveryWithSenderSerializer
+
+    def patch(self, *args, **kwargs):
+        delivery = self.get_object()
+
+        if delivery.status == "declined":
+            return Response("This delivery is declined")
+
+        delivery.status = "declined"
+        delivery.save()
+
+        serializer = self.get_serializer(delivery)
+        return Response(serializer.data, status.HTTP_202_ACCEPTED)

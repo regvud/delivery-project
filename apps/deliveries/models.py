@@ -25,8 +25,8 @@ class DeliveryModel(BaseModel):
     class Meta:
         db_table = "deliveries"
 
-    reciever = models.ForeignKey(
-        UserModel, on_delete=models.CASCADE, related_name="recieving"
+    receiver = models.ForeignKey(
+        UserModel, on_delete=models.CASCADE, related_name="receiving"
     )
     item = models.OneToOneField(ItemModel, on_delete=models.CASCADE)
     sender = models.ForeignKey(
