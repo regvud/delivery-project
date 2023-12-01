@@ -7,7 +7,7 @@ from apps.deliveries.models import DeliveryModel, ItemModel
 class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemModel
-        fields = ("id", "label", "price", "size")
+        fields = ("label", "price", "size")
 
 
 class DeliverySerializer(serializers.ModelSerializer):
@@ -50,3 +50,13 @@ class DeliveryWithSenderSerializer(serializers.ModelSerializer):
 class DeliveryUserPhoneExistanceCheckSerializer(serializers.Serializer):
     item = ItemSerializer()
     reciever = serializers.CharField()
+
+
+class DeliveryConvertedIdToPhoneNumberSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    item = ItemSerializer()
+    sender = serializers.CharField()
+    reciever = serializers.CharField()
+    status = serializers.CharField()
+    created_at = serializers.CharField()
+    updated_at = serializers.CharField()

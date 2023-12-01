@@ -9,6 +9,9 @@ UserModel = get_user_model()
 
 
 class ItemModel(BaseModel):
+    class Meta:
+        db_table = "items"
+
     label = models.CharField(max_length=30)
     price = models.DecimalField(
         decimal_places=2,
