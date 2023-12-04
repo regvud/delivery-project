@@ -89,8 +89,11 @@ class DeliveryReceiveView(generics.RetrieveUpdateAPIView):
     def patch(self, *args, **kwargs):
         delivery = self.get_object()
 
-        if delivery.status == "received":
-            return Response("This delivery is received")
+        match delivery.status:
+            case "in progress":
+                return Response("This delivery is not ready for pick up")
+            case "received":
+                return Response("This delivery is received")
 
         delivery.status = "received"
         delivery.save()
