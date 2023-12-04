@@ -6,9 +6,9 @@ from apps.deliveries.models import DeliveryModel
 from apps.deliveries.serializers import (
     DeliveryConvertedIdToPhoneNumberSerializer,
     DeliverySerializer,
-    DeliveryUserPhoneExistanceCheckSerializer,
     DeliveryWithSenderSerializer,
 )
+from apps.departments.models import DepartmentModel
 
 UserModel = get_user_model()
 
@@ -24,38 +24,52 @@ class DeliveryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class DeliveryCreateView(generics.GenericAPIView):
-    serializer_class = DeliveryUserPhoneExistanceCheckSerializer
+    def get_department(self, general_number):
+        try:
+            department = DepartmentModel.objects.get(general_number=general_number)
+        except DepartmentModel.DoesNotExist:
+            raise ValueError(
+                f"Department with general number: {department} does not exist"
+            )
+
+        return department
+
+    def get_receiver(self, phone):
+        try:
+            receiver = UserModel.objects.get(phone=phone)
+        except UserModel.DoesNotExist:
+            raise ValueError(f"User with phone number: {phone} does not exist")
+
+        return receiver
 
     def post(self, *args, **kwargs):
         data = self.request.data
         sender = self.request.user
-        serializer = self.serializer_class(data=data)
+        department = data["department"]
+        phone = data["receiver"]
+
+        department = self.get_department(general_number=department).pk
+        receiver = self.get_receiver(phone=phone).pk
+
+        data["receiver"] = receiver
+        data["department"] = department
+
+        serializer = DeliverySerializer(data=data)
         serializer.is_valid(raise_exception=True)
-
-        try:
-            phone = serializer.validated_data["receiver"]
-            receiver = UserModel.objects.get(phone=phone)
-            serializer.validated_data["receiver"] = receiver.pk
-
-            data = dict(serializer.validated_data)
-            serializer = DeliverySerializer(data=data)
-            serializer.is_valid(raise_exception=True)
-            serializer.save(sender=sender)
-
-        except UserModel.DoesNotExist:
-            return Response({"details": "no user with this phone number found"})
+        serializer.save(sender=sender)
 
         return Response(serializer.data, status.HTTP_201_CREATED)
 
 
 class DeliveryInfoView(generics.GenericAPIView):
-    queryset = DeliveryModel
-
     def get_delivery(self):
         return DeliveryModel.objects.get(pk=self.kwargs.get("pk"))
 
-    def get_user(self, *args, **kwargs):
-        return UserModel.objects.get(pk=kwargs["pk"])
+    def get_user(self, pk):
+        return UserModel.objects.get(pk=pk)
+
+    def get_department(self, pk):
+        return DepartmentModel.objects.get(pk=pk)
 
     """
     GET method:
@@ -68,9 +82,11 @@ class DeliveryInfoView(generics.GenericAPIView):
 
         receiver_id = serializer.data["receiver"]
         sender_id = serializer.data["sender"]
+        department_id = serializer.data["department"]
 
         receiver = self.get_user(pk=receiver_id).phone
         sender = self.get_user(pk=sender_id).phone
+        department = self.get_department(pk=department_id).general_number
 
         info_serializer = DeliveryConvertedIdToPhoneNumberSerializer(
             data=serializer.data
@@ -78,8 +94,9 @@ class DeliveryInfoView(generics.GenericAPIView):
         info_serializer.is_valid(raise_exception=True)
         info_serializer.validated_data["receiver"] = receiver
         info_serializer.validated_data["sender"] = sender
+        info_serializer.validated_data["department"] = department
 
-        return Response(info_serializer.data, status.HTTP_200_OK)
+        return Response({"info": info_serializer.data}, status.HTTP_200_OK)
 
 
 class DeliveryReceiveView(generics.RetrieveUpdateAPIView):

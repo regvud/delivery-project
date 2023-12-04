@@ -26,7 +26,6 @@ class UserSerializer(serializers.ModelSerializer):
 
         read_only_fields = (
             "id",
-            "phone",
             "sending",
             "receiving",
             "last_login",

@@ -19,6 +19,7 @@ class DeliverySerializer(serializers.ModelSerializer):
             "id",
             "item",
             "receiver",
+            "department",
             "status",
         )
 
@@ -41,15 +42,23 @@ class DeliveryWithSenderSerializer(serializers.ModelSerializer):
             "item",
             "sender",
             "receiver",
+            "department",
             "status",
             "created_at",
             "updated_at",
         )
 
 
-class DeliveryUserPhoneExistanceCheckSerializer(serializers.Serializer):
-    item = ItemSerializer()
-    receiver = serializers.CharField()
+class DeliveryWithoutItemNestedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DeliveryModel
+        fields = (
+            "id",
+            "item",
+            "receiver",
+            "department",
+            "status",
+        )
 
 
 class DeliveryConvertedIdToPhoneNumberSerializer(serializers.Serializer):
@@ -57,8 +66,7 @@ class DeliveryConvertedIdToPhoneNumberSerializer(serializers.Serializer):
     item = ItemSerializer()
     sender = serializers.CharField()
     receiver = serializers.CharField()
+    department = serializers.IntegerField()
     status = serializers.CharField()
     created_at = serializers.CharField()
     updated_at = serializers.CharField()
-
-
