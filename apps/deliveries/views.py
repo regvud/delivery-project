@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.views import Response
 
@@ -62,35 +63,27 @@ class DeliveryCreateView(generics.GenericAPIView):
 
 
 class DeliveryInfoView(generics.GenericAPIView):
-    def get_delivery(self):
-        return DeliveryModel.objects.get(pk=self.kwargs.get("pk"))
-
-    def get_user(self, pk):
-        return UserModel.objects.get(pk=pk)
-
-    def get_department(self, pk):
-        return DepartmentModel.objects.get(pk=pk)
-
     """
     GET method:
-        Represents receiver and sender fields with phone numbers instead of table ids 
+        Represents receiver and sender fields with phone numbers instead of table ids
     """
 
     def get(self, *args, **kwargs):
-        delivery = self.get_delivery()
+        delivery = get_object_or_404(DeliveryModel, pk=self.kwargs.get("pk"))
         serializer = DeliveryWithSenderSerializer(delivery)
 
         receiver_id = serializer.data["receiver"]
         sender_id = serializer.data["sender"]
         department_id = serializer.data["department"]
 
-        receiver = self.get_user(pk=receiver_id).phone
-        sender = self.get_user(pk=sender_id).phone
-        department = self.get_department(pk=department_id).general_number
+        receiver = get_object_or_404(UserModel, pk=receiver_id).phone
+        sender = get_object_or_404(UserModel, pk=sender_id).phone
+        department = get_object_or_404(DepartmentModel, pk=department_id).general_number
 
         info_serializer = DeliveryConvertedIdToPhoneNumberSerializer(
             data=serializer.data
         )
+
         info_serializer.is_valid(raise_exception=True)
         info_serializer.validated_data["receiver"] = receiver
         info_serializer.validated_data["sender"] = sender
