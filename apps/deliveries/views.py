@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import Response
 
 from apps.deliveries.models import DeliveryModel
@@ -17,6 +18,7 @@ UserModel = get_user_model()
 class DeliveryListView(generics.ListAPIView):
     queryset = DeliveryModel.objects.all()
     serializer_class = DeliveryWithSenderSerializer
+    permission_classes = (IsAuthenticated,)
 
 
 class DeliveryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
