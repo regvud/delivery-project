@@ -49,3 +49,9 @@ class UserDeliveriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
         fields = ("sending", "receiving")
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserModel
+        fields = ("email", "phone", "last_login")
