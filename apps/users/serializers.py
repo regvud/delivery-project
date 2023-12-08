@@ -1,7 +1,11 @@
 from rest_framework import serializers
 from rest_framework.authentication import get_user_model
 
-from apps.deliveries.serializers import DeliverySerializer, ItemSerializer
+from apps.deliveries.serializers import (
+    DeliverySerializer,
+    DeliveryWithSenderSerializer,
+    ItemSerializer,
+)
 
 UserModel = get_user_model()
 
@@ -43,8 +47,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserDeliveriesSerializer(serializers.ModelSerializer):
-    sending = DeliverySerializer(many=True, read_only=True)
-    receiving = DeliverySerializer(many=True, read_only=True)
+    sending = DeliveryWithSenderSerializer(many=True, read_only=True)
+    receiving = DeliveryWithSenderSerializer(many=True, read_only=True)
 
     class Meta:
         model = UserModel
