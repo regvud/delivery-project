@@ -26,38 +26,23 @@ class DeliveryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = DeliveryWithSenderSerializer
 
 
-class DeliveryCreateView(generics.GenericAPIView):
-    def get_department(self, general_number):
-        try:
-            department = DepartmentModel.objects.get(general_number=general_number)
-        except DepartmentModel.DoesNotExist:
-            raise ValueError(
-                f"Department with general number: {department} does not exist"
-            )
-
-        return department
-
-    def get_receiver(self, phone):
-        try:
-            receiver = UserModel.objects.get(phone=phone)
-        except UserModel.DoesNotExist:
-            raise ValueError(f"User with phone number: {phone} does not exist")
-
-        return receiver
+class DeliveryCreateView(generics.CreateAPIView):
+    serializer_class = DeliverySerializer
+    queryset = DeliveryModel.objects.all()
 
     def post(self, *args, **kwargs):
         data = self.request.data
         sender = self.request.user
-        department = data["department"]
-        phone = data["receiver"]
 
-        department = self.get_department(general_number=department).pk
-        receiver = self.get_receiver(phone=phone).pk
+        receiver = get_object_or_404(UserModel, phone=data["receiver"])
+        department = get_object_or_404(
+            DepartmentModel, general_number=data["department"]
+        )
 
-        data["receiver"] = receiver
-        data["department"] = department
+        data["receiver"] = receiver.pk
+        data["department"] = department.pk
 
-        serializer = DeliverySerializer(data=data)
+        serializer = self.serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save(sender=sender)
 
