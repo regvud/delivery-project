@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
@@ -30,14 +31,37 @@ class DeliveryCreateView(generics.CreateAPIView):
     serializer_class = DeliverySerializer
     queryset = DeliveryModel.objects.all()
 
-    def post(self, *args, **kwargs):
-        data = self.request.data
-        sender = self.request.user
+    def get_receiver(self, phone):
+        try:
+            return UserModel.objects.get(phone=phone)
+        except UserModel.DoesNotExist:
+            return None
 
-        receiver = get_object_or_404(UserModel, phone=data["receiver"])
-        department = get_object_or_404(
-            DepartmentModel, general_number=data["department"]
-        )
+    def get_department(self, general_number):
+        try:
+            return DepartmentModel.objects.get(general_number=general_number)
+        except DepartmentModel.DoesNotExist:
+            return None
+
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        sender = request.user
+
+        # Retrieve the receiver and department objects
+        receiver = self.get_receiver(data.get("receiver"))
+        department = self.get_department(data.get("department"))
+
+        if not receiver:
+            return Response(
+                "User with this phone number does not exist",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not department:
+            return Response(
+                "Department does not exist",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         data["receiver"] = receiver.pk
         data["department"] = department.pk
@@ -46,7 +70,42 @@ class DeliveryCreateView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save(sender=sender)
 
-        return Response(serializer.data, status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+# class DeliveryCreateView(generics.CreateAPIView):
+#     serializer_class = DeliverySerializer
+#     queryset = DeliveryModel.objects.all()
+
+#     def get_receiver(self, phone):
+#         try:
+#             obj = UserModel.objects.get(phone=phone)
+#             return obj
+#         except UserModel.DoesNotExist:
+#             return Response("No user found")
+
+#     def get_department(self, general_number):
+#         try:
+#             obj = DepartmentModel.objects.get(general_number=general_number)
+#             return obj
+#         except DepartmentModel.DoesNotExist:
+#             raise ObjectDoesNotExist
+
+#     def post(self, *args, **kwargs):
+#         data = self.request.data
+#         sender = self.request.user
+
+#         receiver = self.get_receiver(data["receiver"])
+#         department = self.get_department(data["department"])
+
+#         data["receiver"] = receiver.pk
+#         data["department"] = department.pk
+
+#         serializer = self.serializer_class(data=data)
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save(sender=sender)
+
+#         return Response(serializer.data, status.HTTP_201_CREATED)
 
 
 class DeliveryInfoView(generics.GenericAPIView):
