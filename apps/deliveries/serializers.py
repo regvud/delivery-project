@@ -2,6 +2,7 @@ from django.db.transaction import atomic
 from rest_framework import serializers
 
 from apps.deliveries.models import DeliveryModel, ItemModel
+from core.services.tracking_service import TrackingService
 
 
 class ItemSerializer(serializers.ModelSerializer):

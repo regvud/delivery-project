@@ -5,6 +5,7 @@ from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import Response
 
+from apps.deliveries.choices import StatusChoices
 from apps.deliveries.models import DeliveryModel
 from apps.deliveries.serializers import (
     DeliveryConvertedIdToPhoneNumberSerializer,
@@ -73,41 +74,6 @@ class DeliveryCreateView(generics.CreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-# class DeliveryCreateView(generics.CreateAPIView):
-#     serializer_class = DeliverySerializer
-#     queryset = DeliveryModel.objects.all()
-
-#     def get_receiver(self, phone):
-#         try:
-#             obj = UserModel.objects.get(phone=phone)
-#             return obj
-#         except UserModel.DoesNotExist:
-#             return Response("No user found")
-
-#     def get_department(self, general_number):
-#         try:
-#             obj = DepartmentModel.objects.get(general_number=general_number)
-#             return obj
-#         except DepartmentModel.DoesNotExist:
-#             raise ObjectDoesNotExist
-
-#     def post(self, *args, **kwargs):
-#         data = self.request.data
-#         sender = self.request.user
-
-#         receiver = self.get_receiver(data["receiver"])
-#         department = self.get_department(data["department"])
-
-#         data["receiver"] = receiver.pk
-#         data["department"] = department.pk
-
-#         serializer = self.serializer_class(data=data)
-#         serializer.is_valid(raise_exception=True)
-#         serializer.save(sender=sender)
-
-#         return Response(serializer.data, status.HTTP_201_CREATED)
-
-
 class DeliveryInfoView(generics.GenericAPIView):
     """
     GET method:
@@ -151,7 +117,7 @@ class DeliveryReceiveView(generics.RetrieveUpdateAPIView):
             case "received":
                 return Response("This delivery is received")
 
-        delivery.status = "received"
+        delivery.status = StatusChoices.recieved
         delivery.save()
         serializer = self.get_serializer(delivery)
         return Response(serializer.data, status.HTTP_202_ACCEPTED)
@@ -164,10 +130,10 @@ class DeliveryDeclineView(generics.RetrieveUpdateAPIView):
     def patch(self, *args, **kwargs):
         delivery = self.get_object()
 
-        if delivery.status == "declined":
+        if delivery.status == StatusChoices.declined:
             return Response("This delivery is declined")
 
-        delivery.status = "declined"
+        delivery.status = StatusChoices.declined
         delivery.save()
 
         serializer = self.get_serializer(delivery)

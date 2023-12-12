@@ -21,14 +21,14 @@ class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
 
 
-class UserDeliveriesView(generics.GenericAPIView):
+class UserDeliveriesView(generics.RetrieveAPIView):
     def get(self, *args, **kwargs):
         user = self.request.user
         serializer = UserDeliveriesSerializer(user)
         return Response(serializer.data, status.HTTP_200_OK)
 
 
-class UserProfileView(generics.GenericAPIView):
+class UserProfileView(generics.RetrieveAPIView):
     serializer_class = UserProfileSerializer
 
     def get(self, *args, **kwargs):
