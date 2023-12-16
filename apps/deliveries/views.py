@@ -112,12 +112,12 @@ class DeliveryReceiveView(generics.RetrieveUpdateAPIView):
         delivery = self.get_object()
 
         match delivery.status:
-            case "in progress":
+            case StatusChoices.in_progress:
                 return Response("This delivery is not ready for pick up")
-            case "received":
+            case StatusChoices.received:
                 return Response("This delivery is received")
 
-        delivery.status = StatusChoices.recieved
+        delivery.status = StatusChoices.received
         delivery.save()
         serializer = self.get_serializer(delivery)
         return Response(serializer.data, status.HTTP_202_ACCEPTED)

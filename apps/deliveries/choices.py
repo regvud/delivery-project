@@ -11,5 +11,5 @@ class SizeChoices(models.TextChoices):
 class StatusChoices(models.TextChoices):
     in_progress = "in progress"
     ready = "ready"
-    recieved = "received"
+    received = "received"
     declined = "declined"
