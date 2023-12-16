@@ -13,7 +13,6 @@ from apps.deliveries.serializers import (
     DeliverySerializer,
 )
 from apps.departments.models import DepartmentModel
-from core.dataclasses.delivery_dataclass import DeliveryDataclass
 from core.dataclasses.department_dataclass import DepartmentDataclass
 from core.dataclasses.user_dataclass import UserDataclass
 

@@ -12,6 +12,7 @@ class DepartmentSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "general_number",
+            "region",
             "staff_count",
             "capacity",
             "status",

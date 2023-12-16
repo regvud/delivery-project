@@ -37,5 +37,5 @@ class DeliveryModel(BaseModel):
         DepartmentModel, on_delete=models.CASCADE, related_name="deliveries"
     )
     status = models.CharField(
-        max_length=11, choices=StatusChoices.choices, default="in progress"
+        max_length=11, choices=StatusChoices.choices, default=StatusChoices.in_progress
     )

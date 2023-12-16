@@ -11,9 +11,13 @@ from apps.users.serializers import (
 UserModel = get_user_model()
 
 
-class UserListCreateView(generics.ListCreateAPIView):
+class UserListView(generics.ListAPIView):
     serializer_class = UserSerializer
     queryset = UserModel.objects.all()
+
+
+class UserCreateView(generics.CreateAPIView):
+    serializer_class = UserSerializer
 
 
 class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
