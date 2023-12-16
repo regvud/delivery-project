@@ -2,7 +2,6 @@ from django.db.transaction import atomic
 from rest_framework import serializers
 
 from apps.deliveries.models import DeliveryModel, ItemModel
-from core.services.tracking_service import TrackingService
 
 
 class ItemSerializer(serializers.ModelSerializer):
@@ -19,6 +18,7 @@ class DeliverySerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "item",
+            "sender",
             "receiver",
             "department",
             "status",
@@ -33,7 +33,10 @@ class DeliverySerializer(serializers.ModelSerializer):
         return delivery
 
 
-class DeliveryWithSenderSerializer(serializers.ModelSerializer):
+class DeliveryConvertedFieldsSerializer(serializers.ModelSerializer):
+    receiver = serializers.SerializerMethodField()
+    sender = serializers.SerializerMethodField()
+    department = serializers.SerializerMethodField()
     item = ItemSerializer()
 
     class Meta:
@@ -49,6 +52,22 @@ class DeliveryWithSenderSerializer(serializers.ModelSerializer):
             "updated_at",
         )
 
+    def get_receiver(self, user):
+        return user.receiver.phone
+
+    def get_sender(self, user):
+        return user.sender.phone
+
+    def get_department(self, user):
+        return user.department.general_number
+
+
+class DeliveryDataSerializer(serializers.Serializer):
+    receiver = serializers.CharField()
+    sender = serializers.IntegerField()
+    department = serializers.CharField()
+    item = ItemSerializer()
+
 
 class DeliveryWithoutItemNestedSerializer(serializers.ModelSerializer):
     class Meta:
@@ -60,14 +79,3 @@ class DeliveryWithoutItemNestedSerializer(serializers.ModelSerializer):
             "department",
             "status",
         )
-
-
-class DeliveryConvertedIdToPhoneNumberSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    item = ItemSerializer()
-    sender = serializers.CharField()
-    receiver = serializers.CharField()
-    department = serializers.IntegerField()
-    status = serializers.CharField()
-    created_at = serializers.CharField()
-    updated_at = serializers.CharField()

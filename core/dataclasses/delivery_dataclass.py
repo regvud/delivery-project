@@ -1,12 +1,17 @@
 from dataclasses import dataclass
 
-from core.dataclasses.item_dataclass import Item
+
+@dataclass
+class ItemDataclass:
+    label: str
+    price: float
+    size: str
 
 
 @dataclass
-class Delivery:
+class DeliveryDataclass:
     receiver: int
-    item: Item
+    item: ItemDataclass
     sender: int
     department: int
     status: str

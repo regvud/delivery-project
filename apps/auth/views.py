@@ -1,12 +1,14 @@
+from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from rest_framework import generics
-from rest_framework.views import Response, status
 
 from apps.users.serializers import UserSerializer
 
+UserModel = get_user_model()
 
-class MeView(generics.GenericAPIView):
+
+class MeView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
 
-    def get(self, *args, **kwargs):
-        serializer = self.get_serializer(self.request.user)
-        return Response(serializer.data, status.HTTP_200_OK)
+    def get_object(self):
+        return get_object_or_404(UserModel, pk=self.request.user.pk)

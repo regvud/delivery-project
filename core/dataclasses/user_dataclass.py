@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class User:
+class UserDataclass:
     email: str
     password: str
     is_superuser: bool
