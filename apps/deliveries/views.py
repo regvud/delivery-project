@@ -96,37 +96,21 @@ class DeliveryInfoView(generics.RetrieveAPIView):
         return get_object_or_404(DeliveryModel, pk=self.kwargs.get("pk"))
 
 
-class DeliveryReceiveView(generics.RetrieveUpdateAPIView):
+class DeliveryReceiveView(generics.UpdateAPIView):
+    serializer_class = DeliverySerializer
+    queryset = DeliveryModel
+
+    def perform_update(self, serializer):
+        serializer.validated_data["status"] = StatusChoices.received
+        serializer.save()
+        return super().perform_update(serializer)
+
+
+class DeliveryDeclineView(generics.UpdateAPIView):
     queryset = DeliveryModel
     serializer_class = DeliverySerializer
 
-    def patch(self, *args, **kwargs):
-        delivery = self.get_object()
-
-        match delivery.status:
-            case StatusChoices.in_progress:
-                return Response("This delivery is not ready for pick up")
-            case StatusChoices.received:
-                return Response("This delivery is received")
-
-        delivery.status = StatusChoices.received
-        delivery.save()
-        serializer = self.get_serializer(delivery)
-        return Response(serializer.data, status.HTTP_202_ACCEPTED)
-
-
-class DeliveryDeclineView(generics.RetrieveUpdateAPIView):
-    queryset = DeliveryModel
-    serializer_class = DeliverySerializer
-
-    def patch(self, *args, **kwargs):
-        delivery = self.get_object()
-
-        if delivery.status == StatusChoices.declined:
-            return Response("This delivery is declined")
-
-        delivery.status = StatusChoices.declined
-        delivery.save()
-
-        serializer = self.get_serializer(delivery)
-        return Response(serializer.data, status.HTTP_202_ACCEPTED)
+    def perform_update(self, serializer):
+        serializer.validated_data["status"] = StatusChoices.declined
+        serializer.save()
+        return super().perform_update(serializer)
