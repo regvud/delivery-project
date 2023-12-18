@@ -16,8 +16,8 @@ class ItemModel(BaseModel):
     label = models.CharField(max_length=30)
     price = models.DecimalField(
         decimal_places=2,
-        max_digits=7,
-        validators=[V.MinValueValidator(0), V.MaxValueValidator(1000000)],
+        max_digits=8,
+        validators=[V.MinValueValidator(1), V.MaxValueValidator(999999)],
     )
     size = models.CharField(max_length=6, choices=SizeChoices.choices)
 

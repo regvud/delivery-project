@@ -1,5 +1,6 @@
+from datetime import datetime, timezone
+
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.fields import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
@@ -34,6 +35,9 @@ class DeliveryCreateView(generics.CreateAPIView):
     serializer_class = DeliverySerializer
 
     def get_receiver(self, phone):
+        if phone == self.request.user.phone:
+            raise Exception("You cannot send to yourself")
+
         try:
             receiver = UserModel.objects.get(phone=phone)
             return receiver
@@ -77,10 +81,12 @@ class DeliveryCreateView(generics.CreateAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         except ObjectDoesNotExist as e:
-            return Response(str(e), status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
         except Exception as e:
-            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class DeliveryInfoView(generics.RetrieveAPIView):
@@ -90,19 +96,22 @@ class DeliveryInfoView(generics.RetrieveAPIView):
     """
 
     serializer_class = DeliveryConvertedFieldsSerializer
-
-    def get_object(self):
-        return get_object_or_404(DeliveryModel, pk=self.kwargs.get("pk"))
+    queryset = DeliveryModel
 
 
 class DeliveryReceiveView(generics.UpdateAPIView):
     serializer_class = DeliverySerializer
     queryset = DeliveryModel
 
-    def perform_update(self, serializer):
-        serializer.validated_data["status"] = StatusChoices.received
-        serializer.save()
-        return super().perform_update(serializer)
+    # def perform_update(self, serializer):
+    #     serializer.save(status=StatusChoices.received)
+    def patch(self, *args, **kwargs):
+        created = self.get_object().created_at
+        now = datetime.now(timezone.utc)
+
+        time_difference = int(str(now - created)[0])
+
+        return Response(time_difference)
 
 
 class DeliveryDeclineView(generics.UpdateAPIView):
@@ -110,6 +119,4 @@ class DeliveryDeclineView(generics.UpdateAPIView):
     serializer_class = DeliverySerializer
 
     def perform_update(self, serializer):
-        serializer.validated_data["status"] = StatusChoices.declined
-        serializer.save()
-        return super().perform_update(serializer)
+        serializer.save(status=StatusChoices.declined)
