@@ -37,9 +37,13 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.staticfiles",
+    # additional
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
+    "celery",
+    "django_celery_results",
+    "django_celery_beat",
     # apps
     "core",
     "apps.auth",
@@ -72,6 +76,7 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = "configs.asgi.application"
 WSGI_APPLICATION = "configs.wsgi.application"
 
 
