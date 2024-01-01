@@ -4,17 +4,18 @@ from configs.celery import app
 
 
 class StatusService:
-    @app.task
+    @staticmethod
     def manage_status_service(*args, **options):
         deliveries = DeliveryModel.objects.all()
 
         for delivery in deliveries:
             if delivery.status == StatusChoices.in_progress:
                 delivery.status = StatusChoices.ready
-
                 delivery.save()
 
-            return print("Delivery status has been changed!!!!!!!!")
+        print("Delivery statuses have been changed!!!!!!!!")
 
-
-StatusService.manage_status_service()
+    @classmethod
+    @app.task
+    def start(cls):
+        cls.manage_status_service

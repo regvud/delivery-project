@@ -13,6 +13,7 @@ class DepartmentSerializer(serializers.ModelSerializer):
             "id",
             "general_number",
             "region",
+            "city",
             "staff_count",
             "capacity",
             "status",

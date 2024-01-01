@@ -13,11 +13,18 @@ from apps.deliveries.serializers import (
     DeliveryDataSerializer,
     DeliverySerializer,
 )
+from apps.deliveries.services import StatusService
 from apps.departments.models import DepartmentModel
 from core.dataclasses.department_dataclass import DepartmentDataclass
 from core.dataclasses.user_dataclass import UserDataclass
 
 UserModel = get_user_model()
+
+
+class test(generics.GenericAPIView):
+    def get(self, *args, **kwargs):
+        StatusService.manage_status_service.delay()
+        return Response("dwqdwqd")
 
 
 class DeliveryListView(generics.ListAPIView):
@@ -103,13 +110,11 @@ class DeliveryReceiveView(generics.UpdateAPIView):
     serializer_class = DeliverySerializer
     queryset = DeliveryModel
 
-    # def perform_update(self, serializer):
-    #     serializer.save(status=StatusChoices.received)
     def patch(self, *args, **kwargs):
         created = self.get_object().created_at
-        now = datetime.now(timezone.utc)
+        current_time = datetime.now(timezone.utc)
 
-        time_difference = int(str(now - created)[0])
+        time_difference = int(str(current_time - created)[0])
 
         return Response(time_difference)
 

@@ -10,6 +10,7 @@ class DepartmentListView(generics.ListAPIView):
 
 
 class DepartmentCreateView(generics.CreateAPIView):
+    queryset = DepartmentModel
     serializer_class = DepartmentSerializer
 
 
