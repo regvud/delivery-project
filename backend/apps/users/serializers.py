@@ -1,10 +1,9 @@
-from rest_framework import serializers
-from rest_framework.authentication import get_user_model
-
 from apps.deliveries.serializers import (
     DeliveryConvertedFieldsSerializer,
     DeliverySerializer,
 )
+from rest_framework import serializers
+from rest_framework.authentication import get_user_model
 
 UserModel = get_user_model()
 
@@ -32,8 +31,6 @@ class UserSerializer(serializers.ModelSerializer):
             "sending",
             "receiving",
             "last_login",
-            "created_at",
-            "updated_at",
         )
 
         extra_kwargs = {

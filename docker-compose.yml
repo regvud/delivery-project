@@ -13,9 +13,6 @@ services:
     restart: on-failure
     command: >
       sh -c "python manage.py wait_db && python manage.py runserver 0.0.0.0:8000"
-    environment:
-      ADMIN_TOKEN: $$argon2id$$v=19$$m=19456,t=2,p=1$$UUZxK1FZMkZoRHFQRlVrTXZvS0E3bHpNQW55c2dBN2NORzdsa0Nxd1JhND0$$cUoId+JBUsJutlG4rfDZayExfjq4TCt48aBc9qsc3UI
-
   db:
     image: mysql:8
     volumes:
