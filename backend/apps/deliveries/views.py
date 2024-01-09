@@ -29,7 +29,7 @@ class test(generics.GenericAPIView):
 
 class DeliveryListView(generics.ListAPIView):
     queryset = DeliveryModel.objects.all()
-    serializer_class = DeliverySerializer
+    serializer_class = DeliveryConvertedFieldsSerializer
     permission_classes = (IsAuthenticated,)
 
 
