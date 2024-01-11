@@ -7,12 +7,10 @@ from .views import (
     DeliveryListView,
     DeliveryReceiveView,
     DeliveryRetrieveUpdateDestroyView,
-    test,
 )
 
 urlpatterns = [
     path("", DeliveryListView.as_view(), name="delivery_list"),
-    path("/test", test.as_view(), name="test    "),
     path("/create", DeliveryCreateView.as_view(), name="delivery_create"),
     path(
         "/<int:pk>", DeliveryRetrieveUpdateDestroyView.as_view(), name="delivery_crud"

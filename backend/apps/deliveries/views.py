@@ -1,5 +1,3 @@
-from datetime import datetime, timezone
-
 from django.contrib.auth import get_user_model
 from rest_framework import generics, status
 from rest_framework.fields import ObjectDoesNotExist
@@ -13,7 +11,6 @@ from apps.deliveries.serializers import (
     DeliveryDataSerializer,
     DeliverySerializer,
 )
-from apps.deliveries.services import StatusService
 from apps.departments.models import DepartmentModel
 from core.dataclasses.department_dataclass import DepartmentDataclass
 from core.dataclasses.user_dataclass import UserDataclass
@@ -21,24 +18,39 @@ from core.dataclasses.user_dataclass import UserDataclass
 UserModel = get_user_model()
 
 
-class test(generics.GenericAPIView):
-    def get(self, *args, **kwargs):
-        StatusService.manage_status_service.delay()
-        return Response("dwqdwqd")
-
-
 class DeliveryListView(generics.ListAPIView):
+    """
+    GET method:
+        Delivery list
+    """
+
     queryset = DeliveryModel.objects.all()
     serializer_class = DeliveryConvertedFieldsSerializer
     permission_classes = (IsAuthenticated,)
 
 
 class DeliveryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    GET method:
+        Receive delivery
+    PATCH method:
+        Update delivery
+    PUT method:
+        Fully update delivery
+    DELETE method:
+        Remove delivery
+    """
+
     queryset = DeliveryModel
     serializer_class = DeliverySerializer
 
 
 class DeliveryCreateView(generics.CreateAPIView):
+    """
+    POST method:
+        Create new delivery
+    """
+
     serializer_class = DeliverySerializer
 
     def get_receiver(self, phone):
@@ -107,19 +119,24 @@ class DeliveryInfoView(generics.RetrieveAPIView):
 
 
 class DeliveryReceiveView(generics.UpdateAPIView):
-    serializer_class = DeliverySerializer
+    """
+    GET method:
+        Receive delivery
+    """
+
     queryset = DeliveryModel
+    serializer_class = DeliverySerializer
 
-    def patch(self, *args, **kwargs):
-        created = self.get_object().created_at
-        current_time = datetime.now(timezone.utc)
-
-        time_difference = int(str(current_time - created)[0])
-
-        return Response(time_difference)
+    def perform_update(self, serializer):
+        serializer.save(status=StatusChoices.received)
 
 
 class DeliveryDeclineView(generics.UpdateAPIView):
+    """
+    GET method:
+        Decline delivery
+    """
+
     queryset = DeliveryModel
     serializer_class = DeliverySerializer
 
