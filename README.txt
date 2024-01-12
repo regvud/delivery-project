@@ -1,5 +1,36 @@
 Delivery project:
 
+
+before starting:
+
+    PORTS:
+        frontend port: 80
+        backend port: 8080 
+
+    1) .env file setup:
+    
+        DEBUG=True
+        MYSQL_DATABASE=...
+        MYSQL_USER=...
+        MYSQL_PASSWORD=...
+        MYSQL_ROOT_PASSWORD=...
+        MYSQL_HOST=db
+        MYSQL_PORT=3306
+
+    2) pip install -r requirements.txt
+
+    3) docker compose up --build
+
+    4) Commands:
+
+        cd /backend
+
+        docker compose run --rm app sh 
+
+        ./manage.py migrate
+
+
+
 backend:
     поділений на 4 основні таблиці: (users, departments, deliveries, items) 
 
@@ -17,32 +48,18 @@ backend:
     Пермішени не розтавляв, щоб не ускладнювати перевірку.
 
 
+
 frontend:
-    На фронті відтворив основні функції: (реєстрація, логінація, створення посилок, виведення посилок юзера, виведення всіх посилок).
+    Відтворив основні функції: (реєстрація, логінація, створення посилок, виведення посилок юзера, виведення всіх посилок).
 
     Кожна форма має валідацію.
     Стейт менеджер: Tanstack Query. 
 
 
+    - Перед тим як створити посилку: 
+        1. На бекенді треба створити мінімум 1 відділення.
+        2. Зареєструвати мінімум 2-ох юзерів.
 
-TO START PROJECT:
-
-    1) .env file setup:
-    
-        DEBUG=True
-        MYSQL_DATABASE=...
-        MYSQL_USER=...
-        MYSQL_PASSWORD=...
-        MYSQL_ROOT_PASSWORD=...
-        MYSQL_HOST=db
-        MYSQL_PORT=3306
-
-    2) pip install -r requirements.txt
-
-    3) docker compose up --build
-
-    frontend port: 80
-    backend port: 8080 
 
 
 
