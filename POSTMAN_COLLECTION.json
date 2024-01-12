@@ -1,0 +1,658 @@
+{
+	"info": {
+		"_postman_id": "a4ab98c2-c536-4a91-8c8d-409d7aed75ca",
+		"name": "DELIVERY",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28775826"
+	},
+	"item": [
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "getUsers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var template = `",
+									"<style type=\"text/css\">",
+									"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+									"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+									"    .tftable tr {background-color:#ffffff;}",
+									"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+									"    .tftable tr:hover {background-color:#e0ffff;}",
+									"</style>",
+									"",
+									"<table class=\"tftable\" border=\"1\">",
+									"    <tr>",
+									"        <th>ID</th>",
+									"        <th>Email</th>",
+									"        <th>Phone</th>",
+									"        <th>Last Login</th>",
+									"        <th>Created At</th>",
+									"        <th>Updated At</th>",
+									"    </tr>",
+									"    ",
+									"    {{#each response}}",
+									"        <tr>",
+									"            <td>{{id}}</td>",
+									"            <td>{{email}}</td>",
+									"            <td>{{phone}}</td>",
+									"            <td>{{last_login}}</td>",
+									"            <td>{{created_at}}</td>",
+									"            <td>{{updated_at}}</td>",
+									"        </tr>",
+									"    {{/each}}",
+									"</table>",
+									"`;",
+									"",
+									"function constructVisualizerPayload() {",
+									"    return {response: pm.response.json()}",
+									"}",
+									"",
+									"pm.visualizer.set(template, constructVisualizerPayload());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "sasa@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{dockerhost}}/api/users",
+							"host": [
+								"{{dockerhost}}"
+							],
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "craete",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "new@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "qwe",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "0931234466",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{dockerhost}}/api/users/create",
+							"host": [
+								"{{dockerhost}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "userDeliveries",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var template = `",
+									"<style type=\"text/css\">",
+									"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+									"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+									"    .tftable tr {background-color:#ffffff;}",
+									"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+									"    .tftable tr:hover {background-color:#e0ffff;}",
+									"</style>",
+									"",
+									"<h2>Sending Deliveries</h2>",
+									"<table class=\"tftable\" border=\"1\">",
+									"    <tr>",
+									"        <th>ID</th>",
+									"        <th>Item Label</th>",
+									"        <th>Item Price</th>",
+									"        <th>Item Size</th>",
+									"        <th>Receiver ID</th>",
+									"        <th>Status</th>",
+									"    </tr>",
+									"    ",
+									"    {{#each response.sending}}",
+									"        <tr>",
+									"            <td>{{id}}</td>",
+									"            <td>{{item.label}}</td>",
+									"            <td>{{item.price}}</td>",
+									"            <td>{{item.size}}</td>",
+									"            <td>{{receiver}}</td>",
+									"            <td>{{status}}</td>",
+									"        </tr>",
+									"    {{/each}}",
+									"</table>",
+									"",
+									"<h2>Receiving Deliveries</h2>",
+									"<table class=\"tftable\" border=\"1\">",
+									"    <tr>",
+									"        <th>ID</th>",
+									"        <th>Item Label</th>",
+									"        <th>Item Price</th>",
+									"        <th>Item Size</th>",
+									"        <th>Receiver ID</th>",
+									"        <th>Status</th>",
+									"    </tr>",
+									"    ",
+									"    {{#each response.receiving}}",
+									"        <tr>",
+									"            <td>{{id}}</td>",
+									"            <td>{{item.label}}</td>",
+									"            <td>{{item.price}}</td>",
+									"            <td>{{item.size}}</td>",
+									"            <td>{{receiver}}</td>",
+									"            <td>{{status}}</td>",
+									"        </tr>",
+									"    {{/each}}",
+									"</table>",
+									"`;",
+									"",
+									"function constructVisualizerPayload() {",
+									"    return {response: pm.response.json()}",
+									"}",
+									"",
+									"pm.visualizer.set(template, constructVisualizerPayload());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{dockerhost}}/api/users/deliveries",
+							"host": [
+								"{{dockerhost}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"deliveries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "userProfile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{dockerhost}}/api/users/profile",
+							"host": [
+								"{{dockerhost}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "deliveries",
+			"item": [
+				{
+					"name": "getDeliveries",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var template = `",
+									"<style type=\"text/css\">",
+									"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+									"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+									"    .tftable tr {background-color:#ffffff;}",
+									"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+									"    .tftable tr:hover {background-color:#e0ffff;}",
+									"</style>",
+									"",
+									"<table class=\"tftable\" border=\"1\">",
+									"    <tr>",
+									"        <th>ID</th>",
+									"        <th>Item Label</th>",
+									"        <th>Item Price</th>",
+									"        <th>Item Size</th>",
+									"        <th>Sender</th>",
+									"        <th>Receiver</th>",
+									"        <th>Status</th>",
+									"        <th>Created At</th>",
+									"        <th>Updated At</th>",
+									"    </tr>",
+									"    ",
+									"    {{#each response}}",
+									"        <tr>",
+									"            <td>{{id}}</td>",
+									"            <td>{{item.label}}</td>",
+									"            <td>{{item.price}}</td>",
+									"            <td>{{item.size}}</td>",
+									"            <td>{{sender}}</td>",
+									"            <td>{{receiver}}</td>",
+									"            <td>{{status}}</td>",
+									"            <td>{{created_at}}</td>",
+									"            <td>{{updated_at}}</td>",
+									"        </tr>",
+									"    {{/each}}",
+									"</table>",
+									"`;",
+									"",
+									"function constructVisualizerPayload() {",
+									"    return {response: pm.response.json()}",
+									"}",
+									"",
+									"pm.visualizer.set(template, constructVisualizerPayload());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{dockerhost}}/api/deliveries",
+							"host": [
+								"{{dockerhost}}"
+							],
+							"path": [
+								"api",
+								"deliveries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createDelivery",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"receiver\":\"1\",\n    \"department\":4,\n    \"item\":{\n        \"label\":\"table\",\n        \"price\":999999,\n        \"size\":\"small\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{dockerhost}}/api/deliveries/create",
+							"host": [
+								"{{dockerhost}}"
+							],
+							"path": [
+								"api",
+								"deliveries",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deliveryInfo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{dockerhost}}/api/deliveries/1/info",
+							"host": [
+								"{{dockerhost}}"
+							],
+							"path": [
+								"api",
+								"deliveries",
+								"1",
+								"info"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deliveryCrud",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "status",
+									"value": "in progress",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{dockerhost}}/api/deliveries/1",
+							"host": [
+								"{{dockerhost}}"
+							],
+							"path": [
+								"api",
+								"deliveries",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "receiveDelivery",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{dockerhost}}/api/deliveries/3/receive",
+							"host": [
+								"{{dockerhost}}"
+							],
+							"path": [
+								"api",
+								"deliveries",
+								"3",
+								"receive"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "declineDelivery",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{dockerhost}}/api/deliveries/1/decline",
+							"host": [
+								"{{dockerhost}}"
+							],
+							"path": [
+								"api",
+								"deliveries",
+								"1",
+								"decline"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "departments",
+			"item": [
+				{
+					"name": "getDepartments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{dockerhost}}/api/departments",
+							"host": [
+								"{{dockerhost}}"
+							],
+							"path": [
+								"api",
+								"departments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "general_number",
+									"value": "9",
+									"type": "text"
+								},
+								{
+									"key": "region",
+									"value": "Kyiv",
+									"type": "text"
+								},
+								{
+									"key": "city",
+									"value": "Kyiv"
+								},
+								{
+									"key": "staff_count",
+									"value": "30",
+									"type": "text"
+								},
+								{
+									"key": "capacity",
+									"value": "100",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{dockerhost}}/api/departments/create",
+							"host": [
+								"{{dockerhost}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "crud",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/api/departments/3",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"api",
+								"departments",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const res = pm.response.json()",
+									"pm.environment.set('access', res.access)",
+									"pm.environment.set('refresh', res.refresh)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "vany@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "qwe",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{dockerhost}}/api/auth",
+							"host": [
+								"{{dockerhost}}"
+							],
+							"path": [
+								"api",
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "meView",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{dockerhost}}/api/auth/me",
+							"host": [
+								"{{dockerhost}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

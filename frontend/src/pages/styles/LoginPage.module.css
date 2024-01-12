@@ -1,0 +1,35 @@
+.formStyles {
+  display: flex;
+  flex-direction: column;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.inputStyles {
+  margin: 8px 0;
+  padding: 8px;
+}
+
+.buttonStyles {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.welcomeStyles {
+  text-align: center;
+}
+
+.loggedInStyles {
+  text-align: center;
+}
+
+.logoutButtonStyles {
+  background-color: #e44a2e;
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+
+  width: 20%;
+}

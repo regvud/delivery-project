@@ -3,8 +3,6 @@ FROM python:3.11-alpine
 ENV PYTHONUNBUFFERED=1
 
 RUN apk add --no-cache gcc musl-dev mariadb-dev 
-# for pillow
-# RUN apk add --no-cache jpeg-dev zlib-dev libjpeg
 
 RUN mkdir /app
 WORKDIR /app

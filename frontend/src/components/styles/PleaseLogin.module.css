@@ -1,0 +1,8 @@
+.pleaseLogin {
+  flex-flow: column;
+  text-align: center;
+}
+
+.button {
+  width: 20%;
+}

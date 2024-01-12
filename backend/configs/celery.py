@@ -13,6 +13,6 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     "status-manager-every-minute": {
         "task": "apps.deliveries.services.start",
-        "schedule": crontab(minute=1),
+        "schedule": crontab(hour=1),
     },
 }

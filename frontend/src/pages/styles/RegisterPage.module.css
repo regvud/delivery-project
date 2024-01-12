@@ -1,0 +1,51 @@
+/* Form styles */
+form {
+  display: flex;
+  flex-direction: column;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+form > h1 {
+  text-align: center;
+}
+
+form > h4 {
+  margin: 0;
+  color: red;
+}
+
+/* Input styles */
+input {
+  margin-bottom: 10px;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Submit button styles (optional) */
+input[type='submit'] {
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+}
+
+input[type='submit']:hover {
+  background-color: #45a049;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #45a049;
+}
