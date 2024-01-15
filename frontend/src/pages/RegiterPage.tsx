@@ -19,7 +19,7 @@ const RegisterPage = () => {
         return;
       }
 
-      navigate('/profile');
+      navigate('/login');
     } catch (e) {
       console.log(`unknown error: ${e}}`);
     }

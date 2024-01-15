@@ -6,19 +6,23 @@ import { PleaseLogin } from '../components/PleaseLogin';
 import { PagePagination } from '../components/PagePagination';
 import { useEffect } from 'react';
 import css from './styles/DeliveryPage.module.css';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 
 const DeliveryPage = () => {
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
-  const token = localStorage.getItem('access');
+  const { getItem } = useLocalStorage();
+  const token = getItem('access');
 
   const currentPage = params.get('page') ?? '1';
-  const { data, isLoading, error, refetch } = useFetch(
-    deliveryService.getAll(+currentPage),
-    ['deliveries']
-  );
+  const {
+    data: deliveries,
+    isLoading,
+    error,
+    refetch,
+  } = useFetch(deliveryService.getAll(+currentPage), ['deliveries']);
 
-  const total_pages = data?.total_pages ?? 1;
+  const total_pages = deliveries?.total_pages ?? 1;
 
   useEffect(() => {
     refetch();
@@ -26,11 +30,17 @@ const DeliveryPage = () => {
 
   if (!token) return <PleaseLogin />;
 
-  if (+currentPage > total_pages) return <h1>Invalid page..</h1>;
+  if (+currentPage > total_pages)
+    return <h1 style={{ textAlign: 'center' }}>Invalid page..</h1>;
 
-  if (isLoading) return <h1>Loading...</h1>;
+  if (isLoading) return <h1 style={{ textAlign: 'center' }}>Loading...</h1>;
 
-  if (error) return <h1>{error.message}</h1>;
+  if (error) return <h1 style={{ textAlign: 'center' }}>{error.message}</h1>;
+
+  if (!deliveries?.results[0])
+    return (
+      <h1 style={{ textAlign: 'center' }}>Delivery list is currently empty</h1>
+    );
 
   return (
     <>
@@ -40,7 +50,7 @@ const DeliveryPage = () => {
         setURLSearchParams={setParams}
       />
       <div className={css.grid}>
-        {data?.results?.map((delivery) => (
+        {deliveries?.results?.map((delivery) => (
           <DeliveryCard
             key={delivery.id}
             delivery={delivery}

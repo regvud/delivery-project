@@ -5,21 +5,27 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import css from './styles/LoginPage.module.css';
 import { ResponseError } from '../types/axiosTypes';
+import { usePage } from '../store/store';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 
 const LoginPage = () => {
   const { register, handleSubmit } = useForm<UserLogin>();
   const [error, setError] = useState<ResponseError>();
-  const [, setRefresh] = useState(false);
   const navigate = useNavigate();
-
-  const token = localStorage.getItem('access');
+  const setNavbarRefresh = usePage((state) => state.setRefresh);
 
   const submit: SubmitHandler<UserLogin> = async (user) => {
     try {
-      const { data, request } = await authService.login(user);
+      const {
+        data: { access },
+        request,
+      } = await authService.login(user);
 
       if (request.status === 200) {
-        localStorage.setItem('access', data.access);
+        const { setItem } = useLocalStorage();
+        setItem('access', access);
+
+        setNavbarRefresh();
         navigate('/profile');
       }
       setError(JSON.parse(request.response));
@@ -27,23 +33,6 @@ const LoginPage = () => {
       console.log(`unknow error:   ${e}}`);
     }
   };
-
-  const logout = () => {
-    localStorage.removeItem('access');
-    setRefresh((prev) => !prev);
-  };
-
-  if (token)
-    return (
-      <div className={css.loggedInStyles}>
-        <h1>
-          Currently, you are logged in. Press the button if you want to logout.
-        </h1>
-        <button onClick={logout} className={css.logoutButtonStyles}>
-          Logout
-        </button>
-      </div>
-    );
 
   return (
     <>

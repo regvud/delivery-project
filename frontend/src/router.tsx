@@ -7,6 +7,10 @@ import { MainLayout } from './layouts/MainLayout';
 import { CreateDeliveryPage } from './pages/CreateDeliveryPage';
 import { DeliveryDetail } from './pages/DeliveryDetail';
 import { RegisterPage } from './pages/RegiterPage';
+import { useLocalStorage } from './hooks/useLocalStorage';
+
+const { getItem } = useLocalStorage();
+const token = getItem('access');
 
 export const router = createBrowserRouter([
   {
@@ -15,7 +19,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <LoginPage />,
+        element: token ? <ProfilePage /> : <LoginPage />,
       },
       {
         path: '/register',

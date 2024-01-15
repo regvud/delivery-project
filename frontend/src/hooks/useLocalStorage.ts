@@ -1,11 +1,10 @@
-import { useState } from 'react';
+export const useLocalStorage = () => {
+  const getItem = (key: string) => localStorage.getItem(key);
 
-const useLocalStorage = (key: string) => {
-  const item = localStorage.getItem(key);
-  const remove = localStorage.removeItem(key);
-  const [trigger, setTrigger] = useState(null);
+  const setItem = (key: string, value: string) =>
+    localStorage.setItem(key, value);
 
-  return { trigger, setTrigger, item, remove };
+  const removeItem = (key: string) => localStorage.removeItem(key);
+
+  return { getItem, removeItem, setItem };
 };
-
-export { useLocalStorage };

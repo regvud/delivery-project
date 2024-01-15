@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 
 type Store = {
-  paginationPage: number;
-  setPaginationPage: (page: number) => void;
+  refresh: boolean;
+  setRefresh: () => void;
 };
 
 export const usePage = create<Store>((set) => ({
-  paginationPage: 1,
-  setPaginationPage: (page: number) => set({ paginationPage: page }),
+  refresh: false,
+  setRefresh: () => set((state) => ({ refresh: !state.refresh })),
 }));
