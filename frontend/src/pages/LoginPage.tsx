@@ -47,7 +47,7 @@ const LoginPage = () => {
           type="text"
           placeholder="email"
           className={css.inputStyles}
-          {...register('email')}
+          {...register('email', { required: true })}
         />
 
         {error?.password}
@@ -55,7 +55,7 @@ const LoginPage = () => {
           type="password"
           placeholder="password"
           className={css.inputStyles}
-          {...register('password')}
+          {...register('password', { required: true })}
         />
         <button type="submit" className={css.buttonStyles}>
           Login

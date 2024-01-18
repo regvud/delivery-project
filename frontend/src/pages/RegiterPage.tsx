@@ -1,57 +1,90 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
-import { UserRegister } from '../types/userTypes';
 import css from './styles/RegisterPage.module.css';
-import { useState } from 'react';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { ResponseError } from '../types/axiosTypes';
 
+const phoneRegex = new RegExp(/^3?8?(0\d{9})$/);
+
+const schema = z.object({
+  email: z.string().email('Email example: user@gmail.com'),
+  phone: z.string().regex(phoneRegex, 'Phone format: 380632503425'),
+  password: z.string().min(8, 'Password must have at least 8 symbols'),
+});
+
+type UserRegister = z.infer<typeof schema>;
+
 const RegisterPage = () => {
-  const { register, handleSubmit } = useForm<UserRegister>();
-  const [error, setError] = useState<ResponseError>();
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<UserRegister>({
+    resolver: zodResolver(schema),
+  });
+
   const navigate = useNavigate();
 
   const submit: SubmitHandler<UserRegister> = async (user) => {
     try {
-      const data = await authService.register(user);
-      if (data.request.status === 400) {
-        setError(JSON.parse(data.request.response));
-        return;
+      const { request } = await authService.register(user);
+
+      if (request.status === 201) {
+        navigate('/login');
       }
 
-      navigate('/login');
+      if (request.status == 400) {
+        const response: ResponseError = JSON.parse(request.response);
+
+        setError('root', {
+          message: response.email || response.password || response.phone,
+        });
+      }
     } catch (e) {
-      console.log(`unknown error: ${e}}`);
+      console.log(`unknown error: ${e}`);
     }
   };
+
   return (
     <>
       <form onSubmit={handleSubmit(submit)} className={css.form}>
         <h1 className={css.h1}>Registration</h1>
 
-        <h4>{error?.email}</h4>
+        {errors.email && (
+          <h4 className="text-red-500">{errors.email.message}</h4>
+        )}
         <input
+          className={css.input}
           type="text"
           placeholder="email"
-          {...register('email')}
-          className={css.input}
+          {...register('email', { required: 'Email is required' })}
         />
 
-        {<h4>{error?.phone}</h4>}
+        {errors.phone && (
+          <h4 className="text-red-500">{errors.phone.message}</h4>
+        )}
         <input
           type="text"
           placeholder="phone"
-          {...register('phone')}
+          {...register('phone', { required: 'Phone is required' })}
           className={css.input}
         />
 
-        <h4>{error?.password}</h4>
+        {errors.password && (
+          <h4 className="text-red-500">{errors.password.message}</h4>
+        )}
+
         <input
           type="password"
           placeholder="password"
-          {...register('password')}
+          {...register('password', { required: 'Password is required' })}
           className={css.input}
         />
+
+        {errors.root && <h4>{errors.root.message}</h4>}
 
         <button className={css.button}>Register</button>
       </form>
