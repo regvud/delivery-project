@@ -13,4 +13,4 @@ class IsAdmin(BasePermission):
 
 class IsActive(BasePermission):
     def has_permission(self, request, view):
-        return bool(request.user and request.user.active)
+        return bool(request.user and request.user.active and not request.user.is_block)

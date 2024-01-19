@@ -1,7 +1,9 @@
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 
 from apps.departments.models import DepartmentModel
 from apps.departments.serializers import DepartmentSerializer
+from core.permissions import IsAdmin
 
 
 class DepartmentListView(generics.ListAPIView):
@@ -12,6 +14,7 @@ class DepartmentListView(generics.ListAPIView):
 
     queryset = DepartmentModel.objects.all()
     serializer_class = DepartmentSerializer
+    permission_classes = (IsAuthenticated,)
 
 
 class DepartmentCreateView(generics.CreateAPIView):
@@ -22,6 +25,7 @@ class DepartmentCreateView(generics.CreateAPIView):
 
     queryset = DepartmentModel
     serializer_class = DepartmentSerializer
+    permission_classes = (IsAdmin,)
 
 
 class DepartmentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
@@ -38,3 +42,4 @@ class DepartmentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView)
 
     queryset = DepartmentModel
     serializer_class = DepartmentSerializer
+    permission_classes = (IsAdmin,)

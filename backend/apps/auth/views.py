@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import Response, status
 
 from apps.auth.serializers import EmailSerializer, PasswordSerializer
@@ -14,6 +14,7 @@ UserModel = get_user_model()
 
 class MeView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_object(self):
         return get_object_or_404(UserModel, pk=self.request.user.pk)
@@ -42,7 +43,7 @@ class RecoverPasswordRequestView(generics.GenericAPIView):
         recover password request
     """
 
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
     serializer_class = EmailSerializer
 
     # provide email method
@@ -62,7 +63,7 @@ class RecoverPasswordView(generics.GenericAPIView):
         recover password
     """
 
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
     serializer_class = PasswordSerializer
 
     def post(self, *args, **kwargs):

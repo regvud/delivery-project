@@ -43,6 +43,7 @@ class DeliveryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
     queryset = DeliveryModel
     serializer_class = DeliverySerializer
+    permission_classes = (IsAuthenticated,)
 
 
 class DeliveryCreateView(generics.CreateAPIView):
@@ -52,6 +53,7 @@ class DeliveryCreateView(generics.CreateAPIView):
     """
 
     serializer_class = DeliverySerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_receiver(self, phone):
         if phone == self.request.user.phone:
@@ -114,8 +116,9 @@ class DeliveryInfoView(generics.RetrieveAPIView):
         Represents receiver and sender fields with phone numbers instead of table ids
     """
 
-    serializer_class = DeliveryConvertedFieldsSerializer
     queryset = DeliveryModel
+    serializer_class = DeliveryConvertedFieldsSerializer
+    permission_classes = (IsAuthenticated,)
 
 
 class DeliveryReceiveView(generics.UpdateAPIView):
@@ -126,6 +129,7 @@ class DeliveryReceiveView(generics.UpdateAPIView):
 
     queryset = DeliveryModel
     serializer_class = DeliverySerializer
+    permission_classes = (IsAuthenticated,)
 
     def perform_update(self, serializer):
         serializer.save(status=StatusChoices.received)
@@ -139,6 +143,7 @@ class DeliveryDeclineView(generics.UpdateAPIView):
 
     queryset = DeliveryModel
     serializer_class = DeliverySerializer
+    permission_classes = (IsAuthenticated,)
 
     def perform_update(self, serializer):
         serializer.save(status=StatusChoices.declined)
