@@ -17,5 +17,9 @@ urlpatterns = [
         RecoverPasswordRequestView.as_view(),
         name="password_recover",
     ),
-    path("/activate/<str:token>", ActivateUserView.as_view(), name="user_activate"),
+    path(
+        "/activate/<str:token>",
+        ActivateUserView.as_view(),
+        name="user_activate",
+    ),
 ]

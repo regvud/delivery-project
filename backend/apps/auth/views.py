@@ -75,7 +75,7 @@ class RecoverPasswordView(generics.GenericAPIView):
         serializer = self.serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
 
-        user = JwtService.validate_token(self.kwargs["token"], RecoveryToken)
+        user = JwtService.validate_token(self.kwargs.get("token"), RecoveryToken)
 
         user.set_password(data["password"])
         user.save()

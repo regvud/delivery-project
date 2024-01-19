@@ -35,7 +35,7 @@ class EmailService:
     @classmethod
     def recover_password(cls, user: UserDataclass):
         token = JwtService.create_token(user, RecoveryToken)
-        url = f"http://localhost:80/recover/token={token}"
+        url = f"http://localhost:80/recover/{token}"
 
         cls.__send_email(
             user.email, "recover_password.html", {"url": url}, "Recover Password letter"

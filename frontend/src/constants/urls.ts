@@ -6,6 +6,7 @@ const auth = '/auth';
 const profile = '/profile';
 const users = '/users';
 const create = '/create';
+const activate = '/activate';
 
 export const urls = {
   deliveries: {
@@ -18,6 +19,7 @@ export const urls = {
     login: auth,
     register: `${users}${create}`,
     profile: `${users}${profile}`,
+    activate: (token: string) => `${auth}${activate}/${token}`,
   },
   profile: {
     base: profile,

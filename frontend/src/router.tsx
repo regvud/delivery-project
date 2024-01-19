@@ -8,6 +8,7 @@ import { CreateDeliveryPage } from './pages/CreateDeliveryPage';
 import { DeliveryDetail } from './pages/DeliveryDetail';
 import { RegisterPage } from './pages/RegiterPage';
 import { useLocalStorage } from './hooks/useLocalStorage';
+import { ActivatePage } from './pages/ActivatePage';
 
 const { getItem } = useLocalStorage();
 const token = getItem('access');
@@ -22,11 +23,11 @@ export const router = createBrowserRouter([
         element: token ? <ProfilePage /> : <LoginPage />,
       },
       {
-        path: '/register',
+        path: 'register',
         element: <RegisterPage />,
       },
       {
-        path: '/login',
+        path: 'login',
         element: <LoginPage />,
       },
       {
@@ -50,5 +51,9 @@ export const router = createBrowserRouter([
         element: <DeliveryDetail />,
       },
     ],
+  },
+  {
+    path: 'activate/:token',
+    element: <ActivatePage />,
   },
 ]);
