@@ -5,6 +5,7 @@ import css from './styles/RegisterPage.module.css';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ResponseError } from '../types/axiosTypes';
+import { useState } from 'react';
 
 const phoneRegex = new RegExp(/^3?8?(0\d{9})$/);
 
@@ -12,41 +13,54 @@ const schema = z.object({
   email: z.string().email('Email example: user@gmail.com'),
   phone: z.string().regex(phoneRegex, 'Phone format: 380632503425'),
   password: z.string().min(8, 'Password must have at least 8 symbols'),
+  validation_password: z
+    .string()
+    .min(8, 'Password must have at least 8 symbols'),
 });
 
-type UserRegister = z.infer<typeof schema>;
+type UserRegisterSchema = z.infer<typeof schema>;
 
 const RegisterPage = () => {
+  const navigate = useNavigate();
+  const [loader, setLoader] = useState(false);
+
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors },
-  } = useForm<UserRegister>({
+    getValues,
+  } = useForm<UserRegisterSchema>({
     resolver: zodResolver(schema),
   });
 
-  const navigate = useNavigate();
+  const submit: SubmitHandler<UserRegisterSchema> = async (user) => {
+    if (getValues('password') === getValues('validation_password')) {
+      try {
+        setLoader(true);
+        const { request } = await authService.register(user);
 
-  const submit: SubmitHandler<UserRegister> = async (user) => {
-    try {
-      const { request } = await authService.register(user);
+        if (request.status === 201) {
+          navigate('/login');
+        }
 
-      if (request.status === 201) {
-        navigate('/login');
+        if (request.status == 400) {
+          const response: ResponseError = JSON.parse(request.response);
+
+          setError('root', {
+            message: response.email || response.password || response.phone,
+          });
+        }
+      } catch (e) {
+        setError('root', { message: `unknown error: ${e}` });
+      } finally {
+        setLoader(false);
       }
-
-      if (request.status == 400) {
-        const response: ResponseError = JSON.parse(request.response);
-
-        setError('root', {
-          message: response.email || response.password || response.phone,
-        });
-      }
-    } catch (e) {
-      console.log(`unknown error: ${e}`);
-    }
+    } else
+      setError('validation_password', { message: 'Passwords should match' });
   };
+
+  if (loader) return <h1 style={{ textAlign: 'center' }}>Processing</h1>;
 
   return (
     <>
@@ -76,11 +90,24 @@ const RegisterPage = () => {
         {errors.password && (
           <h4 className="text-red-500">{errors.password.message}</h4>
         )}
-
         <input
           type="password"
           placeholder="password"
-          {...register('password', { required: 'Password is required' })}
+          {...register('password', {
+            required: 'Password is required',
+          })}
+          className={css.input}
+        />
+
+        {errors.validation_password && (
+          <h4 className="text-red-500">{errors.validation_password.message}</h4>
+        )}
+        <input
+          type="password"
+          placeholder="repeat password"
+          {...register('validation_password', {
+            required: 'Password is required',
+          })}
           className={css.input}
         />
 
