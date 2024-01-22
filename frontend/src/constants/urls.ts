@@ -7,6 +7,8 @@ const profile = '/profile';
 const users = '/users';
 const create = '/create';
 const activate = '/activate';
+const recover = '/recover';
+const request = '/request';
 
 export const urls = {
   deliveries: {
@@ -20,6 +22,8 @@ export const urls = {
     register: `${users}${create}`,
     profile: `${users}${profile}`,
     activate: (token: string) => `${auth}${activate}/${token}`,
+    recover: (token: string) => `${auth}${recover}/${token}`,
+    recoverRequest: `${auth}${recover}${request}`,
   },
   profile: {
     base: profile,

@@ -41,7 +41,7 @@ const LoginPage = () => {
         const response: ResponseError = JSON.parse(request.response);
 
         setError('root', {
-          message: response.detail,
+          message: `${response.detail}, may be incorrect email or password.`,
         });
       }
     } catch (e) {
@@ -55,8 +55,6 @@ const LoginPage = () => {
         Welcome! You have to login to use all the features.
       </h1>
       <form className={css.formStyles} onSubmit={handleSubmit(submit)}>
-        {/* <h4 style={{ color: 'red', margin: 0 }}>{error?.detail}</h4> */}
-
         {errors.email && (
           <h4 className="text-red-500">{errors.email.message}</h4>
         )}
@@ -81,6 +79,12 @@ const LoginPage = () => {
 
         <button type="submit" className={css.buttonStyles}>
           Login
+        </button>
+        <button
+          className={css.forgotPassBtn}
+          onClick={() => navigate('/request/recover')}
+        >
+          Forgot password?
         </button>
       </form>
     </>

@@ -9,6 +9,8 @@ import { DeliveryDetail } from './pages/DeliveryDetail';
 import { RegisterPage } from './pages/RegiterPage';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { ActivatePage } from './pages/ActivatePage';
+import { RecoverPasswordPage } from './pages/RecoverPasswordPage';
+import { RequestRecoverPassword } from './pages/RequestRecoverPassword';
 
 const { getItem } = useLocalStorage();
 const token = getItem('access');
@@ -55,5 +57,13 @@ export const router = createBrowserRouter([
   {
     path: 'activate/:token',
     element: <ActivatePage />,
+  },
+  {
+    path: 'recover/:recoveryToken',
+    element: <RecoverPasswordPage />,
+  },
+  {
+    path: 'request/recover',
+    element: <RequestRecoverPassword />,
   },
 ]);

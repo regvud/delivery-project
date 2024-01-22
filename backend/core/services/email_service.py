@@ -38,5 +38,5 @@ class EmailService:
         url = f"http://localhost:80/recover/{token}"
 
         cls.__send_email(
-            user.email, "recover_password.html", {"url": url}, "Recover Password letter"
+            user.email, "recover_password.html", {"url": url}, "Recover Password"
         )

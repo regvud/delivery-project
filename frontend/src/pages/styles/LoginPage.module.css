@@ -5,6 +5,26 @@
   margin: 0 auto;
 }
 
+.forgotPassBtn {
+  background-color: transparent;
+  color: #3498db; /* Set the text color */
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect */
+.forgotPassBtn:hover {
+  background-color: rgba(
+    52,
+    152,
+    219,
+    0.1
+  ); /* Add a subtle background on hover */
+}
+
 .inputStyles {
   margin: 8px 0;
   padding: 8px;
