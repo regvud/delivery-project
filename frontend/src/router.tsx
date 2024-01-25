@@ -11,6 +11,7 @@ import { useLocalStorage } from './hooks/useLocalStorage';
 import { ActivatePage } from './pages/ActivatePage';
 import { RecoverPasswordPage } from './pages/RecoverPasswordPage';
 import { RequestRecoverPassword } from './pages/RequestRecoverPassword';
+import { CheckEmailPage } from './pages/CheckEmailPage';
 
 const { getItem } = useLocalStorage();
 const token = getItem('access');
@@ -65,5 +66,9 @@ export const router = createBrowserRouter([
   {
     path: 'request/recover',
     element: <RequestRecoverPassword />,
+  },
+  {
+    path: 'email/check-page',
+    element: <CheckEmailPage />,
   },
 ]);

@@ -41,7 +41,7 @@ const RegisterPage = () => {
         const { request } = await authService.register(user);
 
         if (request.status === 201) {
-          navigate('/login');
+          navigate('/email/check-page');
         }
 
         if (request.status == 400) {
