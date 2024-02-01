@@ -12,6 +12,9 @@ import { ActivatePage } from './pages/ActivatePage';
 import { RecoverPasswordPage } from './pages/RecoverPasswordPage';
 import { RequestRecoverPassword } from './pages/RequestRecoverPassword';
 import { CheckEmailPage } from './pages/CheckEmailPage';
+import { DepartmentCreatePage } from './pages/DepartmentCreatePage';
+import { DepartmentsPage } from './pages/DepartmentsPage';
+import { DepartmentDetailPage } from './pages/DepartmentDetailPage';
 
 const { getItem } = useLocalStorage();
 const token = getItem('access');
@@ -32,6 +35,18 @@ export const router = createBrowserRouter([
       {
         path: 'login',
         element: <LoginPage />,
+      },
+      {
+        path: 'departments',
+        element: <DepartmentsPage />,
+      },
+      {
+        path: 'departments/:id',
+        element: <DepartmentDetailPage />,
+      },
+      {
+        path: 'departments/create',
+        element: <DepartmentCreatePage />,
       },
       {
         path: 'deliveries',

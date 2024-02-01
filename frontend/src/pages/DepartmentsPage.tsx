@@ -1,14 +1,13 @@
-import { deliveryService } from '../services/deliveryService';
-import { DeliveryCard } from '../components/DeliveryCard';
-import { useFetch } from '../hooks/useFetch';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useFetch } from '../hooks/useFetch';
+import { departmentService } from '../services/departmentService';
+import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useEffect } from 'react';
 import { PleaseLogin } from '../components/PleaseLogin';
 import { PagePagination } from '../components/PagePagination';
-import { useEffect } from 'react';
-import css from './styles/DeliveryPage.module.css';
-import { useLocalStorage } from '../hooks/useLocalStorage';
+import { DepartmentCard } from '../components/DepartmentCard';
 
-const DeliveryPage = () => {
+const DepartmentsPage = () => {
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const { getItem } = useLocalStorage();
@@ -16,13 +15,13 @@ const DeliveryPage = () => {
 
   const currentPage = params.get('page') ?? '1';
   const {
-    data: deliveries,
+    data: departments,
     isLoading,
     error,
     refetch,
-  } = useFetch(deliveryService.getAll(+currentPage), ['deliveries']);
+  } = useFetch(departmentService.getAll(+currentPage), ['departments']);
 
-  const total_pages = deliveries?.total_pages ?? 1;
+  const total_pages = departments?.total_pages ?? 1;
 
   useEffect(() => {
     refetch();
@@ -37,9 +36,11 @@ const DeliveryPage = () => {
 
   if (error) return <h1 style={{ textAlign: 'center' }}>{error.message}</h1>;
 
-  if (!deliveries?.results[0])
+  if (!departments?.results[0])
     return (
-      <h1 style={{ textAlign: 'center' }}>Delivery list is currently empty</h1>
+      <h1 style={{ textAlign: 'center' }}>
+        Department list is currently empty
+      </h1>
     );
 
   return (
@@ -49,12 +50,14 @@ const DeliveryPage = () => {
         totalPages={total_pages}
         setURLSearchParams={setParams}
       />
-      <div className={css.grid}>
-        {deliveries?.results?.map((delivery) => (
-          <DeliveryCard
-          key={delivery.id}
-            delivery={delivery}
-            navigateFunc={() => navigate(`${delivery.id}`, { state: delivery })}
+      <div>
+        {departments?.results?.map((department) => (
+          <DepartmentCard
+            key={department.id}
+            department={department}
+            navigateFunc={() =>
+              navigate(`${department.id}`, { state: department })
+            }
           />
         ))}
       </div>
@@ -62,4 +65,4 @@ const DeliveryPage = () => {
   );
 };
 
-export { DeliveryPage };
+export { DepartmentsPage };

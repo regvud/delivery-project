@@ -2,15 +2,15 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { authService } from '../services/authService';
 import { useNavigate } from 'react-router-dom';
 import css from './styles/LoginPage.module.css';
-import { ResponseError } from '../types/axiosTypes';
 import { usePage } from '../store/store';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AuthResponse } from '../types/axiosTypes';
 
 const schema = z.object({
   email: z.string().email('Email example: user@gmail.com'),
-  password: z.string().min(8, 'Password must have at least 8 symbols'),
+  password: z.string(),
 });
 
 type UserLoginSchema = z.infer<typeof schema>;
@@ -22,26 +22,26 @@ const LoginPage = () => {
     setError,
     formState: { errors },
   } = useForm<UserLoginSchema>({ resolver: zodResolver(schema) });
+
   const navigate = useNavigate();
   const setNavbarRefresh = usePage((state) => state.setRefresh);
+  const { setItem } = useLocalStorage();
 
   const submit: SubmitHandler<UserLoginSchema> = async (user) => {
     try {
-      const { data, request } = await authService.login(user);
+      const { data, request }: AuthResponse = await authService.login(user);
 
-      if (request.status === 200) {
-        const { setItem } = useLocalStorage();
+      if (request?.status === 200) {
         setItem('access', data?.access);
+        setItem('refresh', data?.refresh);
 
         setNavbarRefresh();
         navigate('/profile');
       }
 
-      if (request.status === 401) {
-        const response: ResponseError = JSON.parse(request.response);
-
+      if (request?.status === 401) {
         setError('root', {
-          message: `${response.detail}, may be incorrect email or password.`,
+          message: `Incorrect email or password, may be you haven't activated your account with email.`,
         });
       }
     } catch (e) {
@@ -65,9 +65,6 @@ const LoginPage = () => {
           {...register('email', { required: 'Email is required' })}
         />
 
-        {errors.password && (
-          <h4 className="text-red-500">{errors.password.message}</h4>
-        )}
         <input
           type="password"
           placeholder="password"

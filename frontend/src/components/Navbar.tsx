@@ -26,6 +26,7 @@ const Navbar = () => {
     <div className={css.navbar}>
       <NavLink to="/profile">Profile</NavLink>
       <NavLink to="/deliveries">Deliveries</NavLink>
+      <NavLink to="/departments">Departments</NavLink>
       <LogoutButton />
     </div>
   );

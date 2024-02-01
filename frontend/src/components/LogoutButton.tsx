@@ -3,14 +3,14 @@ import { usePage } from '../store/store';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
 const LogoutButton = () => {
+  const { removeItem } = useLocalStorage();
   const navigate = useNavigate();
-  const navbarRefresh = usePage((state) => state.setRefresh);
+  const refresh = usePage((state) => state.setRefresh);
 
   function logout() {
-    const { removeItem } = useLocalStorage();
     removeItem('access');
 
-    navbarRefresh();
+    refresh();
     navigate('/login');
   }
 

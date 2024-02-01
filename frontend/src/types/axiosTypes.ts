@@ -11,3 +11,24 @@ export type ResponseError = {
   detail?: string;
   phone?: string;
 };
+export type AuthResponse = {
+  data: Tokens;
+  request?: Request;
+};
+
+export type Tokens = {
+  access: string;
+  refresh: string;
+};
+
+export type Request = {
+  status: number;
+  headers: Record<string, string>;
+};
+
+export type RefreshResponse = {
+  access?: string;
+  refresh?: string;
+  detail?: string;
+  code?: string;
+};
