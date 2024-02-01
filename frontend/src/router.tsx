@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, useNavigate } from 'react-router-dom';
 
 import { DeliveryPage } from './pages/DeliveryPage';
 import { ProfilePage } from './pages/ProfilePage';
@@ -17,7 +17,7 @@ import { DepartmentsPage } from './pages/DepartmentsPage';
 import { DepartmentDetailPage } from './pages/DepartmentDetailPage';
 
 const { getItem } = useLocalStorage();
-const token = getItem('access');
+const accessToken = getItem('access');
 
 export const router = createBrowserRouter([
   {
@@ -25,8 +25,8 @@ export const router = createBrowserRouter([
     element: <MainLayout />,
     children: [
       {
-        path: '',
-        element: token ? <ProfilePage /> : <LoginPage />,
+        index: true,
+        element: accessToken ? <ProfilePage /> : <LoginPage />,
       },
       {
         path: 'register',

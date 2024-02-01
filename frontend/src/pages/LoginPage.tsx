@@ -1,12 +1,13 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { authService } from '../services/authService';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import css from './styles/LoginPage.module.css';
 import { usePage } from '../store/store';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AuthResponse } from '../types/axiosTypes';
+import { useEffect } from 'react';
 
 const schema = z.object({
   email: z.string().email('Email example: user@gmail.com'),
@@ -16,16 +17,25 @@ const schema = z.object({
 type UserLoginSchema = z.infer<typeof schema>;
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const setNavbarRefresh = usePage((state) => state.setRefresh);
+  const { setItem } = useLocalStorage();
+
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    if (pathname === '/') {
+      navigate('/login');
+    }
+  }, [pathname]);
+
+  console.log(pathname);
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors },
   } = useForm<UserLoginSchema>({ resolver: zodResolver(schema) });
-
-  const navigate = useNavigate();
-  const setNavbarRefresh = usePage((state) => state.setRefresh);
-  const { setItem } = useLocalStorage();
 
   const submit: SubmitHandler<UserLoginSchema> = async (user) => {
     try {
@@ -36,6 +46,7 @@ const LoginPage = () => {
         setItem('refresh', data?.refresh);
 
         setNavbarRefresh();
+
         navigate('/profile');
       }
 

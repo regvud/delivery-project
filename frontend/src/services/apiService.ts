@@ -1,66 +1,63 @@
 import axios from 'axios';
 import { baseURL } from '../constants/urls';
-import { useLocalStorage } from '../hooks/useLocalStorage';
 import { authService } from './authService';
 import { jwtDecode } from 'jwt-decode';
-
-const { getItem, setItem, removeItem } = useLocalStorage();
-
-interface AccessTokenPayload {
-  exp: number; // Expiration time in Unix epoch format
-}
-
-export const isAccessTokenValid = (accessToken: string): boolean => {
-  try {
-    // Decode the access token
-    const decodedToken: AccessTokenPayload = jwtDecode(accessToken);
-    const currentTime = Date.now() / 1000; // Convert to seconds (Unix epoch format)
-
-    if (decodedToken.exp > currentTime) {
-      return true; // Token is valid
-    } else {
-      return false; // Token is expired
-    }
-  } catch (error) {
-    console.error('Error decoding access token:', error);
-    return false; // Token is invalid (cannot be decoded)
-  }
-};
-
-export const refreshTokens = async (refreshToken: string) => {
-  const {
-    data: { access, refresh, code, detail },
-  } = await authService.refresh(refreshToken);
-
-  if (refresh && access) {
-    setItem('access', access);
-    setItem('refresh', refresh);
-
-    return { access: access, refresh: refresh };
-  }
-
-  return { code: code, detail: detail };
-};
+import { useState } from 'react';
 
 export const apiService = axios.create({ baseURL });
 
 apiService.interceptors.request.use(async (req) => {
-  const accessToken = getItem('access');
-  const refreshToken = getItem('refresh');
+  // interface AccessTokenPayload {
+  //   exp: number;
+  // }
+
+  // const isAccessTokenValid = (accessToken: string): boolean => {
+  //   try {
+  //     const decodedToken: AccessTokenPayload = jwtDecode(accessToken);
+  //     const currentTime = Date.now() / 1000;
+
+  //     if (decodedToken.exp > currentTime) {
+  //       return true; // Token is valid
+  //     } else {
+  //       return false; // Token is expired
+  //     }
+  //   } catch (error) {
+  //     console.error('Error decoding access token:', error);
+  //     return false;
+  //   }
+  // };
+
+  // const refreshTokens = async (refreshToken: string) => {
+  //   const {
+  //     data: { access, refresh },
+  //   } = await authService.refresh(refreshToken);
+
+  //   if (refresh && access) {
+  //     localStorage.setItem('access', access);
+  //     localStorage.setItem('refresh', refresh);
+
+  //     return access;
+  //   }
+  // };
+
+  const accessToken = localStorage.getItem('access');
+  // const refreshToken = localStorage.getItem('refresh');
+
+  // const [isValid, setIsValid] = useState<boolean>();
 
   // if (accessToken && refreshToken) {
-  //   const isValidAccess = isAccessTokenValid(accessToken);
+  //   setIsValid(isAccessTokenValid(accessToken));
 
-  //   if (isValidAccess) {
+  //   console.log(isValid);
+  //   if (isValid) {
   //     req.headers.Authorization = `Bearer ${accessToken}`;
   //   } else {
-  //     const { access } = await refreshTokens(refreshToken);
+  //     const newAccess = await refreshTokens(refreshToken);
 
-  //     if (access) {
-  //       req.headers.Authorization = `Bearer ${access}`;
-  //     } else {
-  //       console.log('Refresh is expired');
+  //     if (newAccess) {
+  //       setIsValid(isAccessTokenValid(newAccess));
   //     }
+  //     req.headers.Authorization = `Bearer ${newAccess}`;
   //   }
   // }
 
