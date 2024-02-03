@@ -3,11 +3,29 @@ from rest_framework import serializers
 
 from apps.deliveries.models import DeliveryModel, ItemModel
 
+# class ItemImageSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = ItemModel
+#         fields = ("image",)
+
 
 class ItemSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(max_length=None, use_url=True)
+
     class Meta:
         model = ItemModel
-        fields = ("label", "price", "size", "image")
+        fields = (
+            "id",
+            "label",
+            "price",
+            "size",
+            "image",
+        )
+
+        read_only_fields = (
+            "id",
+            "image",
+        )
 
 
 class DeliverySerializer(serializers.ModelSerializer):

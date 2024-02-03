@@ -6,6 +6,7 @@ class ItemDataclass:
     label: str
     price: float
     size: str
+    image: str
 
 
 @dataclass

@@ -9,3 +9,4 @@ class UserDataclass:
     is_staff: bool
     is_active: bool
     phone: str
+    avatar: str

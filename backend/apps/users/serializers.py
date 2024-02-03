@@ -33,6 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
             "id",
             "sending",
             "receiving",
+            "avatar",
             "last_login",
         )
 
@@ -41,10 +42,15 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        print(validated_data)
         user = UserModel.objects.create_user(**validated_data)
         EmailService.register_email(user)
         return user
+
+
+class AvatarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserModel
+        fields = ("avatar",)
 
 
 class UserDeliveriesSerializer(serializers.ModelSerializer):

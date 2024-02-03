@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth import get_user_model
 from rest_framework import generics, status
 from rest_framework.fields import ObjectDoesNotExist
@@ -8,7 +10,6 @@ from apps.deliveries.choices import StatusChoices
 from apps.deliveries.models import DeliveryModel
 from apps.deliveries.serializers import (
     DeliveryConvertedFieldsSerializer,
-    DeliveryDataSerializer,
     DeliverySerializer,
 )
 from apps.departments.models import DepartmentModel
@@ -78,12 +79,18 @@ class DeliveryCreateView(generics.CreateAPIView):
 
     def post(self, *args, **kwargs):
         try:
-            data = self.request.data
+            data = json.loads(self.request.data["data"])
+
+            image = self.request.FILES.get("image")
+
             data["sender"] = self.request.user.pk
+            data["image"] = image
+
+            print(data)
 
             # validate data with middleware serializer
-            middleware_serializer = DeliveryDataSerializer(data=data)
-            middleware_serializer.is_valid(raise_exception=True)
+            # middleware_serializer = DeliveryDataSerializer(data=data)
+            # middleware_serializer.is_valid(raise_exception=True)
 
             # get receiver and department objects
             department: DepartmentDataclass = self.get_department(
@@ -92,10 +99,13 @@ class DeliveryCreateView(generics.CreateAPIView):
             receiver: UserDataclass = self.get_receiver(data.get("receiver"))
 
             # modify data for actual serializer
-            middleware_serializer.validated_data["receiver"] = receiver.pk
-            middleware_serializer.validated_data["department"] = department.pk
+            # middleware_serializer.validated_data["receiver"] = receiver.pk
+            # middleware_serializer.validated_data["department"] = department.pk
 
-            serializer = self.get_serializer(data=middleware_serializer.data)
+            serializer = self.get_serializer(
+                data=data, department=department, receiver=receiver
+            )
+            print(serializer)
             serializer.is_valid(raise_exception=True)
             serializer.save()
 

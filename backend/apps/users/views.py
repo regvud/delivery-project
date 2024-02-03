@@ -1,13 +1,16 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.authentication import get_user_model
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.views import Response
 
 from apps.users.serializers import (
+    AvatarSerializer,
     UserDeliveriesSerializer,
     UserProfileSerializer,
     UserSerializer,
 )
+from core.dataclasses.user_dataclass import UserDataclass
 from core.permissions import IsAdmin
 
 UserModel = get_user_model()
@@ -75,3 +78,22 @@ class UserProfileView(generics.RetrieveAPIView):
 
     def get_object(self):
         return get_object_or_404(UserModel, pk=self.request.user.pk)
+
+
+class UserAvatarView(generics.GenericAPIView):
+    serializer_class = AvatarSerializer
+
+    def post(self, *args, **kwargs):
+        data = self.request.data
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+
+        user: UserDataclass = UserModel.objects.filter(pk=self.request.user.pk).first()
+
+        avatar = serializer.validated_data["avatar"]
+
+        user.avatar.delete()
+        user.avatar = avatar
+
+        user.save()
+        return Response(serializer.data, status.HTTP_200_OK)
