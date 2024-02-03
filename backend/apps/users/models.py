@@ -11,7 +11,16 @@ class UserModel(AbstractBaseUser, PermissionsMixin, BaseModel):
         db_table = "auth_user"
 
     email = models.EmailField(unique=True)
-    password = models.CharField(max_length=128)
+    password = models.CharField(
+        max_length=128,
+        validators=[
+            RegexValidator(
+                regex="^(?=.*[A-Z])(?=.*[a-z])[A-Za-z0-9\s]{8,}$",
+                message="Password must contain uppercase and lowercase letters, min 8 characters.",
+            ),
+        ],
+    )
+    avatar = models.ImageField(blank=True, null=True, upload_to="avatars/")
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
@@ -19,7 +28,10 @@ class UserModel(AbstractBaseUser, PermissionsMixin, BaseModel):
         max_length=12,
         unique=True,
         validators=[
-            RegexValidator(regex="^\+?3?8?(0\d{9})$", message="Invalid phone number")
+            RegexValidator(
+                regex="^\+?3?8?(0\d{9})$",
+                message="Invalid phone number, example: 380664172591 ",
+            )
         ],
     )
 

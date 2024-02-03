@@ -1,5 +1,3 @@
-import time
-
 from django.db.transaction import atomic
 from rest_framework import serializers
 
@@ -9,7 +7,7 @@ from apps.deliveries.models import DeliveryModel, ItemModel
 class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemModel
-        fields = ("label", "price", "size")
+        fields = ("label", "price", "size", "image")
 
 
 class DeliverySerializer(serializers.ModelSerializer):

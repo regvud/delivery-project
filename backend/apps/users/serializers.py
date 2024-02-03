@@ -1,11 +1,10 @@
-from apps.auth.serializers import EmailSerializer
+from rest_framework import serializers
+from rest_framework.authentication import get_user_model
+
 from apps.deliveries.serializers import (
     DeliveryConvertedFieldsSerializer,
     DeliverySerializer,
 )
-from rest_framework import serializers
-from rest_framework.authentication import get_user_model
-
 from core.services.email_service import EmailService
 
 UserModel = get_user_model()
@@ -22,6 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
             "email",
             "phone",
             "password",
+            "avatar",
             "sending",
             "receiving",
             "last_login",
@@ -41,6 +41,7 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
+        print(validated_data)
         user = UserModel.objects.create_user(**validated_data)
         EmailService.register_email(user)
         return user

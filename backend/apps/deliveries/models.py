@@ -20,6 +20,7 @@ class ItemModel(BaseModel):
         validators=[V.MinValueValidator(1), V.MaxValueValidator(999999)],
     )
     size = models.CharField(max_length=6, choices=SizeChoices.choices)
+    image = models.ImageField(upload_to="images/")
 
 
 class DeliveryModel(BaseModel):
