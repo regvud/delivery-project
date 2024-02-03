@@ -6,14 +6,16 @@ import { useEffect } from 'react';
 import { PleaseLogin } from '../components/PleaseLogin';
 import { PagePagination } from '../components/PagePagination';
 import { DepartmentCard } from '../components/DepartmentCard';
+import { useTokenUpdater } from '../hooks/useTokenUpdater';
 
 const DepartmentsPage = () => {
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const { getItem } = useLocalStorage();
   const token = getItem('access');
-
   const currentPage = params.get('page') ?? '1';
+  const updater = useTokenUpdater();
+
   const {
     data: departments,
     isLoading,
@@ -25,7 +27,9 @@ const DepartmentsPage = () => {
 
   useEffect(() => {
     refetch();
-  }, [currentPage, refetch]);
+  }, [currentPage, refetch, updater]);
+
+  const handleClick = () => navigate('create');
 
   if (!token) return <PleaseLogin />;
 
@@ -50,6 +54,9 @@ const DepartmentsPage = () => {
         totalPages={total_pages}
         setURLSearchParams={setParams}
       />
+      <button style={{ width: '10%' }} onClick={handleClick}>
+        Create Department
+      </button>
       <div>
         {departments?.results?.map((department) => (
           <DepartmentCard

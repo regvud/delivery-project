@@ -7,14 +7,16 @@ import { PagePagination } from '../components/PagePagination';
 import { useEffect } from 'react';
 import css from './styles/DeliveryPage.module.css';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useTokenUpdater } from '../hooks/useTokenUpdater';
 
 const DeliveryPage = () => {
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const { getItem } = useLocalStorage();
   const token = getItem('access');
-
   const currentPage = params.get('page') ?? '1';
+  const updater = useTokenUpdater();
+
   const {
     data: deliveries,
     isLoading,
@@ -26,7 +28,7 @@ const DeliveryPage = () => {
 
   useEffect(() => {
     refetch();
-  }, [currentPage, refetch]);
+  }, [currentPage, refetch, updater]);
 
   if (!token) return <PleaseLogin />;
 
@@ -52,7 +54,7 @@ const DeliveryPage = () => {
       <div className={css.grid}>
         {deliveries?.results?.map((delivery) => (
           <DeliveryCard
-          key={delivery.id}
+            key={delivery.id}
             delivery={delivery}
             navigateFunc={() => navigate(`${delivery.id}`, { state: delivery })}
           />

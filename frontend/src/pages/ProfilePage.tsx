@@ -7,48 +7,44 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import css from './styles/ProfilePage.module.css';
 import { PleaseLogin } from '../components/PleaseLogin';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useTokenUpdater } from '../hooks/useTokenUpdater';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const { getItem } = useLocalStorage();
   const [showUserDeliveries, setShowUserDeliveries] = useState(false);
-  const token = getItem('access');
-
-  const { pathname } = useLocation();
+  const accessToken = getItem('access');
+  const updater = useTokenUpdater();
+  console.log('render');
+  const {
+    data: profile,
+    error,
+    isLoading,
+    refetch,
+  } = useFetch(authService.profile(), ['profile']);
 
   useEffect(() => {
-    if (pathname === '/') {
-      navigate('/profile');
-    }
-  }, [pathname]);
+    refetch();
+    if (pathname === '/') navigate('/profile');
+  }, [pathname, updater, refetch]);
 
-  if (token) {
-    const {
-      data: profile,
-      error,
-      isLoading,
-    } = useFetch(authService.profile(), ['profile']);
+  if (error) return <h1>{error?.message}</h1>;
+  if (isLoading) return <h1>Loading...</h1>;
+  if (!accessToken) return <PleaseLogin />;
 
-    if (error) return <h1>{error?.message}</h1>;
-    if (isLoading) return <h1>Loading...</h1>;
-
-    return (
-      <div className={css.profileContainer}>
-        <h1>Profile</h1>
-        <hr />
-        {profile && <ProfileCard profile={profile} />}
-        <button onClick={() => navigate('delivery/create')}>
-          Send delivery
-        </button>
-        <button onClick={() => setShowUserDeliveries((prev) => !prev)}>
-          My deliveries
-        </button>
-        {showUserDeliveries && <UserDeliveries />}
-      </div>
-    );
-  }
-
-  return <PleaseLogin />;
+  return (
+    <div className={css.profileContainer}>
+      <h1>Profile</h1>
+      <hr />
+      {profile && <ProfileCard profile={profile} />}
+      <button onClick={() => navigate('delivery/create')}>Send delivery</button>
+      <button onClick={() => setShowUserDeliveries((prev) => !prev)}>
+        My deliveries
+      </button>
+      {showUserDeliveries && <UserDeliveries />}
+    </div>
+  );
 };
 
 export { ProfilePage };
