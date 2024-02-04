@@ -1,6 +1,9 @@
 import json
 
+import requests
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.http import HttpRequest, request
 from rest_framework import generics, status
 from rest_framework.fields import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
@@ -80,36 +83,36 @@ class DeliveryCreateView(generics.CreateAPIView):
     def post(self, *args, **kwargs):
         try:
             data = json.loads(self.request.data["data"])
+            image_file = self.request.data["image"]
 
-            image = self.request.FILES.get("image")
+            with open("storage/images/" + image_file.name, "wb+") as destination:
+                for chunk in image_file.chunks():
+                    destination.write(chunk)
 
-            data["sender"] = self.request.user.pk
-            data["image"] = image
+            image_path = f"storage/images/{image_file.name}"
 
-            print(data)
+            image = self.request.build_absolute_uri(settings.MEDIA_URL + image_path)
 
-            # validate data with middleware serializer
-            # middleware_serializer = DeliveryDataSerializer(data=data)
-            # middleware_serializer.is_valid(raise_exception=True)
-
-            # get receiver and department objects
             department: DepartmentDataclass = self.get_department(
                 data.get("department")
             )
             receiver: UserDataclass = self.get_receiver(data.get("receiver"))
 
-            # modify data for actual serializer
-            # middleware_serializer.validated_data["receiver"] = receiver.pk
-            # middleware_serializer.validated_data["department"] = department.pk
+            data["sender"] = self.request.user.pk
+            data["department"] = department.id
+            data["receiver"] = receiver.id
 
-            serializer = self.get_serializer(
-                data=data, department=department, receiver=receiver
-            )
-            print(serializer)
+            item = data.get("item")
+            item["image"] = image_file
+
+            print(data)
+
+            serializer = self.get_serializer(data=data)
             serializer.is_valid(raise_exception=True)
-            serializer.save()
 
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            # serializer.save()
+
+            return Response("ok", status=status.HTTP_201_CREATED)
 
         except ObjectDoesNotExist as e:
             return Response({"detail": str(e)}, status=status.HTTP_404_NOT_FOUND)

@@ -19,3 +19,9 @@ class DepartmentSerializer(serializers.ModelSerializer):
             "status",
             "deliveries",
         )
+
+
+class DepartmentNumberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DepartmentModel
+        fields = ("general_number", "region", "city")

@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class UserDataclass:
+    id: int
     email: str
     password: str
     is_superuser: bool
