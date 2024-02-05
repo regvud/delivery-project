@@ -20,7 +20,14 @@ class ItemModel(BaseModel):
         validators=[V.MinValueValidator(1), V.MaxValueValidator(999999)],
     )
     size = models.CharField(max_length=6, choices=SizeChoices.choices)
+
+
+class ImageItemModel(BaseModel):
+    class Meta:
+        db_table = "images"
+
     image = models.ImageField(upload_to="images/")
+    item = models.ForeignKey(ItemModel, on_delete=models.CASCADE, related_name="image")
 
 
 class DeliveryModel(BaseModel):

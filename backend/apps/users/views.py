@@ -1,9 +1,11 @@
+from django.core.files.storage import default_storage
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.authentication import get_user_model
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import Response
 
+from apps.users.models import AvatarModel
 from apps.users.serializers import (
     AvatarSerializer,
     UserDeliveriesSerializer,
@@ -84,16 +86,21 @@ class UserAvatarView(generics.GenericAPIView):
     serializer_class = AvatarSerializer
 
     def post(self, *args, **kwargs):
-        data = self.request.data
-        serializer = self.get_serializer(data=data)
+        avatar = self.request.data.get("avatar")
+        user_id = self.request.user.pk
+
+        data = {"user_id": user_id, "avatar": avatar}
+
+        prev_avatar = AvatarModel.objects.filter(user_id=user_id).first()
+
+        if prev_avatar and prev_avatar.avatar:
+            default_storage.delete(prev_avatar.avatar.path)
+        if prev_avatar:
+            serializer = self.get_serializer(prev_avatar, data=data, partial=True)
+        else:
+            serializer = self.get_serializer(data=data)
+
         serializer.is_valid(raise_exception=True)
+        serializer.save(user_id=user_id)
 
-        user: UserDataclass = UserModel.objects.filter(pk=self.request.user.pk).first()
-
-        avatar = serializer.validated_data["avatar"]
-
-        user.avatar.delete()
-        user.avatar = avatar
-
-        user.save()
         return Response(serializer.data, status.HTTP_200_OK)

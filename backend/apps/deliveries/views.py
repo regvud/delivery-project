@@ -1,9 +1,7 @@
 import json
 
-import requests
-from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.http import HttpRequest, request
+from django.db.transaction import atomic
 from rest_framework import generics, status
 from rest_framework.fields import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
@@ -14,6 +12,8 @@ from apps.deliveries.models import DeliveryModel
 from apps.deliveries.serializers import (
     DeliveryConvertedFieldsSerializer,
     DeliverySerializer,
+    ItemImageSerializer,
+    ItemSerializer,
 )
 from apps.departments.models import DepartmentModel
 from core.dataclasses.department_dataclass import DepartmentDataclass
@@ -59,68 +59,61 @@ class DeliveryCreateView(generics.CreateAPIView):
     serializer_class = DeliverySerializer
     permission_classes = (IsAuthenticated,)
 
-    def get_receiver(self, phone):
+    def get_receiver(self, phone) -> int:
         if phone == self.request.user.phone:
             raise Exception("You cannot send to yourself")
 
         try:
             receiver = UserModel.objects.get(phone=phone)
-            return receiver
+            return receiver.id
         except UserModel.DoesNotExist:
             raise ObjectDoesNotExist(
                 "This phone number does not belong to any user, try another number"
             )
 
-    def get_department(self, department):
+    def get_department(self, department) -> int:
         try:
             department = DepartmentModel.objects.get(general_number=department)
-            return department
+            return department.id
         except DepartmentModel.DoesNotExist:
             raise ObjectDoesNotExist(
                 f"Department with general number {department} does not exist"
             )
 
+    @atomic
     def post(self, *args, **kwargs):
-        try:
-            data = json.loads(self.request.data["data"])
-            image_file = self.request.data["image"]
+        # for front mb
+        # data = self.request.data.get("data")
 
-            with open("storage/images/" + image_file.name, "wb+") as destination:
-                for chunk in image_file.chunks():
-                    destination.write(chunk)
+        data = json.loads(self.request.data.get("data"))
+        image = self.request.data.get("image")
 
-            image_path = f"storage/images/{image_file.name}"
+        item = data.pop("item")
 
-            image = self.request.build_absolute_uri(settings.MEDIA_URL + image_path)
+        image_serializer = ItemImageSerializer(data={"image": image})
+        image_serializer.is_valid(raise_exception=True)
 
-            department: DepartmentDataclass = self.get_department(
-                data.get("department")
-            )
-            receiver: UserDataclass = self.get_receiver(data.get("receiver"))
+        item["image"] = [{"image": image_serializer.validated_data["image"]}]
 
-            data["sender"] = self.request.user.pk
-            data["department"] = department.id
-            data["receiver"] = receiver.id
+        item_serializer = ItemSerializer(data=item)
+        item_serializer.is_valid(raise_exception=True)
 
-            item = data.get("item")
-            item["image"] = image_file
+        validated_item = item_serializer.validated_data
 
-            print(data)
+        department_id = self.get_department(data.get("department"))
+        receiver_id = self.get_receiver(data.get("receiver"))
 
-            serializer = self.get_serializer(data=data)
-            serializer.is_valid(raise_exception=True)
+        data["sender"] = self.request.user.pk
+        data["department"] = department_id
+        data["receiver"] = receiver_id
+        data["item"] = validated_item
 
-            # serializer.save()
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
 
-            return Response("ok", status=status.HTTP_201_CREATED)
+        serializer.save()
 
-        except ObjectDoesNotExist as e:
-            return Response({"detail": str(e)}, status=status.HTTP_404_NOT_FOUND)
-
-        except Exception as e:
-            return Response(
-                {"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+        return Response(serializer.data, status.HTTP_201_CREATED)
 
 
 class DeliveryInfoView(generics.RetrieveAPIView):

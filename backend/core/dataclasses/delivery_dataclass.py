@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class ItemDataclass:
+    id: int
     label: str
     price: float
     size: str
@@ -11,6 +12,7 @@ class ItemDataclass:
 
 @dataclass
 class DeliveryDataclass:
+    id: int
     receiver: int
     item: ItemDataclass
     sender: int

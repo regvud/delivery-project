@@ -1,10 +1,18 @@
 from django.db.transaction import atomic
 from rest_framework import serializers
 
-from apps.deliveries.models import DeliveryModel, ItemModel
+from apps.deliveries.models import DeliveryModel, ImageItemModel, ItemModel
+from core.dataclasses.delivery_dataclass import ItemDataclass
+
+
+class ItemImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ImageItemModel
+        fields = ("image",)
 
 
 class ItemSerializer(serializers.ModelSerializer):
+    image = ItemImageSerializer(many=True, required=False)
 
     class Meta:
         model = ItemModel
@@ -17,6 +25,14 @@ class ItemSerializer(serializers.ModelSerializer):
         )
 
         read_only_fields = ("id",)
+
+    # @atomic
+    # def create(self, validated_data):
+    #     image = validated_data.pop("image")[0]
+
+    #     item: ItemDataclass = ItemModel.objects.create(**validated_data)
+    #     image = ImageItemModel.objects.create(**image, item_id=item.id)
+    #     return item
 
 
 class DeliverySerializer(serializers.ModelSerializer):
@@ -35,10 +51,16 @@ class DeliverySerializer(serializers.ModelSerializer):
 
     @atomic
     def create(self, validated_data):
+        # print("delivery_data", validated_data)
         item = validated_data.pop("item")
-        item = ItemModel.objects.create(**item)
+        image = item.pop("image")[0]
 
-        delivery = DeliveryModel.objects.create(item=item, **validated_data)
+        item = ItemModel.objects.create(**item)
+        image = ImageItemModel.objects.create(**image, item_id=item.id)
+
+        validated_data["item"] = item
+
+        delivery = DeliveryModel.objects.create(**validated_data)
         return delivery
 
 
