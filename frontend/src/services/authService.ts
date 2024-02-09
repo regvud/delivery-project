@@ -17,4 +17,8 @@ export const authService = {
     apiService.post(urls.auth.recoverRequest, { email: email }),
   profile: () =>
     apiService.get<Profile>(urls.auth.profile).then((res) => res.data),
+  addAvatar: (avatar: FormData) =>
+    apiService.post<{ avatar: FormData }>(urls.profile.addAvatar, {
+      avatar: avatar,
+    }),
 };

@@ -9,8 +9,15 @@ export type UserRegister = {
   password: string;
 };
 
+export type Avatar = {
+  avatar: string;
+  id: number;
+  user_id: number;
+};
+
 export type Profile = {
   email: string;
   phone: string;
+  avatar: [Avatar];
   last_login: string;
 };
