@@ -88,7 +88,6 @@ class UserAvatarView(generics.GenericAPIView):
     def post(self, *args, **kwargs):
         avatar = self.request.data.get("avatar")
         user_id = self.request.user.pk
-
         data = {"user_id": user_id, "avatar": avatar}
 
         prev_avatar = AvatarModel.objects.filter(user_id=user_id).first()

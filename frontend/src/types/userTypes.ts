@@ -10,8 +10,8 @@ export type UserRegister = {
 };
 
 export type Avatar = {
-  avatar: string;
   id: number;
+  avatar: string;
   user_id: number;
 };
 

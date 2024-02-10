@@ -8,15 +8,17 @@ import css from './styles/ProfilePage.module.css';
 import { PleaseLogin } from '../components/PleaseLogin';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useTokenUpdater } from '../hooks/useTokenUpdater';
+import { usePage } from '../store/store';
 
 const ProfilePage = () => {
+  const refreshPage = usePage((state) => state.refresh);
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { getItem } = useLocalStorage();
   const [showUserDeliveries, setShowUserDeliveries] = useState(false);
   const accessToken = getItem('access');
   const updater = useTokenUpdater();
-  console.log('render');
+
   const {
     data: profile,
     error,
@@ -27,7 +29,7 @@ const ProfilePage = () => {
   useEffect(() => {
     refetch();
     if (pathname === '/') navigate('/profile');
-  }, [pathname, updater, refetch]);
+  }, [pathname, updater, refetch, refreshPage]);
 
   if (error) return <h1>{error?.message}</h1>;
   if (isLoading) return <h1>Loading...</h1>;

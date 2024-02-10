@@ -36,6 +36,5 @@ export const urls = {
   profile: {
     base: profile,
     delivery: (id: number) => `${profile}${delivery}/${id}`,
-    addAvatar: `${users}/add_avatar`,
   },
 };
