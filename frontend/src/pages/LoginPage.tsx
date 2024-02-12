@@ -2,6 +2,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { authService } from '../services/authService';
 import { useLocation, useNavigate } from 'react-router-dom';
 import css from './styles/LoginPage.module.css';
+import button from './styles/DeliveryPage.module.css';
 import { usePage } from '../store/store';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { z } from 'zod';
@@ -29,7 +30,6 @@ const LoginPage = () => {
     }
   }, [pathname]);
 
-  console.log(pathname);
   const {
     register,
     handleSubmit,
@@ -85,7 +85,7 @@ const LoginPage = () => {
 
         {errors.root && <h4>{errors.root.message}</h4>}
 
-        <button type="submit" className={css.buttonStyles}>
+        <button type="submit" className={button.button}>
           Login
         </button>
         <button

@@ -1,5 +1,7 @@
 import { Delivery } from '../types/deliveryTypes';
 import css from './styles/DeliveryCard.module.css';
+import button from '../pages/styles/DeliveryPage.module.css';
+
 interface DeliveryCardProps {
   delivery: Delivery;
   navigateFunc?: () => void;
@@ -16,9 +18,9 @@ const DeliveryCard = ({
   };
 
   return (
-    <div className={css.deliveryDetailsContainer}>
+    <>
       {detailed ? (
-        <>
+        <div className={css.deliveryDetailsContainer}>
           <h2>Info</h2>
           <hr />
           <h3>ID: {delivery.id}</h3>
@@ -34,9 +36,9 @@ const DeliveryCard = ({
             <h3>Price: {delivery.item.price}</h3>
             <h3>Size: {delivery.item.size}</h3>
           </div>
-        </>
+        </div>
       ) : (
-        <>
+        <div className={css.deliveryDetailsContainer}>
           <h2>Info</h2>
           <hr />
           <h3>ID: {delivery.id}</h3>
@@ -48,10 +50,12 @@ const DeliveryCard = ({
             <h3>Label: {delivery.item.label}</h3>
           </div>
 
-          <button onClick={toDetails}>Details</button>
-        </>
+          <button className={button.button} onClick={toDetails}>
+            Details
+          </button>
+        </div>
       )}
-    </div>
+    </>
   );
 };
 

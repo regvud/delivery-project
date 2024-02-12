@@ -44,6 +44,8 @@ class UserSerializer(serializers.ModelSerializer):
             "phone",
             "password",
             "avatar",
+            "is_staff",
+            "is_superuser",
             "sending",
             "receiving",
             "last_login",

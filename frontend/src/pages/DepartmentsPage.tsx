@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { PleaseLogin } from '../components/PleaseLogin';
 import { PagePagination } from '../components/PagePagination';
 import { DepartmentCard } from '../components/DepartmentCard';
-import { useTokenUpdater } from '../hooks/useTokenUpdater';
+import css from './styles/DeliveryPage.module.css';
 
 const DepartmentsPage = () => {
   const navigate = useNavigate();
@@ -14,7 +14,6 @@ const DepartmentsPage = () => {
   const { getItem } = useLocalStorage();
   const token = getItem('access');
   const currentPage = params.get('page') ?? '1';
-  const updater = useTokenUpdater();
 
   const {
     data: departments,
@@ -27,7 +26,7 @@ const DepartmentsPage = () => {
 
   useEffect(() => {
     refetch();
-  }, [currentPage, refetch, updater]);
+  }, [currentPage, refetch]);
 
   const handleClick = () => navigate('create');
 
@@ -42,9 +41,14 @@ const DepartmentsPage = () => {
 
   if (!departments?.results[0])
     return (
-      <h1 style={{ textAlign: 'center' }}>
-        Department list is currently empty
-      </h1>
+      <div className={css.container}>
+        <h1 style={{ textAlign: 'center' }}>
+          Department list is currently empty
+        </h1>
+        <button className={css.button} onClick={handleClick}>
+          Create Department
+        </button>
+      </div>
     );
 
   return (
@@ -54,19 +58,21 @@ const DepartmentsPage = () => {
         totalPages={total_pages}
         setURLSearchParams={setParams}
       />
-      <button style={{ width: '10%' }} onClick={handleClick}>
-        Create Department
-      </button>
-      <div>
-        {departments?.results?.map((department) => (
-          <DepartmentCard
-            key={department.id}
-            department={department}
-            navigateFunc={() =>
-              navigate(`${department.id}`, { state: department })
-            }
-          />
-        ))}
+      <div className={css.container}>
+        <button className={css.button} onClick={handleClick}>
+          Create Department
+        </button>
+        <div className={css.grid}>
+          {departments?.results?.map((department) => (
+            <DepartmentCard
+              key={department.id}
+              department={department}
+              navigateFunc={() =>
+                navigate(`${department.id}`, { state: department })
+              }
+            />
+          ))}
+        </div>
       </div>
     </>
   );

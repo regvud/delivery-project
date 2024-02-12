@@ -11,6 +11,8 @@ const activate = '/activate';
 const recover = '/recover';
 const request = '/request';
 const refresh = '/refresh';
+const regions = '/regions';
+const active = '/active';
 
 export const urls = {
   deliveries: {
@@ -23,6 +25,8 @@ export const urls = {
     base: (page: number) => `${departments}?page=${page}`,
     byID: (id: number) => `${departments}/${id}`,
     create: `${departments}${create}`,
+    regions: `${departments}${regions}`,
+    active: `${departments}${active}`,
   },
   auth: {
     login: auth,
@@ -32,9 +36,11 @@ export const urls = {
     activate: (token: string) => `${auth}${activate}/${token}`,
     recover: (token: string) => `${auth}${recover}/${token}`,
     recoverRequest: `${auth}${recover}${request}`,
+    me: `${auth}/me`,
   },
   profile: {
     base: profile,
     delivery: (id: number) => `${profile}${delivery}/${id}`,
+    addAvatar: `${users}/add_avatar`,
   },
 };

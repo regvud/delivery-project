@@ -5,17 +5,24 @@ import { useState } from 'react';
 import { ResponseError } from '../types/axiosTypes';
 import { useNavigate } from 'react-router-dom';
 import { urls } from '../constants/urls';
+import { useFetch } from '../hooks/useFetch';
+import { departmentService } from '../services/departmentService';
+import button from './styles/DeliveryPage.module.css';
 
 const CreateDeliveryPage = () => {
   const navigate = useNavigate();
   const [showSuccessCreation, setShowSuccessCreation] = useState(false);
+  const [error, setError] = useState<ResponseError>();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<Delivery>();
-  const [error, setError] = useState<ResponseError>();
+
+  const { data: departments } = useFetch(departmentService.active(), [
+    'departmentNumbers',
+  ]);
 
   const saveDelivery: SubmitHandler<Delivery> = async (delivery) => {
     try {
@@ -47,11 +54,27 @@ const CreateDeliveryPage = () => {
           <h5 style={{ margin: 0, color: 'red' }}>{error.detail}</h5>
         )}
 
-        <input
-          type="number"
-          placeholder="department"
-          {...register('department', { required: true })}
-        />
+        <label
+          style={{ fontWeight: 'bold', marginBottom: '10px', display: 'block' }}
+        >
+          Choose department:
+          <select
+            style={{ paddingLeft: '5px', marginLeft: '20px', width: '200px' }}
+            id="department-select"
+            placeholder="department"
+            {...register('department')}
+          >
+            {departments?.map((department) => (
+              <option
+                value={department.general_number}
+                key={department.general_number}
+              >
+                № {department.general_number} - {department.city}
+              </option>
+            ))}
+          </select>
+        </label>
+
         {error?.detail?.includes('phone') && (
           <h5 style={{ margin: 0, color: 'red' }}>{error.detail}</h5>
         )}
@@ -119,7 +142,9 @@ const CreateDeliveryPage = () => {
           </label>
         </div>
 
-        <button type="submit">Send</button>
+        <button className={button.button} type="submit">
+          Send
+        </button>
       </form>
     </div>
   );

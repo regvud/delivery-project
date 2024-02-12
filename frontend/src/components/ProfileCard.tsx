@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Profile } from '../types/userTypes';
 import css from './styles/ProfileCard.module.css';
-import { baseURL } from '../constants/urls';
 import { usePage } from '../store/store';
+import defaultAvatar from '../assets/defaultAvatar.jpg';
+import { authService } from '../services/authService';
 
 interface ProfileProps {
   profile: Profile;
@@ -13,11 +14,12 @@ const ProfileCard = ({ profile }: ProfileProps) => {
     'es-CL'
   );
   const setRefresh = usePage((state) => state.setRefresh);
-  const avatar = profile.avatar[0].avatar;
+  const avatar = profile?.avatar[0]?.avatar;
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imageSrc, setImageSrc] = useState<string>(avatar);
+  const [imageSrc, setImageSrc] = useState<string>(avatar || defaultAvatar);
   const [imageMsg, setImageMsg] = useState<string>('');
 
+  console.log(avatar);
   const handleImageClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
@@ -25,23 +27,16 @@ const ProfileCard = ({ profile }: ProfileProps) => {
   };
 
   const handleSave = async () => {
-    console.log('saving');
     if (imageFile) {
       const formData = new FormData();
       formData.append('avatar', imageFile);
       try {
-        const response = await fetch(`${baseURL}/users/add_avatar`, {
-          method: 'POST',
-          body: formData,
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('access')}`,
-          },
-        });
-        if (response.ok) {
-          setImageMsg('Image saved successfully');
+        const { request } = await authService.profile.addAavatar(formData);
+        if (request.status == 200) {
+          setImageMsg('Image saved successfully ✅');
           setRefresh();
         } else {
-          setImageMsg('Failed to save image');
+          setImageMsg('Failed to save image 🧐');
         }
       } catch (error) {
         console.error('Error while saving image:', error);
@@ -72,19 +67,24 @@ const ProfileCard = ({ profile }: ProfileProps) => {
 
   return (
     <>
-      <input
-        type="file"
-        accept="image/*"
-        style={{ display: 'none' }}
-        ref={fileInputRef}
-        onChange={handleFileChange}
-      />
-      <img
-        className={css.profileImage}
-        src={imageSrc}
-        onClick={handleImageClick}
-      />
-      {imageMsg && <h4>{imageMsg}</h4>}
+      <div className="d-flex align-items-center justify-content-center">
+        <input
+          type="file"
+          accept="image/*"
+          style={{ display: 'none' }}
+          ref={fileInputRef}
+          onChange={handleFileChange}
+        />
+        <div className="d-flex align-items-center">
+          <img
+            className={css.profileImage}
+            src={imageSrc}
+            onClick={handleImageClick}
+          />
+          {imageMsg && <span style={{ paddingLeft: '10px' }}>{imageMsg}</span>}
+        </div>
+      </div>
+
       <h3>Email: {profile.email}</h3>
       <h3>Phone: {profile.phone}</h3>
       <h3>Last login: {lastLogin}</h3>

@@ -7,7 +7,6 @@ import { PagePagination } from '../components/PagePagination';
 import { useEffect } from 'react';
 import css from './styles/DeliveryPage.module.css';
 import { useLocalStorage } from '../hooks/useLocalStorage';
-import { useTokenUpdater } from '../hooks/useTokenUpdater';
 
 const DeliveryPage = () => {
   const navigate = useNavigate();
@@ -15,7 +14,6 @@ const DeliveryPage = () => {
   const { getItem } = useLocalStorage();
   const token = getItem('access');
   const currentPage = params.get('page') ?? '1';
-  const updater = useTokenUpdater();
 
   const {
     data: deliveries,
@@ -28,7 +26,7 @@ const DeliveryPage = () => {
 
   useEffect(() => {
     refetch();
-  }, [currentPage, refetch, updater]);
+  }, [currentPage, refetch]);
 
   if (!token) return <PleaseLogin />;
 

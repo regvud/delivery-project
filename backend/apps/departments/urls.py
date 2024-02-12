@@ -1,9 +1,9 @@
 from django.urls import path
 
 from .views import (
+    ActiveDepartmentListView,
     DepartmentCreateView,
     DepartmentListView,
-    DepartmentNumberList,
     DepartmentRetrieveUpdateDestroyView,
     GetDepartmentRegions,
 )
@@ -17,5 +17,5 @@ urlpatterns = [
     ),
     path("/create", DepartmentCreateView.as_view(), name="department_create"),
     path("/regions", GetDepartmentRegions.as_view(), name="department_regions"),
-    path("/numbers", DepartmentNumberList.as_view(), name="department_numbers"),
+    path("/active", ActiveDepartmentListView.as_view(), name="active_departments"),
 ]

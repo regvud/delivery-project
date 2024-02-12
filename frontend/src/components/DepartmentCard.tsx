@@ -1,6 +1,6 @@
 import { Department } from '../types/departmentTypes';
 import css from './styles/DeliveryCard.module.css';
-
+import button from '../pages/styles/DeliveryPage.module.css';
 interface DepartmentCardProps {
   department: Department;
   navigateFunc?: () => void;
@@ -14,8 +14,12 @@ const DepartmentCard = ({ department, navigateFunc }: DepartmentCardProps) => {
   return (
     <div className={css.deliveryDetailsContainer}>
       <h3>General Number: {department.general_number}</h3>
-      <h3>Region: {department.region}</h3>
-      <button onClick={toDepartmentDetails}>Details</button>
+      <hr />
+      <h3>City: {department.city}</h3>
+      <h3>Status: {department.status ? 'active' : 'closed'}</h3>
+      <button className={button.button} onClick={toDepartmentDetails}>
+        Details
+      </button>
     </div>
   );
 };

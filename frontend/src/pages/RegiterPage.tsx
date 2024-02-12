@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ResponseError } from '../types/axiosTypes';
 import { useState } from 'react';
+import button from './styles/DeliveryPage.module.css';
 
 const phoneRegex = new RegExp(/^3?8?(0\d{9})$/);
 
@@ -113,7 +114,7 @@ const RegisterPage = () => {
 
         {errors.root && <h4>{errors.root.message}</h4>}
 
-        <button className={css.button}>Register</button>
+        <button className={button.button}>Register</button>
       </form>
     </>
   );

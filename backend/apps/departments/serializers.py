@@ -24,4 +24,4 @@ class DepartmentSerializer(serializers.ModelSerializer):
 class DepartmentNumberSerializer(serializers.ModelSerializer):
     class Meta:
         model = DepartmentModel
-        fields = ("general_number", "region", "city")
+        fields = ("general_number", "city")

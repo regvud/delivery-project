@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 const ActivatePage = () => {
   const { token } = useParams();
   const navigate = useNavigate();
+
   useEffect(() => {
     if (token) {
       authService.activate(token);

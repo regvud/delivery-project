@@ -12,7 +12,6 @@ from apps.users.serializers import (
     UserProfileSerializer,
     UserSerializer,
 )
-from core.dataclasses.user_dataclass import UserDataclass
 from core.permissions import IsAdmin
 
 UserModel = get_user_model()

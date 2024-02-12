@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "celery",
     "django_celery_results",
     "django_celery_beat",
+    "django_filters",
     # apps
     "core",
     "apps.auth",

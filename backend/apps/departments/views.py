@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import Response
 
 from apps.departments.choices import RegionChoices
+from apps.departments.filters import DepartmentFilter
 from apps.departments.models import DepartmentModel
 from apps.departments.serializers import (
     DepartmentNumberSerializer,
@@ -20,11 +21,17 @@ class DepartmentListView(generics.ListAPIView):
     queryset = DepartmentModel.objects.all()
     serializer_class = DepartmentSerializer
     permission_classes = (IsAuthenticated,)
+    filterset_class = DepartmentFilter
 
 
-class DepartmentNumberList(generics.ListAPIView):
+class ActiveDepartmentListView(generics.ListAPIView):
+    """
+    GET method:
+        Active department list
+    """
+
+    queryset = DepartmentModel.objects.filter(status=True)
     serializer_class = DepartmentNumberSerializer
-    queryset = DepartmentModel.objects.all()
     permission_classes = (IsAuthenticated,)
     pagination_class = None
 
@@ -54,7 +61,13 @@ class DepartmentRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView)
 
     queryset = DepartmentModel
     serializer_class = DepartmentSerializer
-    permission_classes = (IsAdmin,)
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            permission_classes = (IsAuthenticated,)
+        else:
+            permission_classes = (IsAdmin,)
+        return [permission() for permission in permission_classes]
 
 
 class GetDepartmentRegions(generics.GenericAPIView):

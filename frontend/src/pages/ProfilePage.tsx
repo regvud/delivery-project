@@ -5,9 +5,9 @@ import { UserDeliveries } from '../components/UserDeliveries';
 import { useFetch } from '../hooks/useFetch';
 import { useLocation, useNavigate } from 'react-router-dom';
 import css from './styles/ProfilePage.module.css';
+import button from './styles/DeliveryPage.module.css';
 import { PleaseLogin } from '../components/PleaseLogin';
 import { useLocalStorage } from '../hooks/useLocalStorage';
-import { useTokenUpdater } from '../hooks/useTokenUpdater';
 import { usePage } from '../store/store';
 
 const ProfilePage = () => {
@@ -17,19 +17,18 @@ const ProfilePage = () => {
   const { getItem } = useLocalStorage();
   const [showUserDeliveries, setShowUserDeliveries] = useState(false);
   const accessToken = getItem('access');
-  const updater = useTokenUpdater();
 
   const {
     data: profile,
     error,
     isLoading,
     refetch,
-  } = useFetch(authService.profile(), ['profile']);
+  } = useFetch(authService.profile.profile(), ['profile']);
 
   useEffect(() => {
     refetch();
     if (pathname === '/') navigate('/profile');
-  }, [pathname, updater, refetch, refreshPage]);
+  }, [pathname, refetch, refreshPage]);
 
   if (error) return <h1>{error?.message}</h1>;
   if (isLoading) return <h1>Loading...</h1>;
@@ -40,8 +39,16 @@ const ProfilePage = () => {
       <h1>Profile</h1>
       <hr />
       {profile && <ProfileCard profile={profile} />}
-      <button onClick={() => navigate('delivery/create')}>Send delivery</button>
-      <button onClick={() => setShowUserDeliveries((prev) => !prev)}>
+      <button
+        className={button.button}
+        onClick={() => navigate('delivery/create')}
+      >
+        Send delivery
+      </button>
+      <button
+        className={button.button}
+        onClick={() => setShowUserDeliveries((prev) => !prev)}
+      >
         My deliveries
       </button>
       {showUserDeliveries && <UserDeliveries />}

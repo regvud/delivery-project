@@ -1,4 +1,4 @@
-import { createBrowserRouter, useNavigate } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 
 import { DeliveryPage } from './pages/DeliveryPage';
 import { ProfilePage } from './pages/ProfilePage';
