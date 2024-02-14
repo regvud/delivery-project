@@ -26,7 +26,7 @@ class ImageItemModel(BaseModel):
     class Meta:
         db_table = "images"
 
-    image = models.ImageField(upload_to="images/")
+    image = models.ImageField(upload_to="images/", null=True, blank=True)
     item = models.ForeignKey(ItemModel, on_delete=models.CASCADE, related_name="image")
 
 

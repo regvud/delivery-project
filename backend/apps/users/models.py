@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.core.validators import RegexValidator
 from django.db import models
-from django.forms import ImageField
 
 from apps.users.managers import UserManager
 from core.models import BaseModel

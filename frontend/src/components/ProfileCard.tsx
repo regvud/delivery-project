@@ -19,7 +19,6 @@ const ProfileCard = ({ profile }: ProfileProps) => {
   const [imageSrc, setImageSrc] = useState<string>(avatar || defaultAvatar);
   const [imageMsg, setImageMsg] = useState<string>('');
 
-  console.log(avatar);
   const handleImageClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();

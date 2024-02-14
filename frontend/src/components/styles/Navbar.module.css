@@ -22,11 +22,14 @@
 .navbar button {
   width: 5%;
   color: white;
+  font-size: 16px;
   padding: 5px;
+  background-color: #555;
+  border: none;
   border-radius: 5px;
-  background-color: red;
 }
 
 .navbar button:hover {
-  background-color: #555;
+  background-color: crimson;
+  cursor: pointer;
 }

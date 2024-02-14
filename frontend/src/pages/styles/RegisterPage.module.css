@@ -1,22 +1,22 @@
 /* Form styles */
-form {
+.form {
   display: flex;
   flex-direction: column;
   max-width: 300px;
   margin: 0 auto;
 }
 
-form > h1 {
+.form > h1 {
   text-align: center;
 }
 
-form > h4 {
+.form > h4 {
   margin: 0;
   color: red;
 }
 
 /* Input styles */
-input {
+.input {
   margin-bottom: 10px;
   padding: 8px;
   font-size: 16px;
@@ -25,17 +25,17 @@ input {
 }
 
 /* Submit button styles (optional) */
-input[type='submit'] {
+.input[type='submit'] {
   background-color: #4caf50;
   color: white;
   cursor: pointer;
 }
 
-input[type='submit']:hover {
+.input[type='submit']:hover {
   background-color: #45a049;
 }
 
-button {
+.button {
   width: 100%;
   padding: 10px;
   background-color: #4caf50;
@@ -46,6 +46,6 @@ button {
   font-size: 16px;
 }
 
-button:hover {
+.button:hover {
   background-color: #45a049;
 }

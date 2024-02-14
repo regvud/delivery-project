@@ -35,6 +35,7 @@ const DeliveryCard = ({
             <h3>Label: {delivery.item.label}</h3>
             <h3>Price: {delivery.item.price}</h3>
             <h3>Size: {delivery.item.size}</h3>
+            <img src={delivery.item.image[0].image} alt={delivery.item.label} />
           </div>
         </div>
       ) : (

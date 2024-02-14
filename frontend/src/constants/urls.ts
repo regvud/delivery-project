@@ -19,6 +19,7 @@ export const urls = {
     base: (page: number) => `${deliveries}?page=${page}`,
     byID: (id: number) => `${deliveries}/${id}/info`,
     create: `${deliveries}${create}`,
+    addImage: (id: number) => `${deliveries}/${id}/add_image`,
     user: `${users}${deliveries}`,
   },
   departments: {

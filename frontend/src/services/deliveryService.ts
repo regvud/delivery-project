@@ -1,7 +1,8 @@
 import { urls } from '../constants/urls';
 import { PaginatedResponse } from '../types/axiosTypes';
-import { Delivery, UserDeliveriesResponse } from '../types/deliveryTypes';
+import { UserDeliveriesResponse } from '../types/deliveryTypes';
 import { apiService } from './apiService';
+import { Delivery } from '../types/deliveryTypes';
 
 export const deliveryService = {
   getAll: (page: number) =>
@@ -11,6 +12,10 @@ export const deliveryService = {
 
   byID: (id: number) =>
     apiService.get<Delivery>(urls.deliveries.byID(id)).then((res) => res.data),
+  addImage: (id: number, image: FormData) =>
+    apiService
+      .post(urls.deliveries.addImage(id), image)
+      .then((res) => res.data),
   getUserDeliveries: () =>
     apiService
       .get<UserDeliveriesResponse>(urls.deliveries.user)

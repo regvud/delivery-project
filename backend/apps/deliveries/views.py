@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import Response
 
 from apps.deliveries.choices import StatusChoices
-from apps.deliveries.models import DeliveryModel
+from apps.deliveries.models import DeliveryModel, ItemModel
 from apps.deliveries.serializers import (
     DeliveryConvertedFieldsSerializer,
     DeliverySerializer,
@@ -16,6 +16,7 @@ from apps.deliveries.serializers import (
     ItemSerializer,
 )
 from apps.departments.models import DepartmentModel
+from core.dataclasses.delivery_dataclass import DeliveryDataclass
 from core.dataclasses.department_dataclass import DepartmentDataclass
 from core.dataclasses.user_dataclass import UserDataclass
 
@@ -82,19 +83,11 @@ class DeliveryCreateView(generics.CreateAPIView):
 
     @atomic
     def post(self, *args, **kwargs):
-        # for front mb
-        # data = self.request.data.get("data")
-
-        data = json.loads(self.request.data.get("data"))
-        image = self.request.data.get("image")
-
+        data = self.request.data
+        print("data", data)
         item = data.pop("item")
 
-        image_serializer = ItemImageSerializer(data={"image": image})
-        image_serializer.is_valid(raise_exception=True)
-
-        item["image"] = [{"image": image_serializer.validated_data["image"]}]
-
+        item["image"] = [{}]
         item_serializer = ItemSerializer(data=item)
         item_serializer.is_valid(raise_exception=True)
 
@@ -114,6 +107,24 @@ class DeliveryCreateView(generics.CreateAPIView):
         serializer.save()
 
         return Response(serializer.data, status.HTTP_201_CREATED)
+
+
+class AddImageDelivery(generics.GenericAPIView):
+    serializer_class = DeliverySerializer
+
+    def post(self, *args, **kwargs):
+        image = self.request.data
+        delivery: DeliveryDataclass = DeliveryModel.objects.filter(
+            id=self.kwargs.get("pk")
+        ).first()
+
+        item_id = delivery.item.id
+
+        serializer = ItemImageSerializer(data=image)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(item_id=item_id)
+
+        return Response(self.get_serializer(delivery).data, status.HTTP_200_OK)
 
 
 class DeliveryInfoView(generics.RetrieveAPIView):

@@ -3,4 +3,11 @@ export type Item = {
   label: string;
   price: string;
   size: string;
+  image: Image[];
+};
+
+export type Image = {
+  id: number;
+  image: string;
+  item_id: number;
 };

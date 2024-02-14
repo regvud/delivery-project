@@ -6,7 +6,11 @@ import { useFetch } from '../hooks/useFetch';
 import { cityService } from '../services/cityService';
 import { useNavigate } from 'react-router-dom';
 import button from './styles/DeliveryPage.module.css';
+import css from './styles/CreateDelivery.module.css';
 import { authService } from '../services/authService';
+import { useEffect, useState } from 'react';
+import { City } from '../types/departmentTypes';
+import { isDoStatement } from 'typescript';
 
 const schema = z.object({
   general_number: z.number().min(1, 'Number must be greater than 1'),
@@ -26,15 +30,6 @@ const schema = z.object({
 type DepartmentSchema = z.infer<typeof schema>;
 
 const DepartmentCreatePage = () => {
-  const { data: user } = useFetch(authService.me(), ['me']);
-
-  if (!user?.is_staff)
-    return (
-      <h1 style={{ textAlign: 'center' }}>
-        Only admins can create departments.
-      </h1>
-    );
-
   const {
     register,
     handleSubmit,
@@ -44,9 +39,24 @@ const DepartmentCreatePage = () => {
   } = useForm<DepartmentSchema>({
     resolver: zodResolver(schema),
   });
+
   const navigate = useNavigate();
-  const { data: cities } = useFetch(cityService(), ['cities']);
-  const { data: regions } = useFetch(departmentService.regions(), ['regions']);
+  const [regions, setRegions] = useState<string[]>([]);
+  const [cities, setCities] = useState<void | City[]>([]);
+  const [isStaff, setIsStaff] = useState<boolean>();
+
+  useEffect(() => {
+    authService.me().then((user) => setIsStaff(user.is_staff));
+    cityService().then((citiesData) => setCities(citiesData));
+    departmentService.regions().then((regionsData) => setRegions(regionsData));
+  }, []);
+
+  if (!isStaff)
+    return (
+      <h1 style={{ textAlign: 'center' }}>
+        Only admins can create departments.
+      </h1>
+    );
 
   const submit: SubmitHandler<DepartmentSchema> = async (department) => {
     try {
@@ -62,7 +72,7 @@ const DepartmentCreatePage = () => {
   };
 
   return (
-    <form className="border" onSubmit={handleSubmit(submit)}>
+    <form className={css.form} onSubmit={handleSubmit(submit)}>
       <h1>Create Department</h1>
 
       {errors.city && <h4>{errors.city.message}</h4>}
@@ -124,7 +134,7 @@ const DepartmentCreatePage = () => {
       />
       {errors.status && <h4>{errors.status.message}</h4>}
       <label>
-        Status:
+        Active:
         <input type="checkbox" {...register('status')} />
       </label>
 

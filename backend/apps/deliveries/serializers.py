@@ -1,14 +1,20 @@
+from wsgiref import validate
+
 from django.db.transaction import atomic
 from rest_framework import serializers
 
 from apps.deliveries.models import DeliveryModel, ImageItemModel, ItemModel
-from core.dataclasses.delivery_dataclass import ItemDataclass
 
 
 class ItemImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ImageItemModel
-        fields = ("image",)
+        fields = ("id", "image", "item_id")
+
+    def create(self, validated_data):
+        ImageItemModel.objects.filter(item_id=validated_data.get("item_id")).delete()
+        image = ImageItemModel.objects.create(**validated_data)
+        return image
 
 
 class ItemSerializer(serializers.ModelSerializer):
@@ -25,14 +31,6 @@ class ItemSerializer(serializers.ModelSerializer):
         )
 
         read_only_fields = ("id",)
-
-    # @atomic
-    # def create(self, validated_data):
-    #     image = validated_data.pop("image")[0]
-
-    #     item: ItemDataclass = ItemModel.objects.create(**validated_data)
-    #     image = ImageItemModel.objects.create(**image, item_id=item.id)
-    #     return item
 
 
 class DeliverySerializer(serializers.ModelSerializer):
@@ -51,7 +49,6 @@ class DeliverySerializer(serializers.ModelSerializer):
 
     @atomic
     def create(self, validated_data):
-        # print("delivery_data", validated_data)
         item = validated_data.pop("item")
         image = item.pop("image")[0]
 
