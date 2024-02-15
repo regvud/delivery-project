@@ -38,7 +38,7 @@
   white-space: nowrap;
   will-change: box-shadow, transform;
   font-size: 1vw;
-  margin-bottom: 10px;
+  margin: 15px 15px 15px 0;
 }
 
 .button:focus {

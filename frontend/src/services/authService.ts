@@ -24,5 +24,11 @@ export const authService = {
       apiService.get<Profile>(urls.auth.profile).then((res) => res.data),
     addAavatar: (avatar: FormData) =>
       apiService.post(urls.profile.addAvatar, avatar),
+    changePassword: (password: string) =>
+      apiService.post(urls.profile.changePassword, { password: password }),
+    changeEmail: (email: string) =>
+      apiService.post(urls.profile.changeEmail, { email: email }),
+    changePhone: (phone: string) =>
+      apiService.post<User>(urls.profile.changePhone, { phone: phone }),
   },
 };

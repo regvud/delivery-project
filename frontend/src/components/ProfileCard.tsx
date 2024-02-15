@@ -4,10 +4,16 @@ import css from './styles/ProfileCard.module.css';
 import { usePage } from '../store/store';
 import defaultAvatar from '../assets/defaultAvatar.jpg';
 import { authService } from '../services/authService';
+import editImg from '../assets/newEdit.png';
+import { phoneRegex } from '../pages/RegiterPage';
+import button from '../pages/styles/DeliveryPage.module.css';
 
 interface ProfileProps {
   profile: Profile;
 }
+const emailRegex = new RegExp(
+  /[a-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[A-Z]{2}|com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum)\b/
+);
 
 const ProfileCard = ({ profile }: ProfileProps) => {
   const lastLogin: string = new Date(profile.last_login).toLocaleDateString(
@@ -15,13 +21,60 @@ const ProfileCard = ({ profile }: ProfileProps) => {
   );
   const setRefresh = usePage((state) => state.setRefresh);
   const avatar = profile?.avatar[0]?.avatar;
+
+  //image
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageSrc, setImageSrc] = useState<string>(avatar || defaultAvatar);
   const [imageMsg, setImageMsg] = useState<string>('');
 
-  const handleImageClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
+  //bools
+  const [showEmailInput, setShowEmailInput] = useState<boolean>(false);
+  const [showPhoneInput, setShowPhoneInput] = useState<boolean>(false);
+  const [isPhoneValid, setIsPhoneValid] = useState<boolean>();
+  const [isEmailValid, setIsEmailValid] = useState<boolean>();
+
+  //variables
+  const [email, setEmail] = useState(profile.email);
+  const [phone, setPhone] = useState(profile.phone);
+
+  //inputs
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const emailInputRef = React.useRef<HTMLInputElement>(null);
+  const phoneInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handlePhoneSave = async () => {
+    const phone = phoneInputRef?.current?.value;
+    if (phone) {
+      const isValid = phoneRegex.test(phone);
+      if (isValid) {
+        const { data: user } = await authService.profile.changePhone(phone);
+        setIsPhoneValid(isValid);
+        setShowPhoneInput(false);
+        setPhone(user.phone);
+        return;
+      }
+      setIsPhoneValid(isValid);
+    }
+  };
+
+  const handleEmailSave = async () => {
+    const email = emailInputRef?.current?.value;
+    if (email) {
+      const isValid = emailRegex.test(email);
+      if (isValid) {
+        const { data: user } = await authService.profile.changeEmail(email);
+        setIsEmailValid(isValid);
+        setShowEmailInput(false);
+        setEmail(user.email);
+        return;
+      }
+      setIsEmailValid(isValid);
+    }
+  };
+
+  const handleImageClick = (ref: React.RefObject<HTMLInputElement>) => {
+    if (ref.current) {
+      ref.current.click();
     }
   };
 
@@ -62,11 +115,9 @@ const ProfileCard = ({ profile }: ProfileProps) => {
     }
   };
 
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
-
   return (
     <>
-      <div className="d-flex align-items-center justify-content-center">
+      <div>
         <input
           type="file"
           accept="image/*"
@@ -74,18 +125,70 @@ const ProfileCard = ({ profile }: ProfileProps) => {
           ref={fileInputRef}
           onChange={handleFileChange}
         />
-        <div className="d-flex align-items-center">
+        <div>
           <img
             className={css.profileImage}
             src={imageSrc}
-            onClick={handleImageClick}
+            onClick={() => handleImageClick(fileInputRef)}
           />
           {imageMsg && <span style={{ paddingLeft: '10px' }}>{imageMsg}</span>}
         </div>
       </div>
 
-      <h3>Email: {profile.email}</h3>
-      <h3>Phone: {profile.phone}</h3>
+      <div className={css.divs}>
+        <h3>Email: {email}</h3>
+        <img
+          className={css.images}
+          onClick={() => setShowEmailInput((prev) => !prev)}
+          src={editImg}
+          alt="edit"
+        />
+        {showEmailInput && (
+          <div>
+            {isEmailValid === false && <span>Invalid email</span>}
+            <input
+              className={css.inputs}
+              type="text"
+              ref={emailInputRef}
+              placeholder="enter your new email here"
+            />
+            <button
+              className={button.button}
+              style={{ marginLeft: '15px', fontSize: '15px' }}
+              onClick={handleEmailSave}
+            >
+              save
+            </button>
+          </div>
+        )}
+      </div>
+      <div className={css.divs}>
+        <h3>Phone: {phone}</h3>
+        <img
+          className={css.images}
+          onClick={() => setShowPhoneInput((prev) => !prev)}
+          src={editImg}
+          alt="edit"
+        />
+        {showPhoneInput && (
+          <div>
+            {isPhoneValid === false && <span>Invalid phone</span>}
+            <input
+              className={css.inputs}
+              type="text"
+              ref={phoneInputRef}
+              placeholder="enter your new phone here"
+            />
+            <button
+              className={button.button}
+              style={{ marginLeft: '15px', fontSize: '15px' }}
+              onClick={handlePhoneSave}
+            >
+              save
+            </button>
+          </div>
+        )}
+      </div>
       <h3>Last login: {lastLogin}</h3>
     </>
   );

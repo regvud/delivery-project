@@ -43,5 +43,8 @@ export const urls = {
     base: profile,
     delivery: (id: number) => `${profile}${delivery}/${id}`,
     addAvatar: `${users}/add_avatar`,
+    changePassword: `${users}/change_password`,
+    changeEmail: `${users}/change_email`,
+    changePhone: `${users}/change_phone`,
   },
 };

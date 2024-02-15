@@ -19,8 +19,6 @@ export const DepartmentDetails = (props: { department: Department }) => {
       setMsg('Only admins can perform this action.');
     }
   };
-  console.log('status', status);
-  console.log('inner=status', innerStatus);
   return (
     <div className={css.deliveryDetailsContainer}>
       <h3>ID: {id}</h3>

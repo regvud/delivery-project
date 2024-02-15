@@ -7,3 +7,23 @@
 .profileImage:hover {
   cursor: pointer;
 }
+
+.divs {
+  display: flex;
+  align-items: center;
+}
+
+.images {
+  width: 30px;
+  height: 30px;
+  margin-left: 15px;
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+.inputs {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
