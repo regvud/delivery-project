@@ -1,5 +1,3 @@
-import json
-
 from django.contrib.auth import get_user_model
 from django.db.transaction import atomic
 from rest_framework import generics, status
@@ -8,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import Response
 
 from apps.deliveries.choices import StatusChoices
-from apps.deliveries.models import DeliveryModel, ItemModel
+from apps.deliveries.models import DeliveryModel
 from apps.deliveries.serializers import (
     DeliveryConvertedFieldsSerializer,
     DeliverySerializer,
@@ -17,8 +15,6 @@ from apps.deliveries.serializers import (
 )
 from apps.departments.models import DepartmentModel
 from core.dataclasses.delivery_dataclass import DeliveryDataclass
-from core.dataclasses.department_dataclass import DepartmentDataclass
-from core.dataclasses.user_dataclass import UserDataclass
 
 UserModel = get_user_model()
 

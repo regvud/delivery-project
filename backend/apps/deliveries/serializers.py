@@ -1,5 +1,3 @@
-from wsgiref import validate
-
 from django.db.transaction import atomic
 from rest_framework import serializers
 

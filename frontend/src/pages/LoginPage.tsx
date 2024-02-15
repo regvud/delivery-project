@@ -61,41 +61,35 @@ const LoginPage = () => {
   };
 
   return (
-    <>
-      <h1 className={css.welcomeStyles}>
-        Welcome! You have to login to use all the features.
-      </h1>
-      <form className={css.formStyles} onSubmit={handleSubmit(submit)}>
-        {errors.email && (
-          <h4 className="text-red-500">{errors.email.message}</h4>
-        )}
-        <input
-          type="text"
-          placeholder="email"
-          className={css.inputStyles}
-          {...register('email', { required: 'Email is required' })}
-        />
+    <form className={css.formStyles} onSubmit={handleSubmit(submit)}>
+      <h1>Welcome!</h1>
+      <h2>Login to use all features.</h2>
+      {errors.email && <span>{errors.email.message}</span>}
+      <input
+        type="text"
+        placeholder="email"
+        className={css.inputStyles}
+        {...register('email', { required: 'Enter your email' })}
+      />
 
-        <input
-          type="password"
-          placeholder="password"
-          className={css.inputStyles}
-          {...register('password', { required: 'Password is required' })}
-        />
-
-        {errors.root && <h4>{errors.root.message}</h4>}
-
-        <button type="submit" className={button.button}>
-          Login
-        </button>
-        <button
-          className={css.forgotPassBtn}
-          onClick={() => navigate('/request/recover')}
-        >
-          Forgot password?
-        </button>
-      </form>
-    </>
+      {errors.password && <span>{errors.password.message}</span>}
+      <input
+        type="password"
+        placeholder="password"
+        className={css.inputStyles}
+        {...register('password', { required: 'Enter your password' })}
+      />
+      {errors.root && <span>{errors.root.message}</span>}
+      <button type="submit" className={button.button}>
+        Login
+      </button>
+      <button
+        className={css.forgotPassBtn}
+        onClick={() => navigate('/request/recover')}
+      >
+        Forgot password?
+      </button>
+    </form>
   );
 };
 

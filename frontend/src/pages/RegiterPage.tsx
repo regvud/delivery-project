@@ -8,7 +8,7 @@ import { ResponseError } from '../types/axiosTypes';
 import { useState } from 'react';
 import button from './styles/DeliveryPage.module.css';
 
-const phoneRegex = new RegExp(/^3?8?(0\d{9})$/);
+export const phoneRegex = new RegExp(/^3?8?(0\d{9})$/);
 
 const schema = z.object({
   email: z.string().email('Email example: user@gmail.com'),

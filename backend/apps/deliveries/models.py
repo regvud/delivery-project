@@ -17,7 +17,7 @@ class ItemModel(BaseModel):
     price = models.DecimalField(
         decimal_places=2,
         max_digits=8,
-        validators=[V.MinValueValidator(1), V.MaxValueValidator(999999)],
+    validators=[V.MinValueValidator(1), V.MaxValueValidator(999999)],
     )
     size = models.CharField(max_length=6, choices=SizeChoices.choices)
 

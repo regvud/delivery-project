@@ -1,4 +1,5 @@
 from django.contrib.auth.base_user import BaseUserManager
+from rest_framework.authentication import get_user_model
 
 
 class UserManager(BaseUserManager):
@@ -27,5 +28,26 @@ class UserManager(BaseUserManager):
             raise ValueError("Superuser must contain is_active status = True")
 
         user = self.create_user(email, password, **extra_kwargs)
+
+        return user
+
+    def change_password(self, email, password):
+        user = get_user_model().objects.get(email=email)
+        user.set_password(password)
+        user.save()
+
+        return user
+
+    def change_email(self, email, new_email):
+        user = get_user_model().objects.get(email=email)
+        user.email = new_email
+        user.save()
+
+        return user
+
+    def change_phone(self, email, phone):
+        user = get_user_model().objects.get(email=email)
+        user.phone = phone
+        user.save()
 
         return user

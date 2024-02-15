@@ -5,9 +5,11 @@ from rest_framework.authentication import get_user_model
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import Response
 
+from apps.auth.serializers import EmailSerializer, PasswordSerializer
 from apps.users.models import AvatarModel
 from apps.users.serializers import (
     AvatarSerializer,
+    PhoneSerializer,
     UserDeliveriesSerializer,
     UserProfileSerializer,
     UserSerializer,
@@ -102,3 +104,48 @@ class UserAvatarView(generics.GenericAPIView):
         serializer.save(user_id=user_id)
 
         return Response(serializer.data, status.HTTP_200_OK)
+
+
+class ChangePasswordView(generics.GenericAPIView):
+    def post(self, *args, **kwargs):
+        data = self.request.data
+
+        serializer = PasswordSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+
+        password = serializer.validated_data.get("password")
+        UserModel.objects.change_password(
+            email=self.request.user.email, password=password
+        )
+
+        return Response({"detail": "password changed"}, status.HTTP_200_OK)
+
+
+class ChangeEmailView(generics.GenericAPIView):
+    def post(self, *args, **kwargs):
+        data = self.request.data
+
+        serializer = EmailSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+
+        new_email = serializer.validated_data.get("email")
+        user = UserModel.objects.change_email(
+            email=self.request.user.email, new_email=new_email
+        )
+
+        return Response(UserSerializer(user).data, status.HTTP_200_OK)
+
+
+class ChangePhoneView(generics.GenericAPIView):
+    def post(self, *args, **kwargs):
+        data = self.request.data
+
+        serializer = PhoneSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+
+        phone = serializer.validated_data.get("phone")
+        user = UserModel.objects.change_phone(
+            email=self.request.user.email, phone=phone
+        )
+
+        return Response(UserSerializer(user).data, status.HTTP_200_OK)

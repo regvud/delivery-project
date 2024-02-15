@@ -12,6 +12,12 @@ from core.services.email_service import EmailService
 UserModel = get_user_model()
 
 
+class PhoneSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserModel
+        fields = ("phone",)
+
+
 class AvatarSerializer(serializers.ModelSerializer):
     class Meta:
         model = AvatarModel
@@ -27,7 +33,6 @@ class AvatarSerializer(serializers.ModelSerializer):
 
     @atomic
     def create(self, validated_data):
-        print(validated_data)
         return super().create(validated_data)
 
 

@@ -2,7 +2,6 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { Delivery } from '../types/deliveryTypes';
 import { deliveryService } from '../services/deliveryService';
 import { useEffect, useRef, useState } from 'react';
-import { ResponseError } from '../types/axiosTypes';
 import { useNavigate } from 'react-router-dom';
 import { urls } from '../constants/urls';
 import { useFetch } from '../hooks/useFetch';
@@ -10,11 +9,11 @@ import { departmentService } from '../services/departmentService';
 import button from './styles/DeliveryPage.module.css';
 import defaultImageURL from '../assets/image.webp';
 import css from './styles/CreateDelivery.module.css';
+import { phoneRegex } from './RegiterPage';
 
 const CreateDeliveryPage = () => {
   const navigate = useNavigate();
   const [showSuccessCreation, setShowSuccessCreation] = useState(false);
-  const [responseError, setRepsonseError] = useState<ResponseError>();
   const [radioButtonInput, setRadioButtonInput] = useState<string>();
   const [imageSrc, setImageSrc] = useState<string>(defaultImageURL);
   const [imageFile, setImageFile] = useState<File>();
@@ -90,65 +89,65 @@ const CreateDeliveryPage = () => {
       ) : (
         <h1>Create Delivery</h1>
       )}
-      {responseError?.detail?.includes('Department') && (
-        <h5 style={{ margin: 0, color: 'red' }}>{responseError.detail}</h5>
-      )}
 
-      <label
-        style={{ fontWeight: 'bold', marginBottom: '10px', display: 'block' }}
+      {errors.department && <span>{errors.department.message}</span>}
+      <select
+        id="department-select"
+        placeholder="department"
+        {...register('department', {
+          required: 'Select valid department',
+          valueAsNumber: true,
+        })}
       >
-        {errors.department && (
-          <span style={{ color: 'red' }}>{errors.department.message}</span>
-        )}
-        <select
-          style={{ width: '100%' }}
-          id="department-select"
-          placeholder="department"
-          {...register('department', {
-            required: 'Select valid department',
-            valueAsNumber: true,
-          })}
-        >
-          <option value="">select department</option>
-          {departments?.map((department) => (
-            <option
-              value={department.general_number}
-              key={department.general_number}
-            >
-              № {department.general_number} - {department.city}
-            </option>
-          ))}
-        </select>
-      </label>
+        <option value="">select department</option>
+        {departments?.map((department) => (
+          <option
+            value={department.general_number}
+            key={department.general_number}
+          >
+            № {department.general_number} - {department.city}
+          </option>
+        ))}
+      </select>
 
-      {responseError?.detail?.includes('phone') && (
-        <h5 style={{ margin: 0, color: 'red' }}>{responseError.detail}</h5>
-      )}
-
+      {errors.receiver && <span>{errors.receiver.message}</span>}
       <input
         type="text"
         placeholder="receiver"
         {...register('receiver', {
-          required: true,
+          required: 'Provide phone for receiver',
+          pattern: {
+            value: phoneRegex,
+            message: 'Phone format: 380632503425',
+          },
         })}
       />
 
+      {errors?.item?.label && <span>{errors.item.label.message}</span>}
       <input
         type="text"
         placeholder="label"
-        {...register('item.label', { required: true })}
+        {...register('item.label', {
+          required: 'Label is required',
+          pattern: {
+            value: /^(?=\s*\S)[\w\s]{1,30}$/,
+            message: 'Special characters not allowed, max length 30',
+          },
+        })}
       />
+
+      {errors?.item?.price && <span>{errors.item.price.message}</span>}
       <input
         type="number"
         step=".01"
         placeholder="price"
         {...register('item.price', {
-          required: true,
-          min: 1,
+          required: 'Minimal 1, maximum 999999',
+          min: { value: 1, message: 'Minimal price is 1' },
+          max: { value: 999999, message: 'Maximum price is 999999' },
           valueAsNumber: true,
         })}
       />
-
       <input
         type="file"
         accept="image/*"
@@ -183,9 +182,7 @@ const CreateDeliveryPage = () => {
           margin: 5,
         }}
       >
-        {!radioButtonInput && (
-          <span style={{ color: 'crimson' }}>Select prefered size:</span>
-        )}
+        {!radioButtonInput && <span>Select prefered size:</span>}
         <label>
           <input
             type="radio"

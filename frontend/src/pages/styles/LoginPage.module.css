@@ -3,6 +3,13 @@
   flex-direction: column;
   max-width: 300px;
   margin: 0 auto;
+  text-align: center;
+}
+.formStyles > h1 {
+  margin-bottom: 0;
+}
+.formStyles > span {
+  color: crimson;
 }
 
 .forgotPassBtn {
@@ -26,8 +33,11 @@
 }
 
 .inputStyles {
-  margin: 8px 0;
+  margin-bottom: 10px;
   padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 .buttonStyles {
@@ -35,10 +45,6 @@
   color: white;
   padding: 10px;
   cursor: pointer;
-}
-
-.welcomeStyles {
-  text-align: center;
 }
 
 .loggedInStyles {
