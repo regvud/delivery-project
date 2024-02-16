@@ -15,9 +15,16 @@ import { CheckEmailPage } from './pages/CheckEmailPage';
 import { DepartmentCreatePage } from './pages/DepartmentCreatePage';
 import { DepartmentsPage } from './pages/DepartmentsPage';
 import { DepartmentDetailPage } from './pages/DepartmentDetailPage';
+import { authService } from './services/authService';
 
-const { getItem } = useLocalStorage();
+const { getItem, setItem } = useLocalStorage();
 const accessToken = getItem('access');
+
+const checkAuth = async () => {
+  const res = await authService.me().then((user) => user.is_staff);
+  setItem('isStaff', `${res}`);
+  return res;
+};
 
 export const router = createBrowserRouter([
   {
@@ -47,6 +54,7 @@ export const router = createBrowserRouter([
       {
         path: 'departments/create',
         element: <DepartmentCreatePage />,
+        loader: checkAuth,
       },
       {
         path: 'deliveries',

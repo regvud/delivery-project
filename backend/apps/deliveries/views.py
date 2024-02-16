@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db.transaction import atomic
 from rest_framework import generics, status
-from rest_framework.fields import ObjectDoesNotExist
+from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import Response
 
@@ -58,13 +58,13 @@ class DeliveryCreateView(generics.CreateAPIView):
 
     def get_receiver(self, phone) -> int:
         if phone == self.request.user.phone:
-            raise Exception("You cannot send to yourself")
+            raise NotFound("You cannot send to yourself")
 
         try:
             receiver = UserModel.objects.get(phone=phone)
             return receiver.id
         except UserModel.DoesNotExist:
-            raise ObjectDoesNotExist(
+            raise NotFound(
                 "This phone number does not belong to any user, try another number"
             )
 
@@ -73,7 +73,7 @@ class DeliveryCreateView(generics.CreateAPIView):
             department = DepartmentModel.objects.get(general_number=department)
             return department.id
         except DepartmentModel.DoesNotExist:
-            raise ObjectDoesNotExist(
+            raise NotFound(
                 f"Department with general number {department} does not exist"
             )
 

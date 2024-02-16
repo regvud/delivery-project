@@ -37,7 +37,6 @@ const ProfileCard = ({ profile }: ProfileProps) => {
   const [isEmailValid, setIsEmailValid] = useState<boolean>();
 
   //variables
-  const [email, setEmail] = useState(profile.email);
   const [phone, setPhone] = useState(profile.phone);
 
   //inputs
@@ -146,7 +145,7 @@ const ProfileCard = ({ profile }: ProfileProps) => {
       </div>
 
       <div className={css.divs}>
-        <h3>Email: {email}</h3>
+        <h3>Email: {profile.email}</h3>
         <img
           className={css.images}
           onClick={() => setShowEmailInput((prev) => !prev)}

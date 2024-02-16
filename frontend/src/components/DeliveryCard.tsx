@@ -32,10 +32,22 @@ const DeliveryCard = ({
           <div>
             <h2>Item</h2>
             <hr />
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+            >
+              <img
+                className={css.image}
+                src={delivery.item.image[0].image}
+                alt={delivery.item.label}
+              />
+            </div>
+
             <h3>Label: {delivery.item.label}</h3>
             <h3>Price: {delivery.item.price}</h3>
             <h3>Size: {delivery.item.size}</h3>
-            <img src={delivery.item.image[0].image} alt={delivery.item.label} />
           </div>
         </div>
       ) : (

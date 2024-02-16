@@ -66,10 +66,11 @@ const RegisterPage = () => {
   return (
     <>
       <form onSubmit={handleSubmit(submit)} className={css.form}>
-        <h1 className={css.h1}>Registration</h1>
+        <h1>Registration</h1>
+        <hr />
 
         {errors.email && (
-          <h4 className="text-red-500">{errors.email.message}</h4>
+          <span className="text-red-500">{errors.email.message}</span>
         )}
         <input
           className={css.input}
@@ -79,7 +80,7 @@ const RegisterPage = () => {
         />
 
         {errors.phone && (
-          <h4 className="text-red-500">{errors.phone.message}</h4>
+          <span className="text-red-500">{errors.phone.message}</span>
         )}
         <input
           type="text"
@@ -89,7 +90,7 @@ const RegisterPage = () => {
         />
 
         {errors.password && (
-          <h4 className="text-red-500">{errors.password.message}</h4>
+          <span className="text-red-500">{errors.password.message}</span>
         )}
         <input
           type="password"
@@ -101,7 +102,9 @@ const RegisterPage = () => {
         />
 
         {errors.validation_password && (
-          <h4 className="text-red-500">{errors.validation_password.message}</h4>
+          <span className="text-red-500">
+            {errors.validation_password.message}
+          </span>
         )}
         <input
           type="password"
@@ -112,9 +115,11 @@ const RegisterPage = () => {
           className={css.input}
         />
 
-        {errors.root && <h4>{errors.root.message}</h4>}
+        {errors.root && <span>{errors.root.message}</span>}
 
-        <button className={button.button}>Register</button>
+        <button className={button.button} style={{ width: '100%' }}>
+          Register
+        </button>
       </form>
     </>
   );

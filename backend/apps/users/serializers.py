@@ -50,6 +50,7 @@ class UserSerializer(serializers.ModelSerializer):
             "password",
             "avatar",
             "is_staff",
+            "is_active",
             "is_superuser",
             "sending",
             "receiving",

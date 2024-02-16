@@ -7,6 +7,12 @@
   margin: 0 auto;
 }
 
+.title {
+  font-family: 'JetBrains Mono';
+  text-align: center;
+  justify-content: center;
+}
+
 .form > input {
   margin-bottom: 20px;
   padding: 8px;

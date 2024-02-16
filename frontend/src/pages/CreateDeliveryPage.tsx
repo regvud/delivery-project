@@ -10,13 +10,21 @@ import button from './styles/DeliveryPage.module.css';
 import defaultImageURL from '../assets/image.webp';
 import css from './styles/CreateDelivery.module.css';
 import { phoneRegex } from './RegiterPage';
+import { AxiosError } from 'axios';
 
+type RespErr = {
+  detail: string;
+};
 const CreateDeliveryPage = () => {
   const navigate = useNavigate();
   const [showSuccessCreation, setShowSuccessCreation] = useState(false);
   const [radioButtonInput, setRadioButtonInput] = useState<string>();
   const [imageSrc, setImageSrc] = useState<string>(defaultImageURL);
   const [imageFile, setImageFile] = useState<File>();
+
+  //response errors
+  const [creationErr, setCreationErr] = useState<RespErr | unknown>();
+  const [imageErr, setImageErr] = useState<RespErr | unknown>();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -45,17 +53,25 @@ const CreateDeliveryPage = () => {
     const formData = new FormData();
     formData.append('image', imageFile);
 
-    const { data: createdDelivery, request: deliveryRequest } =
-      await deliveryService.create(delivery);
+    try {
+      const { data: createdDelivery, request } = await deliveryService.create(
+        delivery
+      );
 
-    if (!deliveryRequest || deliveryRequest.status !== 201) {
-      setError('root', { message: 'Error creating delivery' });
-    } else {
-      setShowSuccessCreation(true);
+      if (request.status === 201) {
+        setShowSuccessCreation(true);
 
-      await deliveryService.addImage(createdDelivery.id, formData);
-
-      navigate(urls.profile.delivery(createdDelivery.id));
+        try {
+          await deliveryService.addImage(createdDelivery.id, formData);
+          navigate(urls.profile.delivery(createdDelivery.id));
+        } catch (e) {
+          const imageErr = e as AxiosError;
+          setImageErr(imageErr?.response?.data);
+        }
+      }
+    } catch (e) {
+      const creationErr = e as AxiosError;
+      setCreationErr(creationErr?.response?.data);
     }
   };
 
@@ -85,9 +101,9 @@ const CreateDeliveryPage = () => {
   return (
     <form className={css.form} onSubmit={handleSubmit(saveDelivery)}>
       {showSuccessCreation ? (
-        <h1>Successfully created!</h1>
+        <h1 className={css.title}>Successfully created!</h1>
       ) : (
-        <h1>Create Delivery</h1>
+        <h1 className={css.title}>Create Delivery</h1>
       )}
 
       {errors.department && <span>{errors.department.message}</span>}
@@ -111,6 +127,12 @@ const CreateDeliveryPage = () => {
       </select>
 
       {errors.receiver && <span>{errors.receiver.message}</span>}
+      {creationErr !== null &&
+        typeof creationErr === 'object' &&
+        'detail' in creationErr && (
+          <span>{(creationErr as RespErr).detail}</span>
+        )}
+
       <input
         type="text"
         placeholder="receiver"
@@ -173,6 +195,9 @@ const CreateDeliveryPage = () => {
           onClick={handleImageClick}
         />
         {errors.item?.image && <span>{`<- ${errors.item.image.message}`}</span>}
+        {imageErr !== null &&
+          typeof imageErr === 'object' &&
+          'detail' in imageErr && <span>{(imageErr as RespErr).detail}</span>}
       </div>
 
       <div

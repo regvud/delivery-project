@@ -5,12 +5,12 @@ from enum import Enum
 class ActionTokenEnum(Enum):
     ACTIVATE = (
         "activate",
-        timedelta(minutes=5),
+        timedelta(hours=1),
     )
 
     RECOVERY = (
         "recovery",
-        timedelta(minutes=10),
+        timedelta(hours=5),
     )
 
     def __init__(self, token_type, lifetime):

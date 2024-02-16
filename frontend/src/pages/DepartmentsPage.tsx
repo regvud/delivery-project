@@ -42,9 +42,7 @@ const DepartmentsPage = () => {
   if (!departments?.results[0])
     return (
       <div className={css.container}>
-        <h1 style={{ textAlign: 'center' }}>
-          Department list is currently empty
-        </h1>
+        <h1>Department list is currently empty</h1>
         <button className={css.button} onClick={handleClick}>
           Create Department
         </button>

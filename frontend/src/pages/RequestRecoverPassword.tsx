@@ -3,6 +3,8 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { authService } from '../services/authService';
 import { useState } from 'react';
+import button from '../pages/styles/DeliveryPage.module.css';
+import css from '../pages/styles/LoginPage.module.css';
 
 const schema = z.object({
   email: z.string().email('Email example: user@gmail.com'),
@@ -45,12 +47,14 @@ const RequestRecoverPassword = () => {
     );
 
   return (
-    <form onSubmit={handleSubmit(submit)}>
+    <form className={css.formStyles} onSubmit={handleSubmit(submit)}>
       <h2>Enter your account email: </h2>
       {errors.email && <h4 className="text-red-500">{errors.email.message}</h4>}
 
-      <input type="text" {...register('email')} />
-      <button>send</button>
+      <input className={css.inputStyles} type="text" {...register('email')} />
+      <button className={button.button} style={{ width: '100%' }}>
+        send
+      </button>
 
       {errors.root && <h4 className="text-red-500">{errors.root.message}</h4>}
     </form>

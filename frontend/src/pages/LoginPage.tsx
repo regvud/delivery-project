@@ -11,7 +11,7 @@ import { AuthResponse } from '../types/axiosTypes';
 import { useEffect } from 'react';
 
 const schema = z.object({
-  email: z.string().email('Email example: user@gmail.com'),
+  email: z.string().email('Enter your email'),
   password: z.string(),
 });
 
@@ -62,8 +62,9 @@ const LoginPage = () => {
 
   return (
     <form className={css.formStyles} onSubmit={handleSubmit(submit)}>
-      <h1>Welcome!</h1>
-      <h2>Login to use all features.</h2>
+      <h1>Login</h1>
+      <hr />
+
       {errors.email && <span>{errors.email.message}</span>}
       <input
         type="text"
@@ -71,7 +72,6 @@ const LoginPage = () => {
         className={css.inputStyles}
         {...register('email', { required: 'Enter your email' })}
       />
-
       {errors.password && <span>{errors.password.message}</span>}
       <input
         type="password"
@@ -80,7 +80,7 @@ const LoginPage = () => {
         {...register('password', { required: 'Enter your password' })}
       />
       {errors.root && <span>{errors.root.message}</span>}
-      <button type="submit" className={button.button}>
+      <button type="submit" className={button.button} style={{ width: '100%' }}>
         Login
       </button>
       <button

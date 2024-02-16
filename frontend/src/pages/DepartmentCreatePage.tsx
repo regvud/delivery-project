@@ -6,10 +6,10 @@ import { cityService } from '../services/cityService';
 import { useNavigate } from 'react-router-dom';
 import button from './styles/DeliveryPage.module.css';
 import css from './styles/CreateDelivery.module.css';
-import { authService } from '../services/authService';
 import { useEffect, useState } from 'react';
 import { City } from '../types/departmentTypes';
 import { AxiosError } from 'axios';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 
 const schema = z.object({
   general_number: z
@@ -31,6 +31,9 @@ const schema = z.object({
 type DepartmentSchema = z.infer<typeof schema>;
 
 const DepartmentCreatePage = () => {
+  const { getItem } = useLocalStorage();
+  const isStaff = getItem('isStaff');
+
   const {
     register,
     handleSubmit,
@@ -42,21 +45,15 @@ const DepartmentCreatePage = () => {
   const navigate = useNavigate();
   const [regions, setRegions] = useState<string[]>([]);
   const [cities, setCities] = useState<void | City[]>([]);
-  const [isStaff, setIsStaff] = useState<boolean>();
   const [responseError, setResponseError] = useState<GenNumError | unknown>();
 
   useEffect(() => {
-    authService.me().then((user) => setIsStaff(user.is_staff));
     cityService().then((citiesData) => setCities(citiesData));
     departmentService.regions().then((regionsData) => setRegions(regionsData));
   }, []);
 
-  if (!isStaff)
-    return (
-      <h1 style={{ textAlign: 'center' }}>
-        Only admins can create departments.
-      </h1>
-    );
+  if (isStaff === 'false')
+    return <h1 className={css.title}>Only admins can create departments.</h1>;
 
   const submit: SubmitHandler<DepartmentSchema> = async (department) => {
     try {
@@ -72,7 +69,7 @@ const DepartmentCreatePage = () => {
   };
   return (
     <form className={css.form} onSubmit={handleSubmit(submit)}>
-      <h1>Create Department</h1>
+      <h1 className={css.title}>Create Department</h1>
 
       {errors.city && <span>{errors.city.message}</span>}
       <select
@@ -145,9 +142,6 @@ const DepartmentCreatePage = () => {
         Active:
         <input type="checkbox" {...register('status')} />
       </label>
-
-      {/* {errors.root && <span>{errors.root.message}</span>} */}
-      {/* {responseError?.detail && <span>{responseError.detail}</span>} */}
 
       <button className={button.button}>Create</button>
     </form>

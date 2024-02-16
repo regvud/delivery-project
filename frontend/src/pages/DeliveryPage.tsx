@@ -39,7 +39,9 @@ const DeliveryPage = () => {
 
   if (!deliveries?.results[0])
     return (
-      <h1 style={{ textAlign: 'center' }}>Delivery list is currently empty</h1>
+      <div className={css.container}>
+        <h1>Delivery list is currently empty</h1>
+      </div>
     );
 
   return (
