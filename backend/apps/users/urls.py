@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import (
+    ChangeEmailRequestView,
     ChangeEmailView,
     ChangePasswordView,
     ChangePhoneView,
@@ -20,6 +21,13 @@ urlpatterns = [
     path("/profile", UserProfileView.as_view(), name="user_profile"),
     path("/add_avatar", UserAvatarView.as_view(), name="user_avatar"),
     path("/change_password", ChangePasswordView.as_view(), name="user_change_password"),
-    path("/change_email", ChangeEmailView.as_view(), name="user_change_email"),
+    path(
+        "/change_email/<str:email>", ChangeEmailView.as_view(), name="user_change_email"
+    ),
+    path(
+        "/request/change_email",
+        ChangeEmailRequestView.as_view(),
+        name="user_change_email_request",
+    ),
     path("/change_phone", ChangePhoneView.as_view(), name="user_change_phone"),
 ]

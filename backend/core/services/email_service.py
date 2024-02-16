@@ -40,3 +40,13 @@ class EmailService:
         cls.__send_email(
             user.email, "recover_password.html", {"url": url}, "Recover Password"
         )
+
+    @classmethod
+    def change_email(cls, new_email):
+        url = f"http://localhost:80/email/check-page/{new_email}"
+        cls.__send_email(
+            new_email,
+            "change_email.html",
+            {"url": url},
+            f"Change Email to {new_email}",
+        )

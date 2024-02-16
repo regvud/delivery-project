@@ -7,6 +7,7 @@ import { authService } from '../services/authService';
 import editImg from '../assets/newEdit.png';
 import { phoneRegex } from '../pages/RegiterPage';
 import button from '../pages/styles/DeliveryPage.module.css';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 
 interface ProfileProps {
   profile: Profile;
@@ -19,6 +20,8 @@ const ProfileCard = ({ profile }: ProfileProps) => {
   const lastLogin: string = new Date(profile.last_login).toLocaleDateString(
     'es-CL'
   );
+
+  const { setItem } = useLocalStorage();
   const setRefresh = usePage((state) => state.setRefresh);
   const avatar = profile?.avatar[0]?.avatar;
 
@@ -42,6 +45,8 @@ const ProfileCard = ({ profile }: ProfileProps) => {
   const emailInputRef = React.useRef<HTMLInputElement>(null);
   const phoneInputRef = React.useRef<HTMLInputElement>(null);
 
+  const [loader, setLoader] = useState(false);
+
   const handlePhoneSave = async () => {
     const phone = phoneInputRef?.current?.value;
     if (phone) {
@@ -62,10 +67,15 @@ const ProfileCard = ({ profile }: ProfileProps) => {
     if (email) {
       const isValid = emailRegex.test(email);
       if (isValid) {
-        const { data: user } = await authService.profile.changeEmail(email);
-        setIsEmailValid(isValid);
-        setShowEmailInput(false);
-        setEmail(user.email);
+        setLoader(true);
+        setItem('newEmail', email);
+
+        const { status } = await authService.changeEmailRequest(email);
+
+        status && setLoader(false);
+        if (status === 200) {
+          setIsEmailValid(isValid);
+        }
         return;
       }
       setIsEmailValid(isValid);
@@ -145,20 +155,28 @@ const ProfileCard = ({ profile }: ProfileProps) => {
         />
         {showEmailInput && (
           <div>
-            {isEmailValid === false && <span>Invalid email</span>}
+            {isEmailValid === false && (
+              <span style={{ marginRight: 10 }}>Invalid email</span>
+            )}
             <input
               className={css.inputs}
               type="text"
               ref={emailInputRef}
               placeholder="enter your new email here"
             />
-            <button
-              className={button.button}
-              style={{ marginLeft: '15px', fontSize: '15px' }}
-              onClick={handleEmailSave}
-            >
-              save
-            </button>
+            {loader ? (
+              <span style={{ marginLeft: 5 }}>please wait</span>
+            ) : isEmailValid !== true ? (
+              <button
+                className={button.button}
+                style={{ marginLeft: '15px', fontSize: '15px' }}
+                onClick={handleEmailSave}
+              >
+                save
+              </button>
+            ) : (
+              <span style={{ marginLeft: 5 }}>check email</span>
+            )}
           </div>
         )}
       </div>

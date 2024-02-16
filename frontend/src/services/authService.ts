@@ -19,6 +19,8 @@ export const authService = {
     axios.post(`${baseURL}${urls.auth.recover(token)}`, { password: password }),
   recoverRequest: (email: string) =>
     axios.post(`${baseURL}${urls.auth.recoverRequest}`, { email: email }),
+  changeEmailRequest: (email: string) =>
+    apiService.post(`${urls.auth.changeEmailRequest}`, { email: email }),
   profile: {
     profile: () =>
       apiService.get<Profile>(urls.auth.profile).then((res) => res.data),
@@ -27,7 +29,7 @@ export const authService = {
     changePassword: (password: string) =>
       apiService.post(urls.profile.changePassword, { password: password }),
     changeEmail: (email: string) =>
-      apiService.post(urls.profile.changeEmail, { email: email }),
+      apiService.post(urls.profile.changeEmail(email)),
     changePhone: (phone: string) =>
       apiService.post<User>(urls.profile.changePhone, { phone: phone }),
   },

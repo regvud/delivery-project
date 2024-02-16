@@ -83,7 +83,11 @@ export const router = createBrowserRouter([
     element: <RequestRecoverPassword />,
   },
   {
-    path: 'email/check-page',
+    path: 'email/check-page/',
+    element: <CheckEmailPage />,
+  },
+  {
+    path: 'email/check-page/:new_email',
     element: <CheckEmailPage />,
   },
 ]);

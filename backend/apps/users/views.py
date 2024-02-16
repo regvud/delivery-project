@@ -15,6 +15,7 @@ from apps.users.serializers import (
     UserSerializer,
 )
 from core.permissions import IsAdmin
+from core.services.email_service import EmailService
 
 UserModel = get_user_model()
 
@@ -121,11 +122,24 @@ class ChangePasswordView(generics.GenericAPIView):
         return Response({"detail": "password changed"}, status.HTTP_200_OK)
 
 
+class ChangeEmailRequestView(generics.GenericAPIView):
+    def post(self, *args, **kwargs):
+        email = self.request.data
+
+        serializer = EmailSerializer(data=email)
+        serializer.is_valid(raise_exception=True)
+
+        new_email = serializer.validated_data.get("email")
+
+        EmailService.change_email(new_email)
+        return Response({"detail": "check email"}, status.HTTP_200_OK)
+
+
 class ChangeEmailView(generics.GenericAPIView):
     def post(self, *args, **kwargs):
-        data = self.request.data
+        email = kwargs["email"]
 
-        serializer = EmailSerializer(data=data)
+        serializer = EmailSerializer(data={"email": email})
         serializer.is_valid(raise_exception=True)
 
         new_email = serializer.validated_data.get("email")

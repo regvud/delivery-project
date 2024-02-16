@@ -37,6 +37,7 @@ export const urls = {
     activate: (token: string) => `${auth}${activate}/${token}`,
     recover: (token: string) => `${auth}${recover}/${token}`,
     recoverRequest: `${auth}${recover}${request}`,
+    changeEmailRequest: `${users}${request}/change_email`,
     me: `${auth}/me`,
   },
   profile: {
@@ -44,7 +45,7 @@ export const urls = {
     delivery: (id: number) => `${profile}${delivery}/${id}`,
     addAvatar: `${users}/add_avatar`,
     changePassword: `${users}/change_password`,
-    changeEmail: `${users}/change_email`,
+    changeEmail: (email: string) => `${users}/change_email/${email}`,
     changePhone: `${users}/change_phone`,
   },
 };
