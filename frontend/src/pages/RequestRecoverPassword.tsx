@@ -52,7 +52,7 @@ const RequestRecoverPassword = () => {
       {errors.email && <h4 className="text-red-500">{errors.email.message}</h4>}
 
       <input className={css.inputStyles} type="text" {...register('email')} />
-      <button className={button.button} style={{ width: '100%' }}>
+      <button style={{ width: '100%' }} className={button.button}>
         send
       </button>
 
