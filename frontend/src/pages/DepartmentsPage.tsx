@@ -14,6 +14,7 @@ const DepartmentsPage = () => {
   const { getItem } = useLocalStorage();
   const token = getItem('access');
   const currentPage = params.get('page') ?? '1';
+  const userIsStaff = getItem('isStaff');
 
   const {
     data: departments,
@@ -42,7 +43,10 @@ const DepartmentsPage = () => {
   if (!departments?.results[0])
     return (
       <div className={css.container}>
-        <h1>Department list is currently empty</h1>
+        <h1>
+          Department list is currently empty, only admins able to create
+          departments.
+        </h1>
         <button className={css.button} onClick={handleClick}>
           Create Department
         </button>
@@ -57,9 +61,11 @@ const DepartmentsPage = () => {
         setURLSearchParams={setParams}
       />
       <div className={css.container}>
-        <button className={css.button} onClick={handleClick}>
-          Create Department
-        </button>
+        {userIsStaff == 'true' && (
+          <button className={css.button} onClick={handleClick}>
+            Create Department
+          </button>
+        )}
         <div className={css.grid}>
           {departments?.results?.map((department) => (
             <DepartmentCard

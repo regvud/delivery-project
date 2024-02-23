@@ -9,7 +9,6 @@ import css from './styles/CreateDelivery.module.css';
 import { useEffect, useState } from 'react';
 import { City } from '../types/departmentTypes';
 import { AxiosError } from 'axios';
-import { useLocalStorage } from '../hooks/useLocalStorage';
 
 const schema = z.object({
   general_number: z
@@ -31,9 +30,6 @@ const schema = z.object({
 type DepartmentSchema = z.infer<typeof schema>;
 
 const DepartmentCreatePage = () => {
-  const { getItem } = useLocalStorage();
-  const isStaff = getItem('isStaff');
-
   const {
     register,
     handleSubmit,
@@ -51,9 +47,6 @@ const DepartmentCreatePage = () => {
     cityService().then((citiesData) => setCities(citiesData));
     departmentService.regions().then((regionsData) => setRegions(regionsData));
   }, []);
-
-  if (isStaff === 'false')
-    return <h1 className={css.title}>Only admins can create departments.</h1>;
 
   const submit: SubmitHandler<DepartmentSchema> = async (department) => {
     try {

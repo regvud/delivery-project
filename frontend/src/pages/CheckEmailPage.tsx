@@ -1,8 +1,9 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { authService } from '../services/authService';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import css from './styles/CheckEmailPage.module.css';
+import button from './styles/DeliveryPage.module.css';
 
 const CheckEmailPage = () => {
   const { getItem } = useLocalStorage();
@@ -20,12 +21,17 @@ const CheckEmailPage = () => {
     setError(true);
   };
 
-  changeEmail();
+  useEffect(() => {
+    if (storageEmail) changeEmail();
+  }, []);
 
   if (error)
     return (
       <div className={css.container}>
         <h1>Something went wrong, try again.</h1>
+        <button className={button.button} onClick={() => navigate('/register')}>
+          Register
+        </button>
       </div>
     );
   return (

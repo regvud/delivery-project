@@ -15,7 +15,7 @@ class UserModel(AbstractBaseUser, PermissionsMixin, BaseModel):
         max_length=128,
         validators=[
             RegexValidator(
-                regex="^(?=.*[A-Z])(?=.*[a-z])[A-Za-z0-9\s]{8,}$",
+                regex="^(?=.*[a-z])(?=.*[A-Z]).{8,}$",
                 message="Password must contain uppercase and lowercase letters, min 8 characters.",
             ),
         ],
@@ -28,8 +28,8 @@ class UserModel(AbstractBaseUser, PermissionsMixin, BaseModel):
         unique=True,
         validators=[
             RegexValidator(
-                regex="^\+?3?8?(0\d{9})$",
-                message="Invalid phone number, example: 380664172591 ",
+                regex="^(050|063|066|067|068|073|091|092|093|094|095|096|097|098|099)\d{7}$",
+                message="Invalid phone number, example: 0664172591 ",
             )
         ],
     )

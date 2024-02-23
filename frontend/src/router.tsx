@@ -16,14 +16,28 @@ import { DepartmentCreatePage } from './pages/DepartmentCreatePage';
 import { DepartmentsPage } from './pages/DepartmentsPage';
 import { DepartmentDetailPage } from './pages/DepartmentDetailPage';
 import { authService } from './services/authService';
+import { deliveryService } from './services/deliveryService';
 
 const { getItem, setItem } = useLocalStorage();
 const accessToken = getItem('access');
 
 const checkAuth = async () => {
-  const res = await authService.me().then((user) => user.is_staff);
-  setItem('isStaff', `${res}`);
-  return res;
+  if (accessToken) {
+    const res = await authService.me().then((user) => user.is_staff);
+    setItem('isStaff', `${res}`);
+    return res;
+  }
+  return null;
+};
+const checkUserDeliveries = async () => {
+  const res = await deliveryService.getUserDeliveries();
+  if (accessToken && !res.receiving[0] && !res.sending[0]) {
+    setItem('userDeliveries', 'false');
+    return false;
+  }
+  setItem('userDeliveries', 'true');
+
+  return true;
 };
 
 export const router = createBrowserRouter([
@@ -46,6 +60,7 @@ export const router = createBrowserRouter([
       {
         path: 'departments',
         element: <DepartmentsPage />,
+        loader: checkAuth,
       },
       {
         path: 'departments/:id',
@@ -54,7 +69,6 @@ export const router = createBrowserRouter([
       {
         path: 'departments/create',
         element: <DepartmentCreatePage />,
-        loader: checkAuth,
       },
       {
         path: 'deliveries',
@@ -67,6 +81,7 @@ export const router = createBrowserRouter([
       {
         path: 'profile',
         element: <ProfilePage />,
+        loader: checkUserDeliveries,
       },
       {
         path: 'profile/delivery/create',

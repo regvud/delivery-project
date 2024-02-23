@@ -64,3 +64,17 @@
   box-shadow: #d6d6e7 0 3px 7px inset;
   transform: translateY(2px);
 }
+
+.button:disabled {
+  box-shadow: #d6d6e7 0 3px 7px inset;
+  color: crimson;
+  transition: none;
+  transform: none;
+  touch-action: none;
+  cursor: default;
+}
+
+.button:disabled:hover {
+  transform: none;
+  background-color: #d6d6e7;
+}

@@ -7,12 +7,12 @@ import { usePage } from '../store/store';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AuthResponse } from '../types/axiosTypes';
 import { useEffect } from 'react';
+import { AxiosError } from 'axios';
 
 const schema = z.object({
   email: z.string().email('Enter your email'),
-  password: z.string(),
+  password: z.string().min(1, 'Enter your password'),
 });
 
 type UserLoginSchema = z.infer<typeof schema>;
@@ -24,7 +24,18 @@ const LoginPage = () => {
 
   const { pathname } = useLocation();
 
+  const clearStorage = () => {
+    localStorage.removeItem('access');
+    localStorage.removeItem('refresh');
+    localStorage.removeItem('isStaff');
+    localStorage.removeItem('newEmail');
+    localStorage.removeItem('userDeliveries');
+  };
+
   useEffect(() => {
+    clearStorage();
+    setNavbarRefresh();
+
     if (pathname === '/') {
       navigate('/login');
     }
@@ -39,9 +50,12 @@ const LoginPage = () => {
 
   const submit: SubmitHandler<UserLoginSchema> = async (user) => {
     try {
-      const { data, request }: AuthResponse = await authService.login(user);
+      const {
+        data,
+        request: { status },
+      } = await authService.login(user);
 
-      if (request?.status === 200) {
+      if (status === 200) {
         setItem('access', data?.access);
         setItem('refresh', data?.refresh);
 
@@ -49,14 +63,15 @@ const LoginPage = () => {
 
         navigate('/profile');
       }
-
-      if (request?.status === 401) {
+    } catch (e) {
+      const err = e as AxiosError;
+      if (err.response?.status === 401) {
         setError('root', {
           message: `Incorrect email or password, may be you haven't activated your account with email.`,
         });
+      } else {
+        setError('root', { message: `unknown error: ${e}` });
       }
-    } catch (e) {
-      setError('root', { message: `unknown error: ${e}` });
     }
   };
 
@@ -70,14 +85,14 @@ const LoginPage = () => {
         type="text"
         placeholder="email"
         className={css.inputStyles}
-        {...register('email', { required: 'Enter your email' })}
+        {...register('email')}
       />
       {errors.password && <span>{errors.password.message}</span>}
       <input
         type="password"
         placeholder="password"
         className={css.inputStyles}
-        {...register('password', { required: 'Enter your password' })}
+        {...register('password')}
       />
       {errors.root && <span>{errors.root.message}</span>}
       <button type="submit" className={button.button} style={{ width: '100%' }}>

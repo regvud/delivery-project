@@ -17,6 +17,7 @@ const ProfilePage = () => {
   const { getItem } = useLocalStorage();
   const [showUserDeliveries, setShowUserDeliveries] = useState(false);
   const accessToken = getItem('access');
+  const userDeliveries = getItem('userDeliveries');
 
   const {
     data: profile,
@@ -45,13 +46,17 @@ const ProfilePage = () => {
       >
         Send delivery
       </button>
-      <button
-        className={button.button}
-        onClick={() => setShowUserDeliveries((prev) => !prev)}
-      >
-        My deliveries
-      </button>
-      {showUserDeliveries && <UserDeliveries />}
+      {userDeliveries && userDeliveries == 'true' && (
+        <>
+          <button
+            className={button.button}
+            onClick={() => setShowUserDeliveries((prev) => !prev)}
+          >
+            My deliveries
+          </button>
+          {showUserDeliveries && <UserDeliveries />}
+        </>
+      )}
     </div>
   );
 };
