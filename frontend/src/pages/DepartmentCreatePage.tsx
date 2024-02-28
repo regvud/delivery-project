@@ -3,12 +3,13 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { unknown, z } from 'zod';
 import { departmentService } from '../services/departmentService';
 import { cityService } from '../services/cityService';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import button from './styles/DeliveryPage.module.css';
 import css from './styles/CreateDelivery.module.css';
 import { useEffect, useState } from 'react';
 import { City } from '../types/departmentTypes';
 import { AxiosError } from 'axios';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 
 const schema = z.object({
   general_number: z
@@ -38,12 +39,18 @@ const DepartmentCreatePage = () => {
     resolver: zodResolver(schema),
   });
   type GenNumError = { general_number: string[] };
+
   const navigate = useNavigate();
+  const { getItem } = useLocalStorage();
   const [regions, setRegions] = useState<string[]>([]);
   const [cities, setCities] = useState<void | City[]>([]);
   const [responseError, setResponseError] = useState<GenNumError | unknown>();
+  const isStaff = getItem('isStaff');
 
   useEffect(() => {
+    if (isStaff === 'false') {
+      navigate('/profile');
+    }
     cityService().then((citiesData) => setCities(citiesData));
     departmentService.regions().then((regionsData) => setRegions(regionsData));
   }, []);
@@ -96,42 +103,48 @@ const DepartmentCreatePage = () => {
         <span>{(responseError as GenNumError)?.general_number[0]}</span>
       )}
       {errors.general_number && <span>{errors.general_number.message}</span>}
-      <input
-        type="number"
-        placeholder="general_number"
-        {...register('general_number', {
-          required: 'Enter a number',
-          valueAsNumber: true,
-        })}
-      />
+      <label>
+        General Number:
+        <input
+          type="number"
+          {...register('general_number', {
+            required: 'Enter a number',
+            valueAsNumber: true,
+          })}
+        />
+      </label>
 
       {errors.capacity && <span>{errors.capacity.message}</span>}
-      <input
-        type="number"
-        placeholder="capacity"
-        {...register('capacity', {
-          required: 'Enter a number',
-          valueAsNumber: true,
-        })}
-      />
-      {errors.staff_count && <span>{errors.staff_count.message}</span>}
-      <input
-        type="number"
-        placeholder="staff count"
-        {...register('staff_count', {
-          required: 'Enter a number',
-          valueAsNumber: true,
-          validate: {
-            isNumber: (value) => {
-              if (!value) {
-                return 'Enter a number';
-              }
-            },
-          },
-        })}
-      />
-      {errors.status && <span>{errors.status.message}</span>}
       <label>
+        Capacity:
+        <input
+          type="number"
+          {...register('capacity', {
+            required: 'Enter a number',
+            valueAsNumber: true,
+          })}
+        />
+      </label>
+      {errors.staff_count && <span>{errors.staff_count.message}</span>}
+      <label>
+        Staff count:
+        <input
+          type="number"
+          {...register('staff_count', {
+            required: 'Enter a number',
+            valueAsNumber: true,
+            validate: {
+              isNumber: (value) => {
+                if (!value) {
+                  return 'Enter a number';
+                }
+              },
+            },
+          })}
+        />
+      </label>
+      {errors.status && <span>{errors.status.message}</span>}
+      <label style={{ display: 'flex', justifyContent: 'center' }}>
         Active:
         <input type="checkbox" {...register('status')} />
       </label>

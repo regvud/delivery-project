@@ -13,15 +13,37 @@
   justify-content: center;
 }
 
-.form > input {
+.form > label {
+  font-family: 'JetBrains Mono';
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 20px;
+}
+
+.form > label > input {
+  font-family: 'JetBrains Mono';
+  width: 65%;
+  margin-left: 5px;
   padding: 8px;
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
 
+.radioButtons {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin: 10px;
+}
+
+.radioButtons > label {
+  font-family: 'JetBrains Mono';
+}
+
 .form > select {
+  font-family: 'JetBrains Mono';
   width: 100%;
   margin-bottom: 20px;
   padding: 8px;

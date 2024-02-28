@@ -15,15 +15,29 @@ apiService.interceptors.request.use(async (req) => {
   return req;
 });
 
+// apiService.interceptors.response.use(
+//   (res) => {
+//     return res;
+//   },
+//   (error) => {
+//     if (!isRedirecting) {
+//       window.location.href = '/login';
+//       return error;
+//     }
+//     return error;
+//   }
+// );
+
 apiService.interceptors.response.use(
   (res) => {
     return res;
   },
-  (error) => {
-    if (!isRedirecting) {
+  async (error) => {
+    if (!isRedirecting && error.response.status === 401) {
+      // Handle unauthorized errors (e.g., token expired) differently
       window.location.href = '/login';
-      return error;
+      return Promise.reject(error);
     }
-    return error;
+    return Promise.reject(error);
   }
 );

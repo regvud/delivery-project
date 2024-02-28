@@ -52,7 +52,6 @@ const DepartmentsPage = () => {
         </button>
       </div>
     );
-
   return (
     <>
       <PagePagination

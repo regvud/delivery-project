@@ -1,3 +1,4 @@
+from amqp import NotFound
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
@@ -48,12 +49,17 @@ class RecoverPasswordRequestView(generics.GenericAPIView):
 
     def post(self, *args, **kwargs):
         data = self.request.data
+
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
-        user = get_object_or_404(UserModel, **serializer.data)
 
-        EmailService.recover_password(user)
-        return Response("Check your email to continue.", status.HTTP_202_ACCEPTED)
+        email = serializer.data.get("email")
+        user = UserModel.objects.filter(email=email).first()
+
+        if user:
+            EmailService.recover_password(user)
+
+        return Response("Check your email to continue.", status.HTTP_200_OK)
 
 
 class RecoverPasswordView(generics.GenericAPIView):

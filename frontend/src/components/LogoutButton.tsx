@@ -14,7 +14,11 @@ const LogoutButton = () => {
     navigate('/login');
   }
 
-  return <button onClick={logout}>Logout</button>;
+  return (
+    <button style={{ width: 80, height: 45 }} onClick={logout}>
+      Logout
+    </button>
+  );
 };
 
 export { LogoutButton };

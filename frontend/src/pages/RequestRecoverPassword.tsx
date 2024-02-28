@@ -13,33 +13,22 @@ const schema = z.object({
 type EmailSchema = z.infer<typeof schema>;
 
 const RequestRecoverPassword = () => {
-  const [msg, setMsg] = useState();
+  const [msg, setMsg] = useState(false);
   const [loader, setLoader] = useState(false);
 
   const {
     register,
     handleSubmit,
-    setError,
     formState: { errors },
   } = useForm<EmailSchema>({
     resolver: zodResolver(schema),
   });
 
   const submit: SubmitHandler<EmailSchema> = async ({ email }) => {
-    try {
-      setLoader(true);
-      const { status, data } = await authService.recoverRequest(email);
-
-      if (status === 202) {
-        setMsg(data);
-      }
-    } catch (e) {
-      setError('root', { message: `unknown error: ${e}` });
-    } finally {
-      setLoader(false);
-    }
+    await authService.recoverRequest(email);
+    setMsg(true);
   };
-
+  console.log(msg);
   if (loader) return <h1 style={{ textAlign: 'center' }}>Please wait..</h1>;
   if (msg)
     return (
