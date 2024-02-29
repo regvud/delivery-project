@@ -2,21 +2,20 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { unknown, z } from 'zod';
 import { departmentService } from '../services/departmentService';
-import { cityService } from '../services/cityService';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import button from './styles/DeliveryPage.module.css';
 import css from './styles/CreateDelivery.module.css';
 import { useEffect, useState } from 'react';
-import { City } from '../types/departmentTypes';
 import { AxiosError } from 'axios';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import citiesJSON from '../data/ua.json';
+import { City } from '../types/departmentTypes';
 
 const schema = z.object({
   general_number: z
     .number({ invalid_type_error: 'Enter a number' })
     .min(1, 'Number must be greater than 1'),
   city: z.string(),
-  region: z.string(),
   capacity: z
     .number({ invalid_type_error: 'Enter a number' })
     .min(100, 'Number must be between 100 - 10000')
@@ -40,10 +39,9 @@ const DepartmentCreatePage = () => {
   });
   type GenNumError = { general_number: string[] };
 
+  const cities = citiesJSON as City[];
   const navigate = useNavigate();
   const { getItem } = useLocalStorage();
-  const [regions, setRegions] = useState<string[]>([]);
-  const [cities, setCities] = useState<void | City[]>([]);
   const [responseError, setResponseError] = useState<GenNumError | unknown>();
   const isStaff = getItem('isStaff');
 
@@ -51,8 +49,6 @@ const DepartmentCreatePage = () => {
     if (isStaff === 'false') {
       navigate('/profile');
     }
-    cityService().then((citiesData) => setCities(citiesData));
-    departmentService.regions().then((regionsData) => setRegions(regionsData));
   }, []);
 
   const submit: SubmitHandler<DepartmentSchema> = async (department) => {
@@ -67,6 +63,7 @@ const DepartmentCreatePage = () => {
       setResponseError(err.response?.data);
     }
   };
+
   return (
     <form className={css.form} onSubmit={handleSubmit(submit)}>
       <h1 className={css.title}>Create Department</h1>
@@ -79,22 +76,8 @@ const DepartmentCreatePage = () => {
       >
         <option value="">select city</option>
         {cities?.map((city) => (
-          <option value={city.name} key={city.objectId}>
-            {city.name}
-          </option>
-        ))}
-      </select>
-
-      {errors.region && <span>{errors.region.message}</span>}
-      <select
-        id="region-select"
-        placeholder="region"
-        {...register('region', { required: 'Select a valid region' })}
-      >
-        <option value="">select region</option>
-        {regions?.map((region) => (
-          <option value={region} key={region}>
-            {region}
+          <option value={`${city.city}, ${city.admin_name}`} key={city.lat}>
+            {city.city}, {city.admin_name}
           </option>
         ))}
       </select>

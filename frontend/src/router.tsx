@@ -22,15 +22,14 @@ const { getItem, setItem } = useLocalStorage();
 const accessToken = getItem('access');
 
 const checkAuth = async () => {
-  if (accessToken) {
-    const res = await authService.me().then((user) => user.is_staff);
-    setItem('isStaff', `${res}`);
-    return res;
-  }
-  return null;
+  const res = await authService.me().then((user) => user.is_staff);
+  setItem('isStaff', `${res}`);
+  return res;
 };
+
 const checkUserDeliveries = async () => {
   const res = await deliveryService.getUserDeliveries();
+  checkAuth();
   if (accessToken && !res.receiving[0] && !res.sending[0]) {
     setItem('userDeliveries', 'false');
     return false;
@@ -60,7 +59,7 @@ export const router = createBrowserRouter([
       {
         path: 'departments',
         element: <DepartmentsPage />,
-        loader: checkAuth,
+        // loader: checkAuth,
       },
       {
         path: 'departments/:id',

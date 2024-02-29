@@ -15,19 +15,6 @@ apiService.interceptors.request.use(async (req) => {
   return req;
 });
 
-// apiService.interceptors.response.use(
-//   (res) => {
-//     return res;
-//   },
-//   (error) => {
-//     if (!isRedirecting) {
-//       window.location.href = '/login';
-//       return error;
-//     }
-//     return error;
-//   }
-// );
-
 apiService.interceptors.response.use(
   (res) => {
     return res;

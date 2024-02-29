@@ -1,7 +1,6 @@
 from django.core import validators as V
 from django.db import models
 
-from apps.departments.choices import RegionChoices
 from core.models import BaseModel
 
 
@@ -10,8 +9,7 @@ class DepartmentModel(BaseModel):
         db_table = "departments"
 
     general_number = models.IntegerField(unique=True)
-    city = models.CharField(max_length=20)
-    region = models.CharField(max_length=15, choices=RegionChoices.choices)
+    city = models.CharField(max_length=50)
     capacity = models.IntegerField(
         validators=[V.MinValueValidator(100), V.MaxValueValidator(1000)]
     )

@@ -6,7 +6,7 @@ import button from '../pages/styles/DeliveryPage.module.css';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
 export const DepartmentDetails = (props: { department: Department }) => {
-  const { id, capacity, city, general_number, region, staff_count, status } =
+  const { id, capacity, city, general_number, staff_count, status } =
     props.department;
   const [innerStatus, setInnerStatus] = useState<boolean>(status);
   const [, setMsg] = useState('');
@@ -29,7 +29,6 @@ export const DepartmentDetails = (props: { department: Department }) => {
       <hr />
       <h3>General Number: {general_number}</h3>
       <h3>City: {city}</h3>
-      <h3>Region: {region}</h3>
       <h3>Capacity: {capacity}</h3>
       <h3>Staff: {staff_count}</h3>
       <div>

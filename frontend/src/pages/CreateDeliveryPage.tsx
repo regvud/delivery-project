@@ -12,7 +12,6 @@ import { phoneRegex } from './RegiterPage';
 import { AxiosError } from 'axios';
 import { DepartmentNumber } from '../types/departmentTypes';
 import { unknown } from 'zod';
-import { flattenDiagnosticMessageText } from 'typescript';
 
 type RespErr = {
   detail: string;
@@ -160,7 +159,7 @@ const CreateDeliveryPage = () => {
             required: 'Provide phone for receiver',
             pattern: {
               value: phoneRegex,
-              message: 'Phone format: 380632503425',
+              message: 'Phone format: 0632503425',
             },
           })}
         />

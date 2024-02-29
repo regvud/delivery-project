@@ -2,7 +2,6 @@ export type Department = {
   id: number;
   general_number: number;
   city: string;
-  region: string;
   capacity: number;
   staff_count: number;
   status: boolean;
@@ -11,7 +10,6 @@ export type Department = {
 export type CreateDepartment = {
   general_number: number;
   city: string;
-  region: string;
   capacity: number;
   staff_count: number;
   status: boolean;
@@ -27,14 +25,13 @@ export type Regions = {
 };
 
 export type City = {
-  objectId: string;
-  name: string;
+  city: string;
+  lat: string;
+  lng: string;
   country: string;
-  population: number;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type Cities = {
-  results: City[];
+  iso2: string;
+  admin_name: string;
+  capital: string;
+  population: string;
+  population_proper: string;
 };
