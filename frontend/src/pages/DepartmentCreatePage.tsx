@@ -15,7 +15,7 @@ const schema = z.object({
   general_number: z
     .number({ invalid_type_error: 'Enter a number' })
     .min(1, 'Number must be greater than 1'),
-  city: z.string(),
+  city: z.string().min(1, 'Select a city'),
   capacity: z
     .number({ invalid_type_error: 'Enter a number' })
     .min(100, 'Number must be between 100 - 10000')
@@ -85,49 +85,61 @@ const DepartmentCreatePage = () => {
       {responseError !== unknown && (
         <span>{(responseError as GenNumError)?.general_number[0]}</span>
       )}
-      {errors.general_number && <span>{errors.general_number.message}</span>}
-      <label>
-        General Number:
-        <input
-          type="number"
-          {...register('general_number', {
-            required: 'Enter a number',
-            valueAsNumber: true,
-          })}
-        />
-      </label>
+      <div className={css.fieldContainer}>
+        {errors.general_number && <span>{errors.general_number.message}</span>}
+        <label>
+          General Number:
+          <input
+            type="number"
+            {...register('general_number', {
+              required: 'Enter a number',
+              valueAsNumber: true,
+            })}
+          />
+        </label>
+      </div>
+      <div className={css.fieldContainer}>
+        {errors.capacity && <span>{errors.capacity.message}</span>}
+        <label>
+          Capacity:
+          <input
+            type="number"
+            {...register('capacity', {
+              required: 'Enter a number',
+              valueAsNumber: true,
+            })}
+          />
+        </label>
+      </div>
 
-      {errors.capacity && <span>{errors.capacity.message}</span>}
-      <label>
-        Capacity:
-        <input
-          type="number"
-          {...register('capacity', {
-            required: 'Enter a number',
-            valueAsNumber: true,
-          })}
-        />
-      </label>
-      {errors.staff_count && <span>{errors.staff_count.message}</span>}
-      <label>
-        Staff count:
-        <input
-          type="number"
-          {...register('staff_count', {
-            required: 'Enter a number',
-            valueAsNumber: true,
-            validate: {
-              isNumber: (value) => {
-                if (!value) {
-                  return 'Enter a number';
-                }
+      <div className={css.fieldContainer}>
+        {errors.staff_count && <span>{errors.staff_count.message}</span>}
+        <label>
+          Staff count:
+          <input
+            type="number"
+            {...register('staff_count', {
+              required: 'Enter a number',
+              valueAsNumber: true,
+              validate: {
+                isNumber: (value) => {
+                  if (!value) {
+                    return 'Enter a number';
+                  }
+                },
               },
-            },
-          })}
-        />
-      </label>
+            })}
+          />
+        </label>
+      </div>
       {errors.status && <span>{errors.status.message}</span>}
-      <label style={{ display: 'flex', justifyContent: 'center' }}>
+      <label
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          fontFamily: 'Jetbrains Mono',
+        }}
+      >
         Active:
         <input type="checkbox" {...register('status')} />
       </label>

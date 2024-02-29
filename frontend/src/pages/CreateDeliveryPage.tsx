@@ -48,7 +48,7 @@ const CreateDeliveryPage = () => {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setCreationErr(unknown);
-    }, 3000);
+    }, 5000);
     return () => clearTimeout(timeoutId);
   }, [creationErr]);
 
@@ -149,49 +149,58 @@ const CreateDeliveryPage = () => {
         'detail' in creationErr && (
           <span>{(creationErr as RespErr).detail}</span>
         )}
-      {errors.receiver && <span>{errors.receiver.message}</span>}
-      <label>
-        Phone:
-        <input
-          type="text"
-          placeholder="receiver"
-          {...register('receiver', {
-            required: 'Provide phone for receiver',
-            pattern: {
-              value: phoneRegex,
-              message: 'Phone format: 0632503425',
-            },
-          })}
-        />
-      </label>
-      {errors?.item?.label && <span>{errors.item.label.message}</span>}
-      <label>
-        Label:
-        <input
-          type="text"
-          {...register('item.label', {
-            required: 'Label is required',
-            pattern: {
-              value: /^(?=\s*\S)[\w\s]{1,30}$/,
-              message: 'Special characters not allowed, max length 30',
-            },
-          })}
-        />
-      </label>
-      {errors?.item?.price && <span>{errors.item.price.message}</span>}
-      <label>
-        Price:
-        <input
-          type="number"
-          step=".01"
-          {...register('item.price', {
-            required: 'Minimal 1, maximum 999999',
-            min: { value: 1, message: 'Minimal price is 1' },
-            max: { value: 999999, message: 'Maximum price is 999999' },
-            valueAsNumber: true,
-          })}
-        />
-      </label>
+
+      <div className={css.fieldContainer}>
+        {errors.receiver && <span>{errors.receiver.message}</span>}
+        <label>
+          Phone:
+          <input
+            type="text"
+            placeholder="receiver"
+            {...register('receiver', {
+              required: 'Provide phone for receiver',
+              pattern: {
+                value: phoneRegex,
+                message: 'Phone format: 0632503425',
+              },
+            })}
+          />
+        </label>
+      </div>
+
+      <div className={css.fieldContainer}>
+        {errors?.item?.label && <span>{errors.item.label.message}</span>}
+        <label>
+          Label:
+          <input
+            type="text"
+            {...register('item.label', {
+              required: 'Label is required',
+              pattern: {
+                value: /^(?=\s*\S)[\w\s]{1,30}$/,
+                message: 'Special characters not allowed, max length 30',
+              },
+            })}
+          />
+        </label>
+      </div>
+
+      <div className={css.fieldContainer}>
+        {errors?.item?.price && <span>{errors.item.price.message}</span>}
+        <label>
+          Price:
+          <input
+            type="number"
+            step=".01"
+            {...register('item.price', {
+              required: 'Minimal 1, maximum 999999',
+              min: { value: 1, message: 'Minimal price is 1' },
+              max: { value: 999999, message: 'Maximum price is 999999' },
+              valueAsNumber: true,
+            })}
+          />
+        </label>
+      </div>
 
       {errors.item?.size && <span>Choose prefed size: </span>}
       <div className={css.radioButtons}>

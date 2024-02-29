@@ -55,8 +55,6 @@ const RegisterPage = () => {
       !!errors.phone ||
       !!errors.validation_password ||
       !!errors.root;
-
-    console.log(hasErrors);
     setisDisabled(hasErrors);
   }, [
     errors.email,

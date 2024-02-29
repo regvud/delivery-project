@@ -13,7 +13,18 @@
   justify-content: center;
 }
 
-.form > label {
+.fieldContainer {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.fieldContainer > span {
+  width: 60%;
+  margin-left: 150px;
+}
+
+.form > div > label {
   font-family: 'JetBrains Mono';
   display: flex;
   align-items: center;
@@ -21,7 +32,7 @@
   margin-bottom: 20px;
 }
 
-.form > label > input {
+.form > div > label > input {
   font-family: 'JetBrains Mono';
   width: 65%;
   margin-left: 5px;
@@ -33,6 +44,7 @@
 
 .radioButtons {
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-around;
   margin: 10px;
