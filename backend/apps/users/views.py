@@ -55,7 +55,7 @@ class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
     serializer_class = UserSerializer
     queryset = UserModel
-    permission_classes = (IsAdmin, IsAuthenticated)
+    permission_classes = (IsAdmin,)
 
 
 class UserDeliveriesView(generics.RetrieveAPIView):

@@ -24,6 +24,7 @@ const Navbar = () => {
 
   return (
     <div className={css.navbar}>
+      <NavLink to="/admin">Admin</NavLink>
       <NavLink to="/profile">Profile</NavLink>
       <NavLink to="/deliveries">Deliveries</NavLink>
       <NavLink to="/departments">Departments</NavLink>

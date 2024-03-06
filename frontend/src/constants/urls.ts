@@ -15,6 +15,10 @@ const regions = '/regions';
 const active = '/active';
 
 export const urls = {
+  users: {
+    base: users,
+    byID: (id: number) => `${users}/${id}`,
+  },
   deliveries: {
     base: (page: number) => `${deliveries}?page=${page}`,
     byID: (id: number) => `${deliveries}/${id}/info`,

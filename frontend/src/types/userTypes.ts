@@ -33,9 +33,17 @@ export type User = {
   avatar: Avatar[];
   is_staff: boolean;
   is_superuser: boolean;
+  is_active: boolean;
   sending: Item[];
   receiving: Item[];
   last_login: string;
   created_at: string;
   updated_at: string;
+};
+
+export type UserResponse = {
+  total_pages: number;
+  next: string;
+  prev: string;
+  results: User[];
 };

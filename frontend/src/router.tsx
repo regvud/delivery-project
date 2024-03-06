@@ -17,6 +17,8 @@ import { DepartmentsPage } from './pages/DepartmentsPage';
 import { DepartmentDetailPage } from './pages/DepartmentDetailPage';
 import { authService } from './services/authService';
 import { deliveryService } from './services/deliveryService';
+import { AdminPage } from './pages/AdminPage';
+import { UsersComponent } from './components/UsersComponent';
 
 const { getItem, setItem } = useLocalStorage();
 const accessToken = getItem('access');
@@ -59,7 +61,6 @@ export const router = createBrowserRouter([
       {
         path: 'departments',
         element: <DepartmentsPage />,
-        // loader: checkAuth,
       },
       {
         path: 'departments/:id',
@@ -90,6 +91,11 @@ export const router = createBrowserRouter([
         path: 'profile/delivery/:id',
         element: <DeliveryDetail />,
       },
+      {
+        path: 'admin',
+        element: <AdminPage />,
+      },
+      { path: 'admin/users', element: <UsersComponent /> },
     ],
   },
   {

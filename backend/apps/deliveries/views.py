@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import Response
 
 from apps.deliveries.choices import StatusChoices
+from apps.deliveries.filters import DeliveryFilter
 from apps.deliveries.models import DeliveryModel
 from apps.deliveries.serializers import (
     DeliveryConvertedFieldsSerializer,
@@ -28,6 +29,7 @@ class DeliveryListView(generics.ListAPIView):
     queryset = DeliveryModel.objects.all()
     serializer_class = DeliveryConvertedFieldsSerializer
     permission_classes = (IsAuthenticated,)
+    filterset_class = DeliveryFilter
 
 
 class DeliveryRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
