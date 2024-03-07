@@ -13,10 +13,11 @@ const request = '/request';
 const refresh = '/refresh';
 const regions = '/regions';
 const active = '/active';
+const stats = '/stats';
 
 export const urls = {
   users: {
-    base: users,
+    base: (page: number) => `${users}?page=${page}`,
     byID: (id: number) => `${users}/${id}`,
   },
   deliveries: {
@@ -24,7 +25,8 @@ export const urls = {
     byID: (id: number) => `${deliveries}/${id}/info`,
     create: `${deliveries}${create}`,
     addImage: (id: number) => `${deliveries}/${id}/add_image`,
-    user: `${users}${deliveries}`,
+    user: (id: number) => `${users}${deliveries}/${id}`,
+    adminDeliveries: (page: number) => `${stats}/delivery_list?page=${page}`,
   },
   departments: {
     base: (page: number) => `${departments}?page=${page}`,
@@ -36,7 +38,7 @@ export const urls = {
   auth: {
     login: auth,
     register: `${users}${create}`,
-    profile: `${users}${profile}`,
+    profile: (id: number) => `${users}${profile}/${id}`,
     refresh: `${auth}${refresh}`,
     activate: (token: string) => `${auth}${activate}/${token}`,
     recover: (token: string) => `${auth}${recover}/${token}`,

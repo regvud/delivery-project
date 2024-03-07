@@ -1,4 +1,5 @@
 from django.db.transaction import atomic
+from django.test.signals import user_model_swapped
 from rest_framework import serializers
 from rest_framework.authentication import get_user_model
 
@@ -94,6 +95,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
         fields = (
+            "id",
             "email",
             "phone",
             "avatar",

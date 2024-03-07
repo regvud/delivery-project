@@ -18,26 +18,31 @@ import { DepartmentDetailPage } from './pages/DepartmentDetailPage';
 import { authService } from './services/authService';
 import { deliveryService } from './services/deliveryService';
 import { AdminPage } from './pages/AdminPage';
-import { UsersComponent } from './components/UsersComponent';
+import { UserComponent } from './components/UsersComponent';
+import { AdminDeliveries } from './components/AdminDeliveries';
+import { ProfileInspectPage } from './pages/ProfileInspectPage';
 
 const { getItem, setItem } = useLocalStorage();
 const accessToken = getItem('access');
 
-const checkAuth = async () => {
-  const res = await authService.me().then((user) => user.is_staff);
-  setItem('isStaff', `${res}`);
-  return res;
-};
-
-const checkUserDeliveries = async () => {
-  const res = await deliveryService.getUserDeliveries();
-  checkAuth();
+const checkUserDeliveries = async (userId: number) => {
+  const res = await deliveryService.getUserDeliveries(userId);
   if (accessToken && !res.receiving[0] && !res.sending[0]) {
     setItem('userDeliveries', 'false');
     return false;
   }
   setItem('userDeliveries', 'true');
 
+  return true;
+};
+
+const checkAuth = async () => {
+  const user = await authService.me().then((user) => user);
+  setItem('isStaff', `${user.is_staff}`);
+  setItem('id', `${user.id}`);
+  setItem('email', `${user.email}`);
+
+  checkUserDeliveries(user.id);
   return true;
 };
 
@@ -81,7 +86,7 @@ export const router = createBrowserRouter([
       {
         path: 'profile',
         element: <ProfilePage />,
-        loader: checkUserDeliveries,
+        loader: checkAuth,
       },
       {
         path: 'profile/delivery/create',
@@ -95,7 +100,19 @@ export const router = createBrowserRouter([
         path: 'admin',
         element: <AdminPage />,
       },
-      { path: 'admin/users', element: <UsersComponent /> },
+      {
+        path: 'admin/users',
+        element: <UserComponent />,
+      },
+      {
+        path: 'admin/users/:id',
+        element: <ProfileInspectPage />,
+      },
+
+      {
+        path: 'admin/deliveries',
+        element: <AdminDeliveries />,
+      },
     ],
   },
   {

@@ -2,10 +2,12 @@ from django.core.files.storage import default_storage
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.authentication import get_user_model
+from rest_framework.exceptions import NotFound
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import Response
 
 from apps.auth.serializers import EmailSerializer, PasswordSerializer
+from apps.deliveries.models import DeliveryModel
 from apps.users.models import AvatarModel
 from apps.users.serializers import (
     AvatarSerializer,
@@ -57,6 +59,13 @@ class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = UserModel
     permission_classes = (IsAdmin,)
 
+    def get_object(self):
+        user = UserModel.objects.filter(pk=self.kwargs.get("pk")).first()
+
+        if not user:
+            raise NotFound("No user found")
+        return user
+
 
 class UserDeliveriesView(generics.RetrieveAPIView):
     """
@@ -65,10 +74,8 @@ class UserDeliveriesView(generics.RetrieveAPIView):
     """
 
     serializer_class = UserDeliveriesSerializer
+    queryset = UserModel.objects.all()
     permission_classes = (IsAuthenticated,)
-
-    def get_object(self):
-        return get_object_or_404(UserModel, pk=self.request.user.pk)
 
 
 class UserProfileView(generics.RetrieveAPIView):
@@ -78,10 +85,8 @@ class UserProfileView(generics.RetrieveAPIView):
     """
 
     serializer_class = UserProfileSerializer
+    queryset = UserModel.objects.all()
     permission_classes = (IsAuthenticated,)
-
-    def get_object(self):
-        return get_object_or_404(UserModel, pk=self.request.user.pk)
 
 
 class UserAvatarView(generics.GenericAPIView):

@@ -1,6 +1,6 @@
 import { urls } from '../constants/urls';
 import { PaginatedResponse } from '../types/axiosTypes';
-import { UserDeliveriesResponse } from '../types/deliveryTypes';
+import { AdminDelivery, UserDeliveriesResponse } from '../types/deliveryTypes';
 import { apiService } from './apiService';
 import { Delivery } from '../types/deliveryTypes';
 
@@ -16,11 +16,17 @@ export const deliveryService = {
     apiService
       .post(urls.deliveries.addImage(id), image)
       .then((res) => res.data),
-  getUserDeliveries: () =>
+  getUserDeliveries: (id: number) =>
     apiService
-      .get<UserDeliveriesResponse>(urls.deliveries.user)
+      .get<UserDeliveriesResponse>(urls.deliveries.user(id))
       .then((res) => res.data),
 
   create: (delivery: Delivery) =>
     apiService.post<Delivery>(urls.deliveries.create, delivery),
+  getAdminDeliveries: (page: number) =>
+    apiService
+      .get<PaginatedResponse<AdminDelivery[]>>(
+        urls.deliveries.adminDeliveries(page)
+      )
+      .then((res) => res.data),
 };

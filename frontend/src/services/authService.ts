@@ -22,8 +22,8 @@ export const authService = {
   changeEmailRequest: (email: string) =>
     apiService.post(`${urls.auth.changeEmailRequest}`, { email: email }),
   profile: {
-    profile: () =>
-      apiService.get<Profile>(urls.auth.profile).then((res) => res.data),
+    profile: (id: number) =>
+      apiService.get<Profile>(urls.auth.profile(id)).then((res) => res.data),
     addAavatar: (avatar: FormData) =>
       apiService.post(urls.profile.addAvatar, avatar),
     changePassword: (password: string) =>

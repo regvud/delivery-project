@@ -20,6 +20,7 @@ export type Avatar = {
 };
 
 export type Profile = {
+  id: number;
   email: string;
   phone: string;
   avatar: Avatar[];

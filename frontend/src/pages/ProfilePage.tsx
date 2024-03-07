@@ -6,25 +6,26 @@ import { useFetch } from '../hooks/useFetch';
 import { useLocation, useNavigate } from 'react-router-dom';
 import css from './styles/ProfilePage.module.css';
 import button from './styles/DeliveryPage.module.css';
-import { PleaseLogin } from '../components/PleaseLogin';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { usePage } from '../store/store';
 
 const ProfilePage = () => {
-  const refreshPage = usePage((state) => state.refresh);
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { getItem } = useLocalStorage();
+
   const [showUserDeliveries, setShowUserDeliveries] = useState(false);
-  const accessToken = getItem('access');
+  const refreshPage = usePage((state) => state.refresh);
+
   const userDeliveries = getItem('userDeliveries');
+  const userId = getItem('id');
 
   const {
     data: profile,
     error,
     isLoading,
     refetch,
-  } = useFetch(authService.profile.profile(), ['profile']);
+  } = useFetch(authService.profile.profile(userId ? +userId : 0), ['profile']);
 
   useEffect(() => {
     refetch();
@@ -33,7 +34,6 @@ const ProfilePage = () => {
 
   if (error) return <h1>{error?.message}</h1>;
   if (isLoading) return <h1>Loading...</h1>;
-  if (!accessToken) return <PleaseLogin />;
 
   return (
     <div className={css.profileContainer}>

@@ -5,6 +5,7 @@ from django.urls import include, path
 from configs.settings import MEDIA_URL
 
 urlpatterns = [
+    path("api/stats", include("apps.stats.urls")),
     path("api/auth", include("apps.auth.urls")),
     path("api/users", include("apps.users.urls")),
     path("api/deliveries", include("apps.deliveries.urls")),

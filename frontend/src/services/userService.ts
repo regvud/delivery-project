@@ -7,8 +7,9 @@ type PatchData = {
 };
 
 export const userService = {
-  getAll: () =>
-    apiService.get<UserResponse>(urls.users.base).then((res) => res.data),
+  getAll: (page: number) =>
+    apiService.get<UserResponse>(urls.users.base(page)).then((res) => res.data),
+  byID: (id: number) => apiService.get<User>(urls.users.byID(id)),
   patchUser: (id: number, data: PatchData) =>
     apiService.patch<User>(urls.users.byID(id), data),
 };

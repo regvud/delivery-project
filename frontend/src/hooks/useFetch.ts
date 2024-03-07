@@ -5,11 +5,11 @@ export const useFetch = <T>(
   queryKey: string[],
   enabled?: boolean
 ) => {
-  const { data, error, isLoading, refetch } = useQuery({
+  const { data, error, isLoading, isError, refetch } = useQuery({
     queryFn: () => queryFn,
     queryKey: queryKey,
     enabled: enabled,
   });
 
-  return { data, error, isLoading, refetch };
+  return { data, error, isLoading, isError, refetch };
 };
