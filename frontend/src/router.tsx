@@ -25,24 +25,21 @@ import { ProfileInspectPage } from './pages/ProfileInspectPage';
 const { getItem, setItem } = useLocalStorage();
 const accessToken = getItem('access');
 
-const checkUserDeliveries = async (userId: number) => {
-  const res = await deliveryService.getUserDeliveries(userId);
-  if (accessToken && !res.receiving[0] && !res.sending[0]) {
-    setItem('userDeliveries', 'false');
-    return false;
-  }
-  setItem('userDeliveries', 'true');
-
-  return true;
-};
-
 const checkAuth = async () => {
   const user = await authService.me().then((user) => user);
+  const userDeliveries = await deliveryService.getUserDeliveries(user.id);
+
+  const showDeliveries =
+    !!userDeliveries.receiving[0] || !!userDeliveries.sending[0];
+
+  showDeliveries
+    ? setItem('userDeliveries', 'true')
+    : setItem('userDeliveries', 'false');
+
   setItem('isStaff', `${user.is_staff}`);
   setItem('id', `${user.id}`);
   setItem('email', `${user.email}`);
 
-  checkUserDeliveries(user.id);
   return true;
 };
 

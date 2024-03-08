@@ -35,6 +35,7 @@ const ProfilePage = () => {
   if (error) return <h1>{error?.message}</h1>;
   if (isLoading) return <h1>Loading...</h1>;
 
+  console.log(userDeliveries);
   return (
     <div className={css.profileContainer}>
       <h1>Profile</h1>
@@ -46,7 +47,7 @@ const ProfilePage = () => {
       >
         Send delivery
       </button>
-      {userDeliveries && userDeliveries == 'true' && (
+      {userDeliveries === 'true' && (
         <>
           <button
             className={button.button}
