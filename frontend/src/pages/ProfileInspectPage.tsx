@@ -5,6 +5,7 @@ import { User } from '../types/userTypes';
 import { AxiosError } from 'axios';
 import { ProfileInspectCard } from './ProfileInspectCard';
 import { deliveryService } from '../services/deliveryService';
+import { UserDeliveriesResponse } from '../types/deliveryTypes';
 
 type UserFetchResponse = {
   detail: string;
@@ -13,7 +14,14 @@ type UserFetchResponse = {
 export const ProfileInspectPage = () => {
   const { id } = useParams();
   const [user, setUser] = useState<User | undefined>();
+  const [deliveries, setDeliveries] = useState<
+    UserDeliveriesResponse | undefined
+  >();
+
   const [error, setError] = useState<UserFetchResponse | undefined>();
+  const [errorDelivery, setErrorDelivery] = useState<
+    UserFetchResponse | undefined
+  >();
 
   if (!id) return <h1>Provide userId in url</h1>;
 
@@ -27,14 +35,34 @@ export const ProfileInspectPage = () => {
   };
 
   const fethUserDeliveries = async () => {
-    const deliveries = await deliveryService.getUserDeliveries(+id);
-    console.log(deliveries);
+    try {
+      await deliveryService
+        .getUserDeliveries(+id)
+        .then(({ data }) => setDeliveries(data));
+    } catch (e) {
+      const err = e as AxiosError;
+      setErrorDelivery(err.response?.data as UserFetchResponse);
+    }
   };
 
   useEffect(() => {
     fetchUser();
     fethUserDeliveries();
   }, [id]);
+
   if (error) return <h1>{error?.detail}</h1>;
-  return <>{user && <ProfileInspectCard user={user} key={user.id} />}</>;
+  if (errorDelivery) return <h1>{errorDelivery?.detail}</h1>;
+
+  return (
+    <>
+      {user && (
+        <ProfileInspectCard
+          sending={deliveries?.sending}
+          receiving={deliveries?.receiving}
+          user={user}
+          key={user.id}
+        />
+      )}
+    </>
+  );
 };

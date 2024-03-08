@@ -27,6 +27,7 @@ const CreateDeliveryPage = () => {
   //response errors
   const [creationErr, setCreationErr] = useState<RespErr | unknown>();
   const [imageErr, setImageErr] = useState<RespErr | unknown>();
+  const [axiosError, setAxiosError] = useState<AxiosError>();
 
   //refs
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -41,20 +42,28 @@ const CreateDeliveryPage = () => {
   } = useForm<Delivery>();
 
   const fetchDepartments = async () => {
-    const departments = await departmentService.active();
-    setDepartments(departments);
+    try {
+      await departmentService
+        .active()
+        .then((departments) => setDepartments(departments));
+    } catch (e) {
+      const err = e as AxiosError;
+      setAxiosError(err);
+    }
   };
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setCreationErr(unknown);
-    }, 5000);
-    return () => clearTimeout(timeoutId);
-  }, [creationErr]);
 
   useEffect(() => {
     fetchDepartments();
   }, []);
+
+  useEffect(() => {
+    if (creationErr) {
+      const timeoutId = setTimeout(() => {
+        setCreationErr(unknown);
+      }, 5000);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [creationErr]);
 
   useEffect(() => {
     clearErrors('item.image');

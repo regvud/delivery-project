@@ -17,9 +17,7 @@ export const deliveryService = {
       .post(urls.deliveries.addImage(id), image)
       .then((res) => res.data),
   getUserDeliveries: (id: number) =>
-    apiService
-      .get<UserDeliveriesResponse>(urls.deliveries.user(id))
-      .then((res) => res.data),
+    apiService.get<UserDeliveriesResponse>(urls.deliveries.user(id)),
 
   create: (delivery: Delivery) =>
     apiService.post<Delivery>(urls.deliveries.create, delivery),

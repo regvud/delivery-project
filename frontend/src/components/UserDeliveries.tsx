@@ -21,14 +21,17 @@ const UserDeliveries = () => {
 
   return (
     <>
-      {userDeliveries?.receiving?.length !== 0 && (
+      {userDeliveries.data?.receiving?.length !== 0 && (
         <DeliveryMapComponent
-          array={userDeliveries?.receiving}
+          array={userDeliveries?.data?.receiving}
           title="receiving"
         />
       )}
-      {userDeliveries?.sending.length !== 0 && (
-        <DeliveryMapComponent array={userDeliveries?.sending} title="sending" />
+      {userDeliveries.data?.sending.length !== 0 && (
+        <DeliveryMapComponent
+          array={userDeliveries?.data?.sending}
+          title="sending"
+        />
       )}
     </>
   );

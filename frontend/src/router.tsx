@@ -30,7 +30,7 @@ const checkAuth = async () => {
   const userDeliveries = await deliveryService.getUserDeliveries(user.id);
 
   const showDeliveries =
-    !!userDeliveries.receiving[0] || !!userDeliveries.sending[0];
+    !!userDeliveries.data.receiving[0] || !!userDeliveries.data.sending[0];
 
   showDeliveries
     ? setItem('userDeliveries', 'true')
@@ -77,7 +77,7 @@ export const router = createBrowserRouter([
         element: <DeliveryPage />,
       },
       {
-        path: 'deliveries/:id',
+        path: 'deliveries/:deliveryId',
         element: <DeliveryDetail />,
       },
       {
@@ -104,6 +104,10 @@ export const router = createBrowserRouter([
       {
         path: 'admin/users/:id',
         element: <ProfileInspectPage />,
+      },
+      {
+        path: 'admin/users/:userId/delivery/:deliveryId',
+        element: <DeliveryDetail />,
       },
 
       {

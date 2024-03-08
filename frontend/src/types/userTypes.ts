@@ -1,4 +1,4 @@
-import { Item } from './itemTypes';
+import { Delivery } from './deliveryTypes';
 
 export type UserLogin = {
   email: string;
@@ -35,8 +35,8 @@ export type User = {
   is_staff: boolean;
   is_superuser: boolean;
   is_active: boolean;
-  sending: Item[];
-  receiving: Item[];
+  sending: Delivery[];
+  receiving: Delivery[];
   last_login: string;
   created_at: string;
   updated_at: string;

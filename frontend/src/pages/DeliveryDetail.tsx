@@ -6,17 +6,17 @@ import { useFetch } from '../hooks/useFetch';
 
 const DeliveryDetail = () => {
   const { state: deliveryFromLocation } = useLocation();
-  const { id } = useParams();
+  const { deliveryId } = useParams();
 
   const navigate = useNavigate();
 
-  //using delivery from state
+  // using delivery from state
   if (deliveryFromLocation) {
     return (
       <DeliveryCard
         delivery={deliveryFromLocation}
         navigateFunc={() =>
-          navigate(`delivery/${id}`, { state: deliveryFromLocation })
+          navigate(`delivery/${deliveryId}`, { state: deliveryFromLocation })
         }
         detailed={true}
       />
@@ -24,12 +24,14 @@ const DeliveryDetail = () => {
   }
 
   //fetching delivery using params
-  if (id !== undefined) {
+  if (deliveryId !== undefined) {
     const {
       data: fetchedDelivery,
       isLoading,
       error,
-    } = useFetch<Delivery | void>(deliveryService.byID(+id), ['delivery']);
+    } = useFetch<Delivery | void>(deliveryService.byID(+deliveryId), [
+      'delivery',
+    ]);
 
     if (error) return <h1>No delivery found...</h1>;
     if (isLoading) return <h1>Loading...</h1>;
@@ -38,7 +40,7 @@ const DeliveryDetail = () => {
         {fetchedDelivery && (
           <DeliveryCard
             delivery={fetchedDelivery}
-            navigateFunc={() => navigate(`delivery/${id}`)}
+            navigateFunc={() => navigate(`delivery/${deliveryId}`)}
             detailed={true}
           />
         )}
@@ -46,7 +48,7 @@ const DeliveryDetail = () => {
     );
   }
 
-  // If neither location state nor id is available
+  // If neither location state nor deliveryId is available
   return <h1>No delivery found...</h1>;
 };
 
