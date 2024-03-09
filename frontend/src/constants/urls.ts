@@ -17,7 +17,7 @@ const stats = '/stats';
 
 export const urls = {
   users: {
-    base: (page: number) => `${users}?page=${page}`,
+    base: (page: number, params?: string) => `${users}?page=${page}&${params}`,
     byID: (id: number) => `${users}/${id}`,
   },
   deliveries: {

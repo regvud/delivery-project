@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
 from apps.auth.views import UserModel
+from apps.deliveries.filters import DeliveryFilter
 from apps.deliveries.models import DeliveryModel
 from apps.stats.serializers import DeliveryStatsSerializer
 from core.permissions import IsAdmin
@@ -55,4 +56,4 @@ class AdminDeliveryListView(ListAPIView):
     queryset = DeliveryModel.objects.all()
     serializer_class = DeliveryStatsSerializer
     permission_classes = (IsAdmin,)
-    # filterset_class = DeliveryFilter
+    filterset_class = DeliveryFilter

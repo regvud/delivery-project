@@ -1,5 +1,4 @@
 from django.core.files.storage import default_storage
-from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.authentication import get_user_model
 from rest_framework.exceptions import NotFound
@@ -7,7 +6,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import Response
 
 from apps.auth.serializers import EmailSerializer, PasswordSerializer
-from apps.deliveries.models import DeliveryModel
+from apps.users.filters import UserFilter
 from apps.users.models import AvatarModel
 from apps.users.serializers import (
     AvatarSerializer,
@@ -31,6 +30,7 @@ class UserListView(generics.ListAPIView):
     serializer_class = UserSerializer
     queryset = UserModel.objects.all()
     permission_classes = (IsAdmin,)
+    filterset_class = UserFilter
 
 
 class UserCreateView(generics.CreateAPIView):
