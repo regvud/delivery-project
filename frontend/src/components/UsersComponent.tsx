@@ -2,19 +2,22 @@ import { useEffect, useRef, useState } from 'react';
 import { useFetch } from '../hooks/useFetch';
 import { userService } from '../services/userService';
 import { UserCard } from './UserCard';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { PagePagination } from './PagePagination';
 
 export const UserComponent = () => {
   const [params, setParams] = useSearchParams();
-  const [stringParams, setStringParams] = useState<string>('');
+  const { search } = useLocation();
   const currentPage = params.get('page') ?? '1';
+  const searchArr = search.split('&');
+
+  //states
+  const [stringParams, setStringParams] = useState<string>();
+  const [isActiveSearch, setIsActiveSearch] = useState(false);
 
   //refs
   const searchInputRef = useRef('');
   const buttonRef = useRef<HTMLButtonElement>(null);
-
-  const [inputValue, setInputValue] = useState<string | null>(null);
 
   //fetch
   const {
@@ -22,27 +25,32 @@ export const UserComponent = () => {
     isLoading,
     error,
     refetch,
-  } = useFetch(
-    userService.getAll(+currentPage, inputValue ? inputValue : stringParams),
-    ['getAllUserList']
-  );
+  } = useFetch(userService.getAll(+currentPage, search || stringParams), [
+    'getAllUserList',
+  ]);
 
-  const total_pages = users?.total_pages ?? 1;
+  const totalPages = users?.total_pages ?? 1;
 
   useEffect(() => {
+    const email = 'email__icontains';
     setParams((searchParams) => {
-      searchParams.delete('email__icontains');
-      searchParams.set('page', currentPage);
+      if (!(email in searchParams.keys())) {
+        searchParams.set('page', currentPage);
+      }
+      handleStringParams();
       return searchParams;
     });
-  }, []);
+    refetch();
+  }, [params]);
 
   useEffect(() => {
-    handleStringParams();
-    refetch();
-  }, [currentPage, refetch, users, inputValue]);
+    if (!searchInputRef.current) {
+      handleDropFilters();
+    }
+  }, [searchInputRef.current]);
 
   //functions
+
   function handleStringParams() {
     const excludedArray: string[] = [];
     params.forEach((v, k) => {
@@ -60,21 +68,29 @@ export const UserComponent = () => {
     }
   }
 
-  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     searchInputRef.current = e.target.value;
-  }
+    setIsActiveSearch(!!searchInputRef.current);
+  };
 
   function handleButtonClick() {
-    const key = 'email__icontains';
-    setInputValue(`${key}=${searchInputRef.current}`);
+    const email_key = 'email__icontains';
     setParams((searchParams) => {
-      searchParams.delete('page');
-      searchParams.set(key, searchInputRef.current);
+      if (searchInputRef.current !== '') {
+        searchParams.set(email_key, searchInputRef.current);
+      } else {
+        searchParams.delete(email_key);
+      }
+
       return searchParams;
     });
   }
 
-  if (+currentPage > total_pages)
+  function handleDropFilters() {
+    setParams({});
+  }
+
+  if (+currentPage > totalPages)
     return <h1 style={{ textAlign: 'center' }}>Invalid page..</h1>;
 
   if (isLoading) return <h1>...Loading</h1>;
@@ -84,29 +100,54 @@ export const UserComponent = () => {
     <>
       <PagePagination
         currentPage={+currentPage}
-        totalPages={total_pages}
+        totalPages={totalPages}
         setURLSearchParams={setParams}
       />
       <div>
         <input
           type="text"
           placeholder="enter user email"
-          onChange={handleInputChange}
+          onChange={(e) => handleInputChange(e)}
           onKeyDown={(e) => handleKeyPress(e)}
         />
-        <button ref={buttonRef} onClick={handleButtonClick}>
+        <button
+          disabled={!isActiveSearch}
+          ref={buttonRef}
+          onClick={handleButtonClick}
+        >
           search
         </button>
+        {searchArr.length > 1 && (
+          <button onClick={handleDropFilters}>drop filters</button>
+        )}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-        <h3 style={{ paddingLeft: 10 }}>ID</h3>
-        <h3>EMAIL</h3>
-        <h3 style={{ paddingRight: 10 }}>STATUS</h3>
-        <h3>ACTION</h3>
-      </div>
-      {users?.results?.map((user) => (
-        <UserCard user={user} key={user.id} />
-      ))}
+      {!users?.results[0] ? (
+        <h1>No matching results</h1>
+      ) : (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-around',
+            flexDirection: 'column',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-around',
+              alignItems: 'center',
+            }}
+          >
+            <h3 style={{ paddingLeft: 10 }}>ID</h3>
+            <h3>EMAIL</h3>
+            <h3 style={{ paddingRight: 10 }}>STATUS</h3>
+            <h3>ACTION</h3>
+          </div>
+          {users.results.map((user) => (
+            <UserCard user={user} key={user.id} />
+          ))}
+        </div>
+      )}
     </>
   );
 };
