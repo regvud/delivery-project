@@ -110,6 +110,7 @@ export const UserComponent = () => {
           onChange={(e) => handleInputChange(e)}
           onKeyDown={(e) => handleKeyPress(e)}
         />
+
         <button
           disabled={!isActiveSearch}
           ref={buttonRef}
@@ -136,6 +137,7 @@ export const UserComponent = () => {
               display: 'flex',
               justifyContent: 'space-around',
               alignItems: 'center',
+              borderTop: '1px solid grey',
             }}
           >
             <h3 style={{ paddingLeft: 10 }}>ID</h3>

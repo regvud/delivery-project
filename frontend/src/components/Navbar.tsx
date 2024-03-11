@@ -9,10 +9,13 @@ const Navbar = () => {
   const { getItem } = useLocalStorage();
   const [token, setToken] = useState(getItem('access'));
   const refresh = usePage((state) => state.refresh);
+  const navRefresh = usePage((state) => state.navRefresh);
+
+  const isLoggedUserStaff = getItem('isStaff');
 
   useEffect(() => {
     setToken(getItem('access'));
-  }, [refresh]);
+  }, [navRefresh, refresh]);
 
   if (!token)
     return (
@@ -24,7 +27,9 @@ const Navbar = () => {
 
   return (
     <div className={css.navbar}>
-      <NavLink to="/admin">Admin</NavLink>
+      {isLoggedUserStaff && isLoggedUserStaff === 'true' && (
+        <NavLink to="/admin">Admin</NavLink>
+      )}
       <NavLink to="/profile">Profile</NavLink>
       <NavLink to="/deliveries">Deliveries</NavLink>
       <NavLink to="/departments">Departments</NavLink>

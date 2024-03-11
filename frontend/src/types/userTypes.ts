@@ -48,3 +48,9 @@ export type UserResponse = {
   prev: string;
   results: User[];
 };
+
+type IsActive = { dataType: 'IsActive'; is_active: boolean };
+type IsStaff = { dataType: 'IsStaff'; is_staff: boolean };
+type IsSuperuser = { dataType: 'IsSuperuser'; is_superuser: boolean };
+
+export type PatchData = IsActive | IsStaff | IsSuperuser;

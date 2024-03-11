@@ -16,6 +16,7 @@ const ProfilePage = () => {
 
   const [showUserDeliveries, setShowUserDeliveries] = useState(false);
   const refreshPage = usePage((state) => state.refresh);
+  const setNavRefresh = usePage((state) => state.setNavRefresh);
 
   const userDeliveries = getItem('userDeliveries');
   const userId = getItem('id');
@@ -28,14 +29,14 @@ const ProfilePage = () => {
   } = useFetch(authService.profile.profile(userId ? +userId : 0), ['profile']);
 
   useEffect(() => {
-    refetch();
     if (pathname === '/') navigate('/profile');
+    refetch();
+    setNavRefresh();
   }, [pathname, refetch, refreshPage]);
 
   if (error) return <h1>{error?.message}</h1>;
   if (isLoading) return <h1>Loading...</h1>;
 
-  console.log(userDeliveries);
   return (
     <div className={css.profileContainer}>
       <h1>Profile</h1>

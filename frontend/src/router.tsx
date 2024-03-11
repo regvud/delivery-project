@@ -28,7 +28,6 @@ const accessToken = getItem('access');
 const checkAuth = async () => {
   const user = await authService.me().then((user) => user);
   const userDeliveries = await deliveryService.getUserDeliveries(user.id);
-
   const showDeliveries =
     !!userDeliveries.data.receiving[0] || !!userDeliveries.data.sending[0];
 
@@ -39,6 +38,7 @@ const checkAuth = async () => {
   setItem('isStaff', `${user.is_staff}`);
   setItem('id', `${user.id}`);
   setItem('email', `${user.email}`);
+  setItem('isSuperuser', `${user.is_superuser}`);
 
   return true;
 };

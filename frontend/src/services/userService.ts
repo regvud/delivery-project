@@ -1,10 +1,6 @@
 import { urls } from '../constants/urls';
-import { User, UserResponse } from '../types/userTypes';
+import { PatchData, User, UserResponse } from '../types/userTypes';
 import { apiService } from './apiService';
-
-type PatchData = {
-  is_active: boolean;
-};
 
 export const userService = {
   getAll: (page: number, params?: string) =>

@@ -27,6 +27,7 @@ const UserCard = ({ user }: UserCardProps) => {
     setIsDisabled(true);
     try {
       const { status } = await userService.patchUser(user.id, {
+        dataType: 'IsActive',
         is_active: !isUserActive,
       });
       if (status === 200) setIsUserActive(!isUserActive);
