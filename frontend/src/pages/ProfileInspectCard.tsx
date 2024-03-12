@@ -26,8 +26,11 @@ export const ProfileInspectCard = ({
   const [statusStaff, setStatusStaff] = useState(user.is_staff);
   const [statusSuperuser, setStatusSuperuser] = useState(user.is_superuser);
   const [permissionMsg, setPermissionMsg] = useState<string>('');
+  const [superUserMsg, setSuperUserMsg] = useState<string>('');
 
   const loggedUser = getItem('email');
+  const isloggedUserSuperuser = getItem('isSuperuser');
+
   useEffect(() => {
     if (loggedUser && loggedUser === user.email) {
       setPermissionMsg('You cannot manage own permissions');
@@ -56,6 +59,17 @@ export const ProfileInspectCard = ({
       const err = e as AxiosError;
       console.log(err.response?.data);
     }
+  };
+
+  const checkIfSuperuserToHandlePermissions = () => {
+    if (isloggedUserSuperuser && isloggedUserSuperuser === 'false') {
+      setSuperUserMsg('Only superusers allowed to change this field');
+      return;
+    }
+    handlePermissions({
+      dataType: 'IsSuperuser',
+      is_superuser: !statusSuperuser,
+    });
   };
 
   return (
@@ -95,14 +109,12 @@ export const ProfileInspectCard = ({
         >
           Is_staff: {statusStaff ? 'true' : 'false'}
         </h4>
+        {superUserMsg && (
+          <span style={{ color: 'crimson' }}>{superUserMsg}</span>
+        )}
         <h4
           className={css.status}
-          onClick={() =>
-            handlePermissions({
-              dataType: 'IsSuperuser',
-              is_superuser: !statusSuperuser,
-            })
-          }
+          onClick={checkIfSuperuserToHandlePermissions}
         >
           Is_superuser: {statusSuperuser ? 'true' : 'false'}
         </h4>

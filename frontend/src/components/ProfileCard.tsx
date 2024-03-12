@@ -23,11 +23,12 @@ const ProfileCard = ({ profile }: ProfileProps) => {
 
   const { setItem } = useLocalStorage();
   const setRefresh = usePage((state) => state.setRefresh);
+
   const avatar = profile?.avatar[0]?.avatar;
 
   //image
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imageSrc, setImageSrc] = useState<string>(avatar || defaultAvatar);
+  const [, setImageSrc] = useState<string>(avatar);
   const [imageMsg, setImageMsg] = useState<string>('');
 
   //bools
@@ -137,7 +138,7 @@ const ProfileCard = ({ profile }: ProfileProps) => {
         <div>
           <img
             className={css.profileImage}
-            src={imageSrc}
+            src={avatar ? avatar : defaultAvatar}
             onClick={() => handleImageClick(fileInputRef)}
           />
           {imageMsg && <span style={{ paddingLeft: '10px' }}>{imageMsg}</span>}
