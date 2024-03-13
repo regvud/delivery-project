@@ -19,8 +19,10 @@ class DeliveryFilter(filters.FilterSet):
         model = DeliveryModel
         fields = {
             "id": ("lt", "lte", "gt", "gte", "exact", "iexact"),
-            "sender__phone": ("exact", "startswith", "endswith"),
-            "receiver__phone": ("exact", "startswith", "endswith"),
+            "sender__phone": ("exact", "startswith", "endswith", "icontains"),
+            "sender__email": ("exact", "startswith", "endswith", "icontains"),
+            "receiver__phone": ("exact", "startswith", "endswith", "icontains"),
+            "receiver__email": ("exact", "startswith", "endswith", "icontains"),
             "department__id": ("lt", "lte", "gt", "gte", "exact", "iexact"),
             "department__general_number": ("lt", "lte", "gt", "gte", "exact", "iexact"),
             "department__city": ("exact", "startswith", "endswith"),

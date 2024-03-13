@@ -22,7 +22,7 @@ const DeliveryDetail = () => {
       />
     );
   }
-
+  console.log(deliveryId);
   //fetching delivery using params
   if (deliveryId !== undefined) {
     const {

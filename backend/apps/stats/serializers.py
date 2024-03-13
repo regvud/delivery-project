@@ -23,10 +23,18 @@ class DeliveryStatsSerializer(ModelSerializer):
         )
 
     def get_receiver(self, delivery: DeliveryDataclass):
-        return {"id": delivery.receiver.id, "email": delivery.receiver.email}
+        return {
+            "id": delivery.receiver.id,
+            "email": delivery.receiver.email,
+            "phone": delivery.receiver.phone,
+        }
 
     def get_sender(self, delivery: DeliveryDataclass):
-        return {"id": delivery.sender.id, "email": delivery.sender.email}
+        return {
+            "id": delivery.sender.id,
+            "email": delivery.sender.email,
+            "phone": delivery.sender.phone,
+        }
 
     def get_item(self, delivery: DeliveryDataclass):
         return {"id": delivery.item.id, "label": delivery.item.label}
@@ -34,5 +42,5 @@ class DeliveryStatsSerializer(ModelSerializer):
     def get_department(self, delivery):
         return {
             "id": delivery.department.id,
-            "generaL_number": delivery.department.general_number,
+            "general_number": delivery.department.general_number,
         }

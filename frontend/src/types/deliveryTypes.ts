@@ -18,10 +18,12 @@ export type AdminDelivery = {
   sender: {
     id: number;
     email: string;
+    phone: string;
   };
   receiver: {
     id: number;
     email: string;
+    phone: string;
   };
   department: {
     id: number;

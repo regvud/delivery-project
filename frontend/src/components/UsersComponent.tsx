@@ -33,6 +33,7 @@ export const UserComponent = () => {
 
   useEffect(() => {
     const email = 'email__icontains';
+
     setParams((searchParams) => {
       if (!(email in searchParams.keys())) {
         searchParams.set('page', currentPage);

@@ -26,7 +26,8 @@ export const urls = {
     create: `${deliveries}${create}`,
     addImage: (id: number) => `${deliveries}/${id}/add_image`,
     user: (id: number) => `${users}${deliveries}/${id}`,
-    adminDeliveries: (page: number) => `${stats}/delivery_list?page=${page}`,
+    adminDeliveries: (page: number, params?: string) =>
+      `${stats}/delivery_list?page=${page}&${params}`,
   },
   departments: {
     base: (page: number) => `${departments}?page=${page}`,

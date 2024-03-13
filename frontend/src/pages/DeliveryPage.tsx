@@ -2,17 +2,13 @@ import { deliveryService } from '../services/deliveryService';
 import { DeliveryCard } from '../components/DeliveryCard';
 import { useFetch } from '../hooks/useFetch';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { PleaseLogin } from '../components/PleaseLogin';
 import { PagePagination } from '../components/PagePagination';
 import { useEffect } from 'react';
 import css from './styles/DeliveryPage.module.css';
-import { useLocalStorage } from '../hooks/useLocalStorage';
 
 const DeliveryPage = () => {
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
-  const { getItem } = useLocalStorage();
-  const token = getItem('access');
   const currentPage = params.get('page') ?? '1';
 
   const {
@@ -22,15 +18,13 @@ const DeliveryPage = () => {
     refetch,
   } = useFetch(deliveryService.getAll(+currentPage), ['deliveries']);
 
-  const total_pages = deliveries?.total_pages ?? 1;
+  const totalPages = deliveries?.total_pages ?? 1;
 
   useEffect(() => {
     refetch();
   }, [currentPage, refetch]);
 
-  if (!token) return <PleaseLogin />;
-
-  if (+currentPage > total_pages)
+  if (+currentPage > totalPages)
     return <h1 style={{ textAlign: 'center' }}>Invalid page..</h1>;
 
   if (isLoading) return <h1 style={{ textAlign: 'center' }}>Loading...</h1>;
@@ -48,7 +42,7 @@ const DeliveryPage = () => {
     <>
       <PagePagination
         currentPage={+currentPage}
-        totalPages={total_pages}
+        totalPages={totalPages}
         setURLSearchParams={setParams}
       />
       <div className={css.grid}>

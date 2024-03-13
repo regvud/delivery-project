@@ -90,7 +90,7 @@ export const router = createBrowserRouter([
         element: <CreateDeliveryPage />,
       },
       {
-        path: 'profile/delivery/:id',
+        path: 'profile/delivery/:deliveryId',
         element: <DeliveryDetail />,
       },
       {
