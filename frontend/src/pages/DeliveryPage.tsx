@@ -2,13 +2,13 @@ import { deliveryService } from '../services/deliveryService';
 import { DeliveryCard } from '../components/DeliveryCard';
 import { useFetch } from '../hooks/useFetch';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { PagePagination } from '../components/PagePagination';
+import { TestPagination } from '../components/PagePagination';
 import { useEffect } from 'react';
 import css from './styles/DeliveryPage.module.css';
 
 const DeliveryPage = () => {
   const navigate = useNavigate();
-  const [params, setParams] = useSearchParams();
+  const [params] = useSearchParams();
   const currentPage = params.get('page') ?? '1';
 
   const {
@@ -40,11 +40,7 @@ const DeliveryPage = () => {
 
   return (
     <>
-      <PagePagination
-        currentPage={+currentPage}
-        totalPages={totalPages}
-        setURLSearchParams={setParams}
-      />
+      <TestPagination currentPage={+currentPage} totalPages={totalPages} />
       <div className={css.grid}>
         {deliveries?.results?.map((delivery) => (
           <DeliveryCard

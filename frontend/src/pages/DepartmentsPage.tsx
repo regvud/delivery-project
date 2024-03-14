@@ -4,13 +4,13 @@ import { departmentService } from '../services/departmentService';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useEffect } from 'react';
 import { PleaseLogin } from '../components/PleaseLogin';
-import { PagePagination } from '../components/PagePagination';
+import { TestPagination } from '../components/PagePagination';
 import { DepartmentCard } from '../components/DepartmentCard';
 import css from './styles/DeliveryPage.module.css';
 
 const DepartmentsPage = () => {
   const navigate = useNavigate();
-  const [params, setParams] = useSearchParams();
+  const [params] = useSearchParams();
   const { getItem } = useLocalStorage();
   const token = getItem('access');
   const currentPage = params.get('page') ?? '1';
@@ -54,11 +54,7 @@ const DepartmentsPage = () => {
     );
   return (
     <>
-      <PagePagination
-        currentPage={+currentPage}
-        totalPages={total_pages}
-        setURLSearchParams={setParams}
-      />
+      <TestPagination currentPage={+currentPage} totalPages={total_pages} />
       <div className={css.container}>
         {userIsStaff == 'true' && (
           <button className={css.button} onClick={handleClick}>

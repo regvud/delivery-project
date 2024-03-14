@@ -2,7 +2,7 @@ import { useLocation, useSearchParams } from 'react-router-dom';
 import { useFetch } from '../hooks/useFetch';
 import { deliveryService } from '../services/deliveryService';
 import { AdminDeliveryCard } from './AdminDeliveryCard';
-import { PagePagination } from './PagePagination';
+import { TestPagination } from './PagePagination';
 import { useEffect } from 'react';
 import { FilterSelectComponent } from './FilterSelectComponent';
 
@@ -43,11 +43,7 @@ export const AdminDeliveries = () => {
   if (error) return <h1 style={{ textAlign: 'center' }}>{error.message}</h1>;
   return (
     <>
-      <PagePagination
-        currentPage={+currentPage}
-        totalPages={totalPages}
-        setURLSearchParams={setParams}
-      />
+      <TestPagination currentPage={+currentPage} totalPages={totalPages} />
       <FilterSelectComponent searchArr={searchArr} />
 
       {!adminDeliveries?.results[0] ? (

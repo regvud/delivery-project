@@ -1,5 +1,9 @@
 import Pagination from '@mui/material/Pagination';
-import { SetURLSearchParams } from 'react-router-dom';
+import {
+  SetURLSearchParams,
+  useLocation,
+  useSearchParams,
+} from 'react-router-dom';
 
 type PagePaginationProps = {
   totalPages: number;
@@ -14,6 +18,42 @@ export function PagePagination({
 }: PagePaginationProps) {
   const handleChange = (event: React.ChangeEvent<unknown>, page: number) =>
     setURLSearchParams({ page: page.toString() });
+  return (
+    <Pagination count={totalPages} onChange={handleChange} page={currentPage} />
+  );
+}
+
+type TestPaginationProps = {
+  totalPages: number;
+  currentPage: number;
+};
+
+export function TestPagination({
+  currentPage,
+  totalPages,
+}: TestPaginationProps) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { search } = useLocation();
+  const urlKeyValuesArr = [];
+
+  const handleChange = (event: React.ChangeEvent<unknown>, page: number) => {
+    setSearchParams((setParams) => {
+      setParams.set('page', page.toString());
+      return setParams;
+    });
+  };
+
+  let filters = '';
+
+  if (searchParams.size > 1) {
+    for (const [k, v] of searchParams.entries()) {
+      if (k !== 'page') urlKeyValuesArr.push(`${k}=${v}`);
+    }
+
+    filters = urlKeyValuesArr.join('&');
+  }
+
+  new URLSearchParams(`${search}&${filters}`);
 
   return (
     <Pagination count={totalPages} onChange={handleChange} page={currentPage} />

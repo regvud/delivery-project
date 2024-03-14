@@ -3,84 +3,63 @@ import { useFetch } from '../hooks/useFetch';
 import { userService } from '../services/userService';
 import { UserCard } from './UserCard';
 import { useLocation, useSearchParams } from 'react-router-dom';
-import { PagePagination } from './PagePagination';
+import { TestPagination } from './PagePagination';
 
 export const UserComponent = () => {
   const [params, setParams] = useSearchParams();
   const { search } = useLocation();
   const currentPage = params.get('page') ?? '1';
-  const searchArr = search.split('&');
 
   //states
-  const [stringParams, setStringParams] = useState<string>();
-  const [isActiveSearch, setIsActiveSearch] = useState(false);
+  const [, setSearchValue] = useState('');
 
   //refs
   const searchInputRef = useRef('');
   const buttonRef = useRef<HTMLButtonElement>(null);
 
+  const searchArr = search
+    .replace('?', '')
+    .split('&')
+    .filter((value) => !value.startsWith('page'))
+    .join('&');
+
   //fetch
   const {
     data: users,
     isLoading,
+    isError,
     error,
     refetch,
-  } = useFetch(userService.getAll(+currentPage, search || stringParams), [
-    'getAllUserList',
-  ]);
+  } = useFetch(userService.getAll(+currentPage, searchArr), ['getAllUserList']);
 
   const totalPages = users?.total_pages ?? 1;
 
   useEffect(() => {
-    const email = 'email__icontains';
-
-    setParams((searchParams) => {
-      if (!(email in searchParams.keys())) {
-        searchParams.set('page', currentPage);
-      }
-      handleStringParams();
-      return searchParams;
-    });
     refetch();
-  }, [params]);
-
-  useEffect(() => {
-    if (!searchInputRef.current) {
-      handleDropFilters();
-    }
-  }, [searchInputRef.current]);
+  }, [search]);
 
   //functions
-
-  function handleStringParams() {
-    const excludedArray: string[] = [];
-    params.forEach((v, k) => {
-      if (k !== 'page') {
-        excludedArray.push(`${k}=${v}`);
-      }
-    });
-    const newParams = excludedArray.join().replace(',', '&');
-    setStringParams(newParams);
-  }
-
   function handleKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter' && buttonRef.current) {
       buttonRef.current.click();
+      setSearchValue(searchInputRef.current);
     }
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     searchInputRef.current = e.target.value;
-    setIsActiveSearch(!!searchInputRef.current);
-  };
+    if (searchInputRef.current === '') handleDropFilters();
+  }
 
   function handleButtonClick() {
+    if (!searchInputRef.current) {
+      return;
+    }
+
     const email_key = 'email__icontains';
     setParams((searchParams) => {
       if (searchInputRef.current !== '') {
         searchParams.set(email_key, searchInputRef.current);
-      } else {
-        searchParams.delete(email_key);
       }
 
       return searchParams;
@@ -89,21 +68,18 @@ export const UserComponent = () => {
 
   function handleDropFilters() {
     setParams({});
+    setSearchValue('');
   }
 
   if (+currentPage > totalPages)
     return <h1 style={{ textAlign: 'center' }}>Invalid page..</h1>;
 
-  if (isLoading) return <h1>...Loading</h1>;
-  if (error) return <h1>{error.message}</h1>;
+  if (isLoading) return <h1 style={{ textAlign: 'center' }}>...Loading</h1>;
+  if (isError) return <h1 style={{ textAlign: 'center' }}>{error?.message}</h1>;
 
   return (
     <>
-      <PagePagination
-        currentPage={+currentPage}
-        totalPages={totalPages}
-        setURLSearchParams={setParams}
-      />
+      <TestPagination currentPage={+currentPage} totalPages={totalPages} />
       <div>
         <input
           type="text"
@@ -112,11 +88,7 @@ export const UserComponent = () => {
           onKeyDown={(e) => handleKeyPress(e)}
         />
 
-        <button
-          disabled={!isActiveSearch}
-          ref={buttonRef}
-          onClick={handleButtonClick}
-        >
+        <button ref={buttonRef} onClick={handleButtonClick}>
           search
         </button>
         {searchArr.length > 1 && (

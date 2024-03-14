@@ -5,7 +5,7 @@ from rest_framework.views import status
 
 class PagePagination(PageNumberPagination):
     max_page_size = 50
-    page_size = 20
+    page_size = 12
     page_size_query_param = "page_size"
     page_query_param = "page"
 
