@@ -43,6 +43,8 @@ class DeliverySerializer(serializers.ModelSerializer):
             "receiver",
             "department",
             "status",
+            "created_at",
+            "updated_at",
         )
 
     @atomic

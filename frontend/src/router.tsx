@@ -109,7 +109,6 @@ export const router = createBrowserRouter([
         path: 'admin/users/:userId/delivery/:deliveryId',
         element: <DeliveryDetail />,
       },
-
       {
         path: 'admin/deliveries',
         element: <AdminDeliveries />,

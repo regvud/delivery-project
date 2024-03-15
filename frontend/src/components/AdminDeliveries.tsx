@@ -9,7 +9,6 @@ import { FilterSelectComponent } from './FilterSelectComponent';
 export const AdminDeliveries = () => {
   const [params, setParams] = useSearchParams();
   const { search } = useLocation();
-  const searchArr = search.split('&');
 
   const currentPage = params.get('page') ?? '1';
 
@@ -31,7 +30,7 @@ export const AdminDeliveries = () => {
     });
 
     refetch();
-  }, [currentPage, refetch, search]);
+  }, [refetch, search]);
 
   const totalPages = adminDeliveries?.total_pages ?? 1;
 
@@ -41,10 +40,11 @@ export const AdminDeliveries = () => {
   if (isLoading) return <h1 style={{ textAlign: 'center' }}>Loading...</h1>;
 
   if (error) return <h1 style={{ textAlign: 'center' }}>{error.message}</h1>;
+
   return (
     <>
       <TestPagination currentPage={+currentPage} totalPages={totalPages} />
-      <FilterSelectComponent searchArr={searchArr} />
+      <FilterSelectComponent />
 
       {!adminDeliveries?.results[0] ? (
         <span>No results for query</span>

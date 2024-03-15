@@ -55,4 +55,16 @@ export const urls = {
     changeEmail: (email: string) => `${users}/change_email/${email}`,
     changePhone: `${users}/change_phone`,
   },
+
+  stats: {
+    totalUsers: `${stats}/total_users`,
+    totalDeliveries: `${stats}/total_deliveries`,
+    todayUsers: `${stats}/today_users`,
+    todayDeliveries: `${stats}/today_deliveries`,
+    prevWeakUsers: `${stats}/prev_weak_users`,
+    prevWeakDeliveries: `${stats}/prev_weak_deliveries`,
+    currentWeakUsers: `${stats}/current_weak_users`,
+    currentWeakDeliveries: `${stats}/current_weak_deliveries`,
+    avgPrice: `${stats}/avg_price`,
+  },
 };
