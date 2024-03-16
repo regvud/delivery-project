@@ -34,7 +34,7 @@ class CurrentDayUsers(GenericAPIView):
     permission_classes = (IsAdmin,)
 
     def get(self, *args, **kwargs):
-        today_users = UserModel.objects.filter(created_at__date=today).count()
+        today_users = UserModel.objects.filter(is_active=True).filter(created_at__date=today).count()
         return Response({"today_users": today_users})
 
 

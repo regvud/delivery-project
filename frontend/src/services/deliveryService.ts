@@ -22,9 +22,7 @@ export const deliveryService = {
   create: (delivery: Delivery) =>
     apiService.post<Delivery>(urls.deliveries.create, delivery),
   getAdminDeliveries: (page: number, params?: string) =>
-    apiService
-      .get<PaginatedResponse<AdminDelivery[]>>(
-        urls.deliveries.adminDeliveries(page, params)
-      )
-      .then((res) => res.data),
+    apiService.get<PaginatedResponse<AdminDelivery[]>>(
+      urls.deliveries.adminDeliveries(page, params)
+    ),
 };

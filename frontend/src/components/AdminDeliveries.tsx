@@ -3,50 +3,48 @@ import { useFetch } from '../hooks/useFetch';
 import { deliveryService } from '../services/deliveryService';
 import { AdminDeliveryCard } from './AdminDeliveryCard';
 import { TestPagination } from './PagePagination';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { FilterSelectComponent } from './FilterSelectComponent';
 
 export const AdminDeliveries = () => {
-  const [params, setParams] = useSearchParams();
+  const [params] = useSearchParams();
   const { search } = useLocation();
-
   const currentPage = params.get('page') ?? '1';
+  const [error, setError] = useState<string>('');
+
+  const searchStr = search
+    .replace('?', '')
+    .split('&')
+    .filter((value) => !value.startsWith('page'))
+    .join('&');
 
   const {
     data: adminDeliveries,
     isLoading,
-    error,
     refetch,
-  } = useFetch(deliveryService.getAdminDeliveries(+currentPage, search), [
-    'adminDeliveries',
-  ]);
+  } = useFetch(
+    deliveryService.getAdminDeliveries(+currentPage, searchStr).catch(() => {
+      setError(`Invalid Page..`);
+    }),
+    ['adminDeliveries']
+  );
 
   useEffect(() => {
-    setParams((searchParams) => {
-      if (!('page' in searchParams.keys())) {
-        searchParams.set('page', currentPage);
-      }
-      return searchParams;
-    });
-
     refetch();
-  }, [refetch, search]);
+  }, [search]);
 
-  const totalPages = adminDeliveries?.total_pages ?? 1;
-
-  if (+currentPage > totalPages)
-    return <h1 style={{ textAlign: 'center' }}>Invalid page..</h1>;
+  const totalPages = adminDeliveries?.data.total_pages ?? 1;
 
   if (isLoading) return <h1 style={{ textAlign: 'center' }}>Loading...</h1>;
 
-  if (error) return <h1 style={{ textAlign: 'center' }}>{error.message}</h1>;
+  if (error) return <h1 style={{ textAlign: 'center' }}>{error}</h1>;
 
   return (
     <>
       <TestPagination currentPage={+currentPage} totalPages={totalPages} />
       <FilterSelectComponent />
 
-      {!adminDeliveries?.results[0] ? (
+      {!adminDeliveries?.data?.results[0] ? (
         <span>No results for query</span>
       ) : (
         <>
@@ -64,7 +62,7 @@ export const AdminDeliveries = () => {
             <h2>Receiver</h2>
             <h2>Department</h2>
           </div>
-          {adminDeliveries.results.map((delivery) => (
+          {adminDeliveries.data.results.map((delivery) => (
             <AdminDeliveryCard delivery={delivery} key={delivery.id} />
           ))}
         </>

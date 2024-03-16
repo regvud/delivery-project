@@ -142,9 +142,13 @@ export const FilterSelectComponent = () => {
             <button onClick={submitFilter}>add filter</button>
           </div>
         )}
-        {searchArr.length > 0 && (
+        {searchArr.length >= 1 && searchArr[0] !== '' && (
           <span
-            style={{ cursor: 'pointer', color: 'violet', textAlign: 'center' }}
+            style={{
+              cursor: 'pointer',
+              color: 'violet',
+              textAlign: 'center',
+            }}
             onClick={dropFilters}
           >
             drop filters
@@ -152,9 +156,11 @@ export const FilterSelectComponent = () => {
         )}
       </div>
       <div style={{ display: 'flex' }}>
-        {searchArr.map((filter) => (
-          <Filter filter={filter} key={filter} valueKeys={valueKeys} />
-        ))}
+        {searchArr.length >= 1 &&
+          searchArr[0] !== '' &&
+          searchArr.map((filter) => (
+            <Filter filter={filter} key={filter} valueKeys={valueKeys} />
+          ))}
       </div>
     </div>
   );

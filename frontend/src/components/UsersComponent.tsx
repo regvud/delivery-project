@@ -8,41 +8,70 @@ import { TestPagination } from './PagePagination';
 export const UserComponent = () => {
   const [params, setParams] = useSearchParams();
   const { search } = useLocation();
-  const currentPage = params.get('page') ?? '1';
 
   //states
   const [, setSearchValue] = useState('');
+  const [error, setError] = useState('');
 
   //refs
   const searchInputRef = useRef('');
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const prevSearch = useRef<string>();
 
-  const searchArr = search
+  const searchStr = search
     .replace('?', '')
     .split('&')
     .filter((value) => !value.startsWith('page'))
     .join('&');
 
+  let currentPage = params.get('page') ?? '1';
+
   //fetch
   const {
     data: users,
     isLoading,
-    isError,
-    error,
     refetch,
-  } = useFetch(userService.getAll(+currentPage, searchArr), ['getAllUserList']);
+  } = useFetch(
+    userService.getAll(+currentPage, searchStr).catch(() => {
+      setError('Invalid Page..');
+    }),
+    ['getAllUserList']
+  );
 
   const totalPages = users?.total_pages ?? 1;
 
+  function compare() {
+    const currentSearch = searchInputRef.current.trim();
+    if (currentSearch !== prevSearch.current) {
+      prevSearch.current = currentSearch;
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+
   useEffect(() => {
+    const page = compare();
+
+    if (page && searchStr) {
+      currentPage = page.toString();
+      setParams((params) => {
+        params.set('page', currentPage);
+        return params;
+      });
+    }
+
     refetch();
-  }, [search]);
+  }, [search, refetch, currentPage, users]);
+
+  useEffect(() => {
+    setError('');
+  }, [users]);
 
   //functions
   function handleKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter' && buttonRef.current) {
       buttonRef.current.click();
-      setSearchValue(searchInputRef.current);
     }
   }
 
@@ -52,14 +81,17 @@ export const UserComponent = () => {
   }
 
   function handleButtonClick() {
-    if (!searchInputRef.current) {
+    const input = searchInputRef.current;
+    if (!input) {
       return;
     }
 
+    setSearchValue(input);
+
     const email_key = 'email__icontains';
     setParams((searchParams) => {
-      if (searchInputRef.current !== '') {
-        searchParams.set(email_key, searchInputRef.current);
+      if (input !== '') {
+        searchParams.set(email_key, input);
       }
 
       return searchParams;
@@ -75,7 +107,8 @@ export const UserComponent = () => {
     return <h1 style={{ textAlign: 'center' }}>Invalid page..</h1>;
 
   if (isLoading) return <h1 style={{ textAlign: 'center' }}>...Loading</h1>;
-  if (isError) return <h1 style={{ textAlign: 'center' }}>{error?.message}</h1>;
+
+  if (error) return <h1 style={{ textAlign: 'center' }}>{error}</h1>;
 
   return (
     <>
@@ -91,7 +124,7 @@ export const UserComponent = () => {
         <button ref={buttonRef} onClick={handleButtonClick}>
           search
         </button>
-        {searchArr.length > 1 && (
+        {searchStr.length > 1 && (
           <button onClick={handleDropFilters}>drop filters</button>
         )}
       </div>
