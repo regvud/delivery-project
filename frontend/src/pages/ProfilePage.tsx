@@ -1,41 +1,54 @@
 import { authService } from '../services/authService';
 import { ProfileCard } from '../components/ProfileCard';
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { UserDeliveries } from '../components/UserDeliveries';
-import { useFetch } from '../hooks/useFetch';
 import { useLocation, useNavigate } from 'react-router-dom';
 import css from './styles/ProfilePage.module.css';
 import button from './styles/DeliveryPage.module.css';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { usePage } from '../store/store';
+import { AxiosError } from 'axios';
+import { useFetchTest } from '../hooks/useFetch';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { getItem } = useLocalStorage();
 
+  //states
   const [showUserDeliveries, setShowUserDeliveries] = useState(false);
   const refreshPage = usePage((state) => state.refresh);
   const setNavRefresh = usePage((state) => state.setNavRefresh);
+  const [error, setError] = useState<AxiosError | unknown>();
 
   const userDeliveries = getItem('userDeliveries');
-  const userId = getItem('id');
+  const userId = getItem('id') ?? 0;
 
   const {
     data: profile,
-    error,
-    isLoading,
     refetch,
-  } = useFetch(authService.profile.profile(userId ? +userId : 0), ['profile']);
+    isLoading,
+  } = useFetchTest(fetchProfile, ['profile']);
 
   useEffect(() => {
     if (pathname === '/') navigate('/profile');
     refetch();
     setNavRefresh();
-  }, [pathname, refetch, refreshPage]);
+  }, [userId, refreshPage, setNavRefresh]);
 
-  if (error) return <h1>{error?.message}</h1>;
-  if (isLoading) return <h1>Loading...</h1>;
+  async function fetchProfile() {
+    try {
+      const profile = await authService.profile.profile(+userId);
+      return profile.data;
+    } catch (e) {
+      const err = e as AxiosError;
+      setError(err.response?.data);
+      return null;
+    }
+  }
+
+  if (isLoading) return <h1>...Loading</h1>;
+  if (error) return <h1>{`${error}`}</h1>;
 
   return (
     <div className={css.profileContainer}>

@@ -38,7 +38,7 @@ const ProfileCard = ({ profile }: ProfileProps) => {
   const [isEmailValid, setIsEmailValid] = useState<boolean>();
 
   //variables
-  const [phone, setPhone] = useState(profile.phone);
+  const [phone, setPhone] = useState<string>('');
 
   //inputs
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -181,7 +181,7 @@ const ProfileCard = ({ profile }: ProfileProps) => {
         )}
       </div>
       <div className={css.divs}>
-        <h3>Phone: {phone}</h3>
+        <h3>Phone: {phone ? phone : profile.phone}</h3>
         <img
           className={css.images}
           onClick={() => setShowPhoneInput((prev) => !prev)}

@@ -26,17 +26,23 @@ export function PagePagination({
 type TestPaginationProps = {
   totalPages: number;
   currentPage: number;
+  setPage?: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export function TestPagination({
   currentPage,
   totalPages,
+  setPage,
 }: TestPaginationProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const { search } = useLocation();
   const urlKeyValuesArr = [];
 
   const handleChange = (event: React.ChangeEvent<unknown>, page: number) => {
+    if (setPage) {
+      setPage(page.toString());
+    }
+
     setSearchParams((setParams) => {
       setParams.set('page', page.toString());
       return setParams;

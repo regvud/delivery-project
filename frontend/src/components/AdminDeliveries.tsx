@@ -1,16 +1,18 @@
 import { useLocation, useSearchParams } from 'react-router-dom';
-import { useFetch } from '../hooks/useFetch';
-import { deliveryService } from '../services/deliveryService';
+import { useFetchTest } from '../hooks/useFetch';
 import { AdminDeliveryCard } from './AdminDeliveryCard';
 import { TestPagination } from './PagePagination';
 import { useEffect, useState } from 'react';
 import { FilterSelectComponent } from './FilterSelectComponent';
+import { AxiosError } from 'axios';
+import { ErrorDetail } from './UsersComponent';
+import { deliveryService } from '../services/deliveryService';
 
 export const AdminDeliveries = () => {
-  const [params] = useSearchParams();
+  const [params, setParams] = useSearchParams();
   const { search } = useLocation();
-  const currentPage = params.get('page') ?? '1';
-  const [error, setError] = useState<string>('');
+  const [urlPage, setUrlPage] = useState(params.get('page') ?? '1');
+  const [, setError] = useState<ErrorDetail | undefined>();
 
   const searchStr = search
     .replace('?', '')
@@ -22,29 +24,53 @@ export const AdminDeliveries = () => {
     data: adminDeliveries,
     isLoading,
     refetch,
-  } = useFetch(
-    deliveryService.getAdminDeliveries(+currentPage, searchStr).catch(() => {
-      setError(`Invalid Page..`);
-    }),
-    ['adminDeliveries']
-  );
+  } = useFetchTest(fetchAdminDeliveries, ['adminDeliveries']);
+
+  const totalPages = adminDeliveries?.total_pages ?? 1;
 
   useEffect(() => {
     refetch();
-  }, [search]);
+  }, [search, refetch, urlPage]);
 
-  const totalPages = adminDeliveries?.data.total_pages ?? 1;
+  async function fetchAdminDeliveries() {
+    try {
+      const users = await deliveryService
+        .getAdminDeliveries(+urlPage, searchStr)
+        .then(({ data }) => data);
+      setError(undefined);
+      return users;
+    } catch (e) {
+      const err = e as AxiosError;
+      setError(err?.response?.data as ErrorDetail);
+
+      if (urlPage !== '1') {
+        handleParams();
+      }
+
+      return;
+    }
+  }
+
+  function handleParams() {
+    setUrlPage('1');
+    setParams((params) => {
+      params.set('page', '1');
+      return params;
+    });
+  }
 
   if (isLoading) return <h1 style={{ textAlign: 'center' }}>Loading...</h1>;
 
-  if (error) return <h1 style={{ textAlign: 'center' }}>{error}</h1>;
-
   return (
     <>
-      <TestPagination currentPage={+currentPage} totalPages={totalPages} />
+      <TestPagination
+        setPage={setUrlPage}
+        currentPage={+urlPage}
+        totalPages={totalPages}
+      />
       <FilterSelectComponent />
 
-      {!adminDeliveries?.data?.results[0] ? (
+      {!adminDeliveries?.results[0] ? (
         <span>No results for query</span>
       ) : (
         <>
@@ -62,7 +88,7 @@ export const AdminDeliveries = () => {
             <h2>Receiver</h2>
             <h2>Department</h2>
           </div>
-          {adminDeliveries.data.results.map((delivery) => (
+          {adminDeliveries.results.map((delivery) => (
             <AdminDeliveryCard delivery={delivery} key={delivery.id} />
           ))}
         </>

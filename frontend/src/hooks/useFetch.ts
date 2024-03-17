@@ -5,11 +5,24 @@ export const useFetch = <T>(
   queryKey: string[],
   enabled?: boolean
 ) => {
-  const { data, error, isLoading, isError, refetch } = useQuery({
+  const { data, error, isLoading, refetch } = useQuery({
     queryFn: () => queryFn,
     queryKey: queryKey,
     enabled: enabled,
   });
 
-  return { data, error, isLoading, isError, refetch };
+  return { data, error, isLoading, refetch };
+};
+export const useFetchTest = <T>(
+  queryFn: () => Promise<T>,
+  queryKey: string[],
+  enabled?: boolean
+) => {
+  const { data, error, isLoading, refetch } = useQuery({
+    queryFn: queryFn, // Pass the function reference here
+    queryKey: queryKey,
+    enabled: enabled,
+  });
+
+  return { data, error, isLoading, refetch };
 };

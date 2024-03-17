@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { useFetch } from '../hooks/useFetch';
+import { useFetchTest } from '../hooks/useFetch';
 import { userService } from '../services/userService';
 import { UserCard } from './UserCard';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { TestPagination } from './PagePagination';
+import { AxiosError } from 'axios';
+export interface ErrorDetail {
+  detail: string;
+}
 
 export const UserComponent = () => {
   const [params, setParams] = useSearchParams();
@@ -11,12 +15,11 @@ export const UserComponent = () => {
 
   //states
   const [, setSearchValue] = useState('');
-  const [error, setError] = useState('');
+  const [, setError] = useState<ErrorDetail | undefined>();
 
-  //refs
+  //refsa
   const searchInputRef = useRef('');
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const prevSearch = useRef<string>();
 
   const searchStr = search
     .replace('?', '')
@@ -24,51 +27,49 @@ export const UserComponent = () => {
     .filter((value) => !value.startsWith('page'))
     .join('&');
 
-  let currentPage = params.get('page') ?? '1';
+  const [urlPage, setUrlPage] = useState(params.get('page') ?? '1');
 
-  //fetch
   const {
     data: users,
     isLoading,
     refetch,
-  } = useFetch(
-    userService.getAll(+currentPage, searchStr).catch(() => {
-      setError('Invalid Page..');
-    }),
-    ['getAllUserList']
-  );
+  } = useFetchTest(fetchUsers, ['getAllUserList']);
 
   const totalPages = users?.total_pages ?? 1;
 
-  function compare() {
-    const currentSearch = searchInputRef.current.trim();
-    if (currentSearch !== prevSearch.current) {
-      prevSearch.current = currentSearch;
-      return 1;
-    } else {
-      return 0;
+  useEffect(() => {
+    refetch();
+  }, [search, refetch, urlPage]);
+
+  //fetch
+  async function fetchUsers() {
+    try {
+      const users = await userService
+        .getAll(+urlPage, searchStr)
+        .then(({ data }) => data);
+      setError(undefined);
+      return users;
+    } catch (e) {
+      const err = e as AxiosError;
+      setError(err?.response?.data as ErrorDetail);
+
+      if (urlPage !== '1') {
+        handleParams();
+      }
+
+      return;
     }
   }
 
-  useEffect(() => {
-    const page = compare();
-
-    if (page && searchStr) {
-      currentPage = page.toString();
-      setParams((params) => {
-        params.set('page', currentPage);
-        return params;
-      });
-    }
-
-    refetch();
-  }, [search, refetch, currentPage, users]);
-
-  useEffect(() => {
-    setError('');
-  }, [users]);
-
   //functions
+  function handleParams() {
+    setUrlPage('1');
+    setParams((params) => {
+      params.set('page', '1');
+      return params;
+    });
+  }
+
   function handleKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter' && buttonRef.current) {
       buttonRef.current.click();
@@ -103,16 +104,18 @@ export const UserComponent = () => {
     setSearchValue('');
   }
 
-  if (+currentPage > totalPages)
+  if (+urlPage > totalPages)
     return <h1 style={{ textAlign: 'center' }}>Invalid page..</h1>;
 
   if (isLoading) return <h1 style={{ textAlign: 'center' }}>...Loading</h1>;
 
-  if (error) return <h1 style={{ textAlign: 'center' }}>{error}</h1>;
-
   return (
     <>
-      <TestPagination currentPage={+currentPage} totalPages={totalPages} />
+      <TestPagination
+        setPage={setUrlPage}
+        currentPage={+urlPage}
+        totalPages={totalPages}
+      />
       <div>
         <input
           type="text"

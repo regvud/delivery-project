@@ -4,9 +4,7 @@ import { apiService } from './apiService';
 
 export const userService = {
   getAll: (page: number, params?: string) =>
-    apiService
-      .get<UserResponse>(urls.users.base(page, params))
-      .then((res) => res.data),
+    apiService.get<UserResponse>(urls.users.base(page, params)),
   byID: (id: number) => apiService.get<User>(urls.users.byID(id)),
   patchUser: (id: number, data: PatchData) =>
     apiService.patch<User>(urls.users.byID(id), data),
