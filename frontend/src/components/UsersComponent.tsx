@@ -5,6 +5,9 @@ import { UserCard } from './UserCard';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { TestPagination } from './PagePagination';
 import { AxiosError } from 'axios';
+import button from '../pages/styles/DeliveryPage.module.css';
+import css from '../pages/styles/LoginPage.module.css';
+
 export interface ErrorDetail {
   detail: string;
 }
@@ -116,19 +119,39 @@ export const UserComponent = () => {
         currentPage={+urlPage}
         totalPages={totalPages}
       />
-      <div>
-        <input
-          type="text"
-          placeholder="enter user email"
-          onChange={(e) => handleInputChange(e)}
-          onKeyDown={(e) => handleKeyPress(e)}
-        />
-
-        <button ref={buttonRef} onClick={handleButtonClick}>
-          search
-        </button>
+      <div
+        style={{
+          width: '30%',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <div>
+          <input
+            className={css.inputStyles}
+            style={{ margin: '0 5px' }}
+            type="text"
+            placeholder="enter user email"
+            onChange={(e) => handleInputChange(e)}
+            onKeyDown={(e) => handleKeyPress(e)}
+          />
+          <button
+            className={button.button}
+            style={{ height: 35 }}
+            ref={buttonRef}
+            onClick={handleButtonClick}
+          >
+            search
+          </button>
+        </div>
         {searchStr.length > 1 && (
-          <button onClick={handleDropFilters}>drop filters</button>
+          <span
+            style={{ cursor: 'pointer', color: 'magenta', marginRight: 30 }}
+            onClick={handleDropFilters}
+          >
+            drop filters
+          </span>
         )}
       </div>
       {!users?.results[0] ? (
@@ -147,6 +170,7 @@ export const UserComponent = () => {
               justifyContent: 'space-around',
               alignItems: 'center',
               borderTop: '1px solid grey',
+              fontFamily: 'Jetbrains Mono',
             }}
           >
             <h3 style={{ paddingLeft: 10 }}>ID</h3>

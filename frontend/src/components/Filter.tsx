@@ -1,5 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 import garbage from '../assets/garbage.png';
+import { useInsertionEffect } from 'react';
 
 interface FilterProps {
   filter: string;
@@ -15,8 +16,13 @@ interface FilterProps {
 
 export const Filter = ({ filter, valueKeys }: FilterProps) => {
   const [, setSearchParams] = useSearchParams();
+  let innerFilter = filter;
 
-  const splitted = filter.split('=');
+  if (innerFilter.startsWith('?')) {
+    innerFilter = innerFilter.substring(1);
+  }
+
+  const splitted = innerFilter.split('=');
   const compareValue = splitted[0];
   const filterValue = splitted[1];
 
@@ -43,15 +49,19 @@ export const Filter = ({ filter, valueKeys }: FilterProps) => {
   return (
     <div
       style={{
+        height: '30px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        border: '1px solid black',
+        border: '1px solid grey',
         borderRadius: '5px',
+        padding: 5,
+        margin: 5,
+        fontFamily: 'Jetbrains Mono',
       }}
     >
       <span>
-        {properKey} - {filterValue}
+        {properKey}: {filterValue}
       </span>
       <img
         onClick={removeFilterAttr}

@@ -69,9 +69,8 @@ export const AdminDeliveries = () => {
         totalPages={totalPages}
       />
       <FilterSelectComponent />
-
       {!adminDeliveries?.results[0] ? (
-        <span>No results for query</span>
+        <h1>No results for query</h1>
       ) : (
         <>
           <div
@@ -80,6 +79,7 @@ export const AdminDeliveries = () => {
               justifyContent: 'space-between',
               alignItems: 'center',
               margin: '0px 100px',
+              fontFamily: 'Jetbrains Mono',
             }}
           >
             <h2>Delivery ID</h2>

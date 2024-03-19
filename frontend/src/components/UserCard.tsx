@@ -43,7 +43,9 @@ const UserCard = ({ user }: UserCardProps) => {
   return (
     <div
       className={css.userContainer}
-      style={{ backgroundColor: isUserActive ? '#40826D' : '#F33A6A' }}
+      style={{
+        backgroundColor: isUserActive ? '#40826D' : '#F33A6A',
+      }}
     >
       <span style={{ cursor: 'pointer' }} onClick={handleNavigation}>
         {user.id}
